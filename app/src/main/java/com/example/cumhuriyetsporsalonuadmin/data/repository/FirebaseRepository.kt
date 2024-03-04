@@ -8,6 +8,7 @@ import com.example.cumhuriyetsporsalonuadmin.domain.model.firebase_collection.Co
 import com.example.cumhuriyetsporsalonuadmin.domain.model.firebase_collection.LessonField
 import com.example.cumhuriyetsporsalonuadmin.domain.model.firebase_collection.UserField
 import com.example.cumhuriyetsporsalonuadmin.domain.model.firebase_exception.LoginError
+import com.example.cumhuriyetsporsalonuadmin.utils.NullValidator
 import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import com.example.cumhuriyetsporsalonuadmin.utils.Stringfy.Companion.stringfy
 import com.google.firebase.firestore.DocumentSnapshot
@@ -45,8 +46,10 @@ class FirebaseRepository @Inject constructor(
             value?.let { value ->
                 val allDocuments = value.documents as MutableList<DocumentSnapshot>
                 allDocuments.map {
-                    val isVerifed = it.get(UserField.IS_VERIFIED.key) as Boolean
-                    if (!isVerifed) {
+                    val isVerified = it.get(UserField.IS_VERIFIED.key) as Boolean?
+                    val isNotNull = NullValidator.validate(isVerified)
+                    if(!isNotNull) return@map
+                    if (!isVerified!!) {
                         val user = convertDocumentToUser(it)
                         myList.add(user)
                     }
