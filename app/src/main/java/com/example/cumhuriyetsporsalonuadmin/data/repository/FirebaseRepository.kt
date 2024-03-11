@@ -1,6 +1,8 @@
 package com.example.cumhuriyetsporsalonuadmin.data.repository
 
+import android.util.Log
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Admin
+import com.example.cumhuriyetsporsalonuadmin.domain.model.FirebaseLesson
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
 import com.example.cumhuriyetsporsalonuadmin.domain.model.User
 import com.example.cumhuriyetsporsalonuadmin.domain.model.firebase_collection.AdminField
@@ -11,6 +13,7 @@ import com.example.cumhuriyetsporsalonuadmin.domain.model.firebase_exception.Log
 import com.example.cumhuriyetsporsalonuadmin.utils.NullValidator
 import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import com.example.cumhuriyetsporsalonuadmin.utils.Stringfy.Companion.stringfy
+import com.example.cumhuriyetsporsalonuadmin.utils.TAG
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.scopes.ViewModelScoped
@@ -48,7 +51,7 @@ class FirebaseRepository @Inject constructor(
                 allDocuments.map {
                     val isVerified = it.get(UserField.IS_VERIFIED.key) as Boolean?
                     val isNotNull = NullValidator.validate(isVerified)
-                    if(!isNotNull) return@map
+                    if (!isNotNull) return@map
                     if (!isVerified!!) {
                         val user = convertDocumentToUser(it)
                         myList.add(user)
@@ -69,14 +72,14 @@ class FirebaseRepository @Inject constructor(
                 result ?: return@addOnCompleteListener
                 for (document in result.documents) {
                     val lesson = convertDocumentToLesson(document)
-                    lessonList.add(lesson)
+                    lesson?.let { lessonList.add(it) }
                 }
                 callback(Resource.Success(lessonList))
             } else callback(Resource.Error(message = task.exception?.message?.stringfy()))
         }
     }
 
-    fun setLessons(lesson: Lesson, callback: (Resource<Nothing>) -> Unit) {
+    fun setLessons(lesson: FirebaseLesson, callback: (Resource<Nothing>) -> Unit) {
         callback(Resource.Loading())
         lessonCollectionRef.document(lesson.uid).set(lesson).addOnCompleteListener { task ->
             if (task.isSuccessful) callback(Resource.Success())
@@ -115,14 +118,21 @@ class FirebaseRepository @Inject constructor(
         return User(uid = uid, email = email, name = name, isVerified = isVerified)
     }
 
-    private fun convertDocumentToLesson(doc: DocumentSnapshot): Lesson {
-        val uid = doc.get(LessonField.UID.key) as String
-        val name = doc.get(LessonField.NAME.key) as String
-        val day = doc.get(LessonField.DAY.key) as String
-        val timeBegin = doc.get(LessonField.TIME_BEGIN.key) as String
-        val timeEndTest = doc.get(LessonField.TIME_END.key) as String
-        val studentUids = doc.get(LessonField.STUDENT_UIDS.key) as List<String>
-        return Lesson(uid, name, day, timeBegin, timeEndTest, studentUids)
+    private fun convertDocumentToLesson(doc: DocumentSnapshot): Lesson? {
+        return try {
+            val uid = doc.get(LessonField.UID.key) as String
+            val name = doc.get(LessonField.NAME.key) as String
+            val day = doc.get(LessonField.DAY.key) as Long
+            val startHour = doc.get(LessonField.START_HOUR.key) as String
+            val endHour = doc.get(LessonField.END_HOUR.key) as String
+            val studentUids = doc.get(LessonField.STUDENT_UIDS.key) as List<String>
+            val firebaseLesson = FirebaseLesson(uid, name, day.toInt(), startHour, endHour, studentUids)
+            val lesson = firebaseLesson.toLesson()
+            lesson
+        } catch (e: Exception) {
+            Log.d(TAG, "convertDocumentToLesson: $e ")
+            null
+        }
     }
 
 }

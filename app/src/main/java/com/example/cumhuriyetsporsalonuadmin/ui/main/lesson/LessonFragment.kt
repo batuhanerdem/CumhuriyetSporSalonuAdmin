@@ -15,7 +15,7 @@ class LessonFragment : BaseFragment<LessonActionBus, LessonViewModel, FragmentLe
             LessonActionBus.Init -> {}
             is LessonActionBus.ShowError -> {}
             is LessonActionBus.ClassesLoaded -> {
-                adapter.submitList(action.lessonList.toList())
+                adapter.submitList(viewModel.lessonList)
             }
 
             LessonActionBus.Loading -> {}

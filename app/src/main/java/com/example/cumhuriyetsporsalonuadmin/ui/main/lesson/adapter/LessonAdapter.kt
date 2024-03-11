@@ -1,5 +1,6 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main.lesson.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -11,11 +12,14 @@ import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
 class LessonAdapter(
 ) : ListAdapter<Lesson, LessonAdapter.LessonViewHolder>(LessonDiffCallback) {
     class LessonViewHolder(val binding: ItemLessonBinding) : RecyclerView.ViewHolder(binding.root) {
+        @SuppressLint("SetTextI18n")
         fun bind(lesson: Lesson) {
+            val context = binding.tvDay.context
             binding.apply {
-                tvDay.text = lesson.day
+                tvDay.text = lesson.lessonDate?.day?.stringIdAsStringfy?.getString(context)
                 tvName.text = lesson.name
-                tvHours.text = "${lesson.timeBegin} - ${lesson.timeEnd}"
+                tvHours.text =
+                    "${lesson.lessonDate?.startHour.toString()} - ${lesson.lessonDate?.endHour.toString()}"
                 tvStudentNumber.text = lesson.studentUids.count().toString()
             }
 

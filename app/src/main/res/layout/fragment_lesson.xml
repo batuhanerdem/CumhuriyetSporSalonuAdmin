@@ -8,7 +8,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/topOfRv"
@@ -27,7 +27,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/bg_black_border_full"
                 android:gravity="center"
-                android:text="Day"
+                android:text="@string/day"
                 android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textSize="20sp"
@@ -42,7 +42,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/bg_black_border_full"
                 android:gravity="center"
-                android:text="Name"
+                android:text="@string/lesson"
                 android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textSize="20sp"
@@ -57,7 +57,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/bg_black_border_full"
                 android:gravity="center"
-                android:text="Hours"
+                android:text="@string/hours"
                 android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textSize="20sp"
@@ -72,7 +72,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/bg_black_border_full"
                 android:gravity="center"
-                android:text="Student Number"
+                android:text="@string/student_number"
                 android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textSize="20sp"
@@ -97,7 +97,7 @@
             android:id="@+id/btnAdd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add"
+            android:text="@string/add"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/guideline"
             app:layout_constraintStart_toStartOf="parent"

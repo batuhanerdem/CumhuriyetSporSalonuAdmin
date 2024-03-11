@@ -1,5 +1,6 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main
 
+import androidx.core.view.isGone
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.cumhuriyetsporsalonuadmin.R
@@ -26,6 +27,7 @@ class MainActivity : BaseActivity<MainActionBus, MainViewModel, ActivityMainBind
         val navController = navHostFragment.navController
 
         navController.addOnDestinationChangedListener { _, navDestination, _ ->
+            binding.bottomNavigationView.isGone = navDestination.id == R.id.addLessonFragment
         }
         binding.bottomNavigationView.setupWithNavController(navController)
     }

@@ -1,36 +1,60 @@
 <resources>
-    <string name="app_name">CumhuriyetSporSalonu</string>
-    <string name="title_activity_main">MainActivity</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_auth">AuthActivity</string>
+    <string name="app_name">Cumhuriyet Spor Salonu Yönetici</string>
 
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
+    <string name="default_success_message">Başarılı</string>
+    <string name="default_error_message">Bir hata oluştu</string>
 
-    <string name="default_success_message">Basarili</string>
-    <string name="default_error_message">Bir hata olustu</string>
-
-    <string name="login_success">Başarı ile giriş yapıldı</string>
-    <string name="login_error_default">Giriş yaparken bir sorun meydana geldi</string>
-    <string name="login_error_invalid_credentials">Hatalı kullanıcı bilgileri kullanıldı</string>
+    <string name="login_success">Başarıyla giriş yapıldı</string>
+    <string name="login_error_default">Giriş yaparken bir sorun oluştu</string>
+    <string name="login_error_invalid_credentials">Geçersiz kimlik bilgileri kullanıldı</string>
     <string name="login_error_empty_space">Lütfen giriş bilgilerini boş bırakmayınız</string>
     <string name="login_error_invalid_user">Kullanıcı hesabı bulunamadı ya da devre dışı bırakıldı</string>
     <string name="login_error_user">Kullanıcı hesabı durumu nedeniyle giriş yetkisi bulunmamaktadır</string>
     <string name="login_error_recent_login">Tekrar giriş yapmanız gerekiyor</string>
 
-    <string name="firebase_error_too_many_request">Çok fazla sayıda istek gönderdiniz, biraz bekleyip tekrar deneyin</string>
-    <string name="firebase_error_network">İnternet bağlantınızı kontrol ediniz</string>
+    <string name="firebase_error_too_many_request">Çok fazla istek gönderdiniz, lütfen biraz bekleyin ve tekrar deneyin</string>
+    <string name="firebase_error_network">Lütfen internet bağlantınızı kontrol edin</string>
 
 
-    <string name="register_success">Başarı ile kayıt olundu</string>
+    <string name="register_success">Başarıyla kayıt olundu</string>
     <string name="register_error_user_collision">Bu e-posta adresi başka bir kullanıcı tarafından kullanılıyor.</string>
     <string name="register_error_invalid_credantial">Geçersiz format</string>
     <string name="register_error_weak_password">Lütfen daha güçlü bir şifre giriniz</string>
-    <string name="register_error_default">Kayıt olurken bir sorun meydana geldi</string>
+    <string name="register_error_default">Kayıt olurken bir sorun oluştu</string>
 
     <string name="update_error_default">Kaydetme başarısız</string>
     <string name="update_success">Kaydetme başarılı</string>
 
     <string name="form_error_blank_spaces">Lütfen boş alan bırakmayınız</string>
+
+    <string name="lesson_saving_error_message">Ders kaydedilemedi. Lütfen girdiğiniz değerleri kontrol edin.</string>
+
+
+    <string name="cancel">İptal</string>
+    <string name="lesson">Ders</string>
+    <string name="e_g_kick_box">Örnek: Kick Box</string>
+    <string name="day">Gün</string>
+    <string name="press_to_select_a_day">Bir Gün Seçmek İçin Basın</string>
+    <string name="starts_at">Başlangıç Saati</string>
+    <string name="e_g_14_00">Örnek: 14.00</string>
+    <string name="ends_at">Bitiş Saati</string>
+    <string name="e_g_15_00">Örnek: 15.00</string>
+    <string name="add_students">Öğrenci Ekle</string>
+    <string name="add">EKLE</string>
+    <string name="update">Guncelle</string>
+    <string name="hours">Saatler</string>
+    <string name="student_number">Öğrenci sayısı</string>
+    <string name="accept">Kabul et</string>
+    <string name="decline">Reddet</string>
+    <string name="students">Öğrenciler</string>
+    <string name="add_lesson">Dersi Ekle</string>
+
+    <string name="monday">Pazartesi</string>
+    <string name="tuesday">Salı</string>
+    <string name="wednesday">Çarşamba</string>
+    <string name="thursday">Perşembe</string>
+    <string name="friday">Cuma</string>
+    <string name="saturday">Cumartesi</string>
+    <string name="sunday">Pazar</string>
 
 </resources>

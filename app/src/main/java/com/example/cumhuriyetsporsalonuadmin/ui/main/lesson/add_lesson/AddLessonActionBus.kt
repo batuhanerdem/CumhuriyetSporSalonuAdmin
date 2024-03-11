@@ -9,4 +9,6 @@ sealed interface AddLessonActionBus : BaseActionBus {
     data class ShowError(val errorMessage: Stringfy?) : AddLessonActionBus
 
     data object Success : AddLessonActionBus
+
+    data object DayListGenerated : AddLessonActionBus
 }

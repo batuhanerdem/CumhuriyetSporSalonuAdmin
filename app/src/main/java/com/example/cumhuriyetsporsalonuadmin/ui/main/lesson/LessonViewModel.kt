@@ -1,6 +1,5 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main.lesson
 
-import android.util.Log
 import com.example.cumhuriyetsporsalonuadmin.data.repository.FirebaseRepository
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseViewModel
@@ -12,7 +11,7 @@ import javax.inject.Inject
 class LessonViewModel @Inject constructor(
     private val firebaseRepository: FirebaseRepository
 ) : BaseViewModel<LessonActionBus>() {
-    private var lessonList = listOf<Lesson>()
+    var lessonList = listOf<Lesson>()
 
     fun getClasses() {
         firebaseRepository.getLessons { result ->
@@ -22,8 +21,7 @@ class LessonViewModel @Inject constructor(
                 is Resource.Success -> {
                     result.data?.let {
                         lessonList = it.toList()
-                        Log.d("tag", "getClasses: $lessonList")
-                        sendAction(LessonActionBus.ClassesLoaded(lessonList))
+                        sendAction(LessonActionBus.ClassesLoaded)
                     }
                 }
             }

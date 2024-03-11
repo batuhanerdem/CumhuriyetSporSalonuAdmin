@@ -23,7 +23,7 @@
         android:id="@+id/btnAccept"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Kabul et"
+        android:text="@string/accept"
         app:layout_constraintEnd_toStartOf="@id/btnDeny"
         app:layout_constraintTop_toTopOf="@id/btnDeny" />
 
@@ -31,7 +31,7 @@
         android:id="@+id/btnDeny"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Reddet"
+        android:text="@string/decline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

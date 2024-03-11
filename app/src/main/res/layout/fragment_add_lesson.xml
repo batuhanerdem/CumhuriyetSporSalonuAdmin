@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:fontFamily="@font/lexend_medium"
-        android:text="Add Lesson"
+        android:text="@string/add_lesson"
         android:textColor="@color/black"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -27,7 +27,8 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
         android:fontFamily="@font/lexend_regular"
-        android:text="Cancel"
+        android:text="@string/cancel"
+        android:textAlignment="center"
         android:textColor="#637587"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -42,9 +43,10 @@
         android:layout_marginStart="30dp"
         android:layout_marginTop="20dp"
         android:fontFamily="@font/lexend_medium"
-        android:text="Lesson"
+        android:text="@string/lesson"
         android:textColor="@color/black"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvAddLesson" />
 
@@ -53,52 +55,21 @@
         android:id="@+id/edtName"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginHorizontal="20dp"
+        android:layout_marginHorizontal="15dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/bg_gray_edittext"
         android:fontFamily="@font/lexend_regular"
-        android:hint="e.g Kick Box"
+        android:hint="@string/e_g_kick_box"
         android:paddingStart="20dp"
         android:textAlignment="textStart"
         android:textColor="@color/black"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/tvLesson"
-        app:layout_constraintTop_toBottomOf="@+id/tvLesson" />
+        app:layout_constraintTop_toBottomOf="@+id/tvLesson"
+        tools:ignore="RtlSymmetry" />
 
-
-    <TextView
-        android:id="@+id/tvDay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="20dp"
-        android:fontFamily="@font/lexend_medium"
-        android:text="Day"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtName" />
-
-
-    <EditText
-        android:id="@+id/edtDay"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/bg_gray_edittext"
-        android:fontFamily="@font/lexend_regular"
-        android:hint="Select A Day"
-        android:paddingStart="20dp"
-        android:drawableEnd="@drawable/down_arrow_blue"
-        android:paddingEnd="3dp"
-        android:textAlignment="textStart"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/tvDay"
-        app:layout_constraintTop_toBottomOf="@+id/tvDay" />
 
     <TextView
         android:id="@+id/tvStart"
@@ -107,28 +78,30 @@
         android:layout_marginStart="30dp"
         android:layout_marginTop="20dp"
         android:fontFamily="@font/lexend_medium"
-        android:text="Starts At"
+        android:text="@string/starts_at"
         android:textColor="@color/black"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtDay" />
+        app:layout_constraintTop_toBottomOf="@+id/edtName" />
 
 
     <EditText
         android:id="@+id/edtStart"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginHorizontal="20dp"
+        android:layout_marginHorizontal="15dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/bg_gray_edittext"
-        android:drawableEnd="@drawable/clock"
+        android:drawableEnd="@drawable/ic_clock"
         android:fontFamily="@font/lexend_regular"
-        android:hint="e.g 14.00"
+        android:hint="@string/e_g_14_00"
         android:paddingStart="20dp"
         android:paddingEnd="5dp"
         android:textAlignment="textStart"
         android:textColor="@color/black"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/tvStart"
         app:layout_constraintTop_toBottomOf="@+id/tvStart" />
@@ -140,9 +113,10 @@
         android:layout_marginStart="30dp"
         android:layout_marginTop="20dp"
         android:fontFamily="@font/lexend_medium"
-        android:text="Ends At"
+        android:text="@string/ends_at"
         android:textColor="@color/black"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edtStart" />
 
@@ -151,64 +125,67 @@
         android:id="@+id/edtEnd"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginHorizontal="20dp"
+        android:layout_marginHorizontal="15dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/bg_gray_edittext"
-        android:drawableEnd="@drawable/clock"
+        android:drawableEnd="@drawable/ic_clock"
         android:fontFamily="@font/lexend_regular"
-        android:hint="e.g 14.00"
+        android:hint="@string/e_g_15_00"
         android:paddingStart="20dp"
         android:paddingEnd="5dp"
         android:textAlignment="textStart"
         android:textColor="@color/black"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/tvEnd"
         app:layout_constraintTop_toBottomOf="@+id/tvEnd" />
 
+
     <TextView
-        android:id="@+id/tvAddStudents"
+        android:id="@+id/tvDay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add Students"
-        app:layout_constraintStart_toStartOf="@+id/edtEnd"
-        app:layout_constraintTop_toBottomOf="@+id/edtEnd"
-        android:fontFamily="@font/lexend_regular"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/lexend_medium"
+        android:text="@string/day"
+        android:textColor="@color/black"
+        android:textSize="16sp"
         android:textStyle="bold"
-        android:textSize="22sp"
-        android:layout_marginTop="20dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edtEnd" />
 
-   <androidx.recyclerview.widget.RecyclerView
-       android:id="@+id/rvStudent"
-       android:layout_width="match_parent"
-       android:layout_height="0dp"
-       app:layout_constraintTop_toBottomOf="@id/tvAddStudents"
-       app:layout_constraintStart_toStartOf="@id/tvAddStudents"
-       app:layout_constraintBottom_toTopOf="@id/btnAdd"
-       app:layout_constraintEnd_toEndOf="parent"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvDay"
-        android:layout_width="0dp"
-        android:layout_marginEnd="17dp"
-        android:layout_marginStart="-17dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/edtDay"
-        app:layout_constraintStart_toStartOf="@id/edtDay"
-        app:layout_constraintEnd_toEndOf="@id/edtDay"
-        android:visibility="invisible"
-        android:background="@drawable/bg_gray_edittext"
-        tools:visibility="visible"
-        />
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginTop="8dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="3dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/tvDay"
+        app:layout_constraintTop_toBottomOf="@+id/tvDay"
+        tools:listitem="@layout/item_day" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:text="ADD"
+        android:layout_width="130dp"
+        android:layout_height="45dp"
+        android:background="@drawable/bg_add_lesson_button"
+        android:fontFamily="@font/lexend_regular"
+        android:text="@string/add_lesson"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginBottom="50dp"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/rvDay" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
