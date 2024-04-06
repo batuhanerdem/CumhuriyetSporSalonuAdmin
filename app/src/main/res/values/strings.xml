@@ -32,6 +32,7 @@
 
     <string name="cancel">İptal</string>
     <string name="lesson">Ders</string>
+    <string name="lessons">Dersler</string>
     <string name="e_g_kick_box">Örnek: Kick Box</string>
     <string name="day">Gün</string>
     <string name="press_to_select_a_day">Bir Gün Seçmek İçin Basın</string>
@@ -40,14 +41,16 @@
     <string name="ends_at">Bitiş Saati</string>
     <string name="e_g_15_00">Örnek: 15.00</string>
     <string name="add_students">Öğrenci Ekle</string>
-    <string name="add">EKLE</string>
-    <string name="update">Guncelle</string>
+    <string name="add">Ekle</string>
+    <string name="update">Güncelle</string>
     <string name="hours">Saatler</string>
     <string name="student_number">Öğrenci sayısı</string>
-    <string name="accept">Kabul et</string>
-    <string name="decline">Reddet</string>
+    <string name="accept">Kabul Et</string>
+    <string name="deny">Reddet</string>
     <string name="students">Öğrenciler</string>
     <string name="add_lesson">Dersi Ekle</string>
+    <string name="sign_up_requests">Kayıt Olma İstekleri</string>
+
 
     <string name="monday">Pazartesi</string>
     <string name="tuesday">Salı</string>

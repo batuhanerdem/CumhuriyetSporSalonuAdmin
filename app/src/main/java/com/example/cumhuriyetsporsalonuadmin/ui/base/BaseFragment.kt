@@ -81,18 +81,14 @@ abstract class BaseFragment<ActionBus : BaseActionBus, ViewModel : BaseViewModel
 
     fun showSuccessMessage(message: Stringfy? = null) {
         progressBar.hide()
-        val _message =
-            message?.getString(requireContext()) ?: R.string.default_success_message.stringfy()
-                .getString(requireContext())
+        val _message = message?.getString(requireContext())
 
         messageHandler.sneakerApiMessage(MessageHandler.StateRequest.Success, _message)
     }
 
     fun showErrorMessage(message: Stringfy? = null) {
         progressBar.hide()
-        val _message =
-            message?.getString(requireContext()) ?: R.string.default_error_message.stringfy()
-                .getString(requireContext())
+        val _message = message?.getString(requireContext())
         messageHandler.sneakerApiMessage(MessageHandler.StateRequest.Error, _message)
     }
 

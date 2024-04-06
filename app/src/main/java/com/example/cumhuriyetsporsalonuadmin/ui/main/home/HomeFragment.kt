@@ -8,15 +8,14 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<HomeActionBus, HomeVIewModel, FragmentHomeBinding>(
-    FragmentHomeBinding::inflate,
-    HomeVIewModel::class.java
+    FragmentHomeBinding::inflate, HomeVIewModel::class.java
 ) {
     private lateinit var adapter: RequestAdapter
     override suspend fun onAction(action: HomeActionBus) {
         when (action) {
             HomeActionBus.Init -> {}
             is HomeActionBus.Success -> {
-                adapter.submitList(action.list.toList())
+                adapter.submitList(viewModel.unverifiedList)
             }
 
             HomeActionBus.Accepted -> viewModel.getUnverifiedUsers()

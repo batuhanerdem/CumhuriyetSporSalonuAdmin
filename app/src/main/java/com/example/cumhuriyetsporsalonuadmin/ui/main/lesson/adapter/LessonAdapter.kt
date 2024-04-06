@@ -14,12 +14,14 @@ class LessonAdapter(
     class LessonViewHolder(val binding: ItemLessonBinding) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
         fun bind(lesson: Lesson) {
-            val context = binding.tvDay.context
+            val context = binding.tvName.context
             binding.apply {
-                tvDay.text = lesson.lessonDate?.day?.stringIdAsStringfy?.getString(context)
+                val dayText = lesson.lessonDate?.day?.stringIdAsStringfy?.getString(context)
                 tvName.text = lesson.name
-                tvHours.text =
+                val hoursText =
                     "${lesson.lessonDate?.startHour.toString()} - ${lesson.lessonDate?.endHour.toString()}"
+
+                tvDate.text = "$dayText, $hoursText"
                 tvStudentNumber.text = lesson.studentUids.count().toString()
             }
 

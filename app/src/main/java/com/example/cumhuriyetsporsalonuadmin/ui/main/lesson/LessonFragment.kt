@@ -1,5 +1,7 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main.lesson
 
+import android.util.Log
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.cumhuriyetsporsalonuadmin.databinding.FragmentLessonBinding
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseFragment
 import com.example.cumhuriyetsporsalonuadmin.ui.main.lesson.adapter.LessonAdapter
@@ -13,12 +15,17 @@ class LessonFragment : BaseFragment<LessonActionBus, LessonViewModel, FragmentLe
     override suspend fun onAction(action: LessonActionBus) {
         when (action) {
             LessonActionBus.Init -> {}
-            is LessonActionBus.ShowError -> {}
-            is LessonActionBus.ClassesLoaded -> {
-                adapter.submitList(viewModel.lessonList)
+            is LessonActionBus.ShowError -> {
+                progressBar.hide()
             }
 
-            LessonActionBus.Loading -> {}
+            is LessonActionBus.ClassesLoaded -> {
+                adapter.submitList(viewModel.lessonList)
+                Log.d(TAG, "onAction: ${viewModel.lessonList.count()}")
+                progressBar.hide()
+            }
+
+            LessonActionBus.Loading -> progressBar.show()
         }
     }
 
@@ -35,10 +42,10 @@ class LessonFragment : BaseFragment<LessonActionBus, LessonViewModel, FragmentLe
 
     private fun setOnClickListeners() {
         binding.apply {
-            btnAdd.setOnClickListener {
-                val action = LessonFragmentDirections.actionLessonFragmentToAddLessonFragment()
-                navigateTo(action)
-            }
+//            btnAdd.setOnClickListener {
+//                val action = LessonFragmentDirections.actionLessonFragmentToAddLessonFragment()
+//                navigateTo(action)
+//            }
         }
     }
 

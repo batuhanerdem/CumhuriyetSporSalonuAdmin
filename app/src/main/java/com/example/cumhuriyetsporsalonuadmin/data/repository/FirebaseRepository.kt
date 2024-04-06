@@ -16,6 +16,8 @@ import com.example.cumhuriyetsporsalonuadmin.utils.Stringfy.Companion.stringfy
 import com.example.cumhuriyetsporsalonuadmin.utils.TAG
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
+import com.google.firestore.v1.StructuredQuery.Order
 import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 
@@ -54,7 +56,9 @@ class FirebaseRepository @Inject constructor(
                     if (!isNotNull) return@map
                     if (!isVerified!!) {
                         val user = convertDocumentToUser(it)
-                        myList.add(user)
+                        user?.let {
+                            myList.add(it)
+                        }
                     }
                 }
                 callback(myList)
@@ -65,18 +69,16 @@ class FirebaseRepository @Inject constructor(
 
     fun getLessons(callback: (Resource<List<Lesson>>) -> Unit) {
         callback(Resource.Loading())
-        lessonCollectionRef.get().addOnCompleteListener { task ->
-            val lessonList = mutableListOf<Lesson>()
-            if (task.isSuccessful) {
-                val result = task.result
-                result ?: return@addOnCompleteListener
-                for (document in result.documents) {
-                    val lesson = convertDocumentToLesson(document)
-                    lesson?.let { lessonList.add(it) }
-                }
-                callback(Resource.Success(lessonList))
-            } else callback(Resource.Error(message = task.exception?.message?.stringfy()))
-        }
+        lessonCollectionRef.orderBy(LessonField.DAY.key).orderBy(LessonField.START_HOUR.key).get()
+            .addOnCompleteListener { task ->
+                val lessonList = mutableListOf<Lesson>()
+                if (task.isSuccessful) {
+                    val result = task.result
+                    result ?: return@addOnCompleteListener
+                    addLessonToList(result.documents, lessonList)
+                    callback(Resource.Success(lessonList))
+                } else callback(Resource.Error(message = task.exception?.message?.stringfy()))
+            }
     }
 
     fun setLessons(lesson: FirebaseLesson, callback: (Resource<Nothing>) -> Unit) {
@@ -103,6 +105,16 @@ class FirebaseRepository @Inject constructor(
         }
     }
 
+    fun deleteAllLessons() {
+        lessonCollectionRef.get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                for (doc in task.result.documents) {
+                    doc.reference.delete()
+                }
+            }
+        }
+    }
+
     fun updateAdmin(admin: Admin, callback: (Resource<Nothing>) -> Unit) {
         adminDocumentRef.set(admin).addOnCompleteListener { task ->
             if (task.isSuccessful) callback(Resource.Success())
@@ -110,12 +122,27 @@ class FirebaseRepository @Inject constructor(
         }
     }
 
-    private fun convertDocumentToUser(doc: DocumentSnapshot): User {
-        val uid = doc.get(UserField.UID.key) as String
-        val email = doc.get(UserField.EMAIL.key) as String
-        val name = doc.get(UserField.NAME.key) as String?
-        val isVerified = doc.get(UserField.IS_VERIFIED.key) as Boolean
-        return User(uid = uid, email = email, name = name, isVerified = isVerified)
+
+    private fun addLessonToList(
+        documentSnapshot: List<DocumentSnapshot>, list: MutableList<Lesson>
+    ) {
+        for (document in documentSnapshot) {
+            val lesson = convertDocumentToLesson(document)
+            lesson?.let { list.add(it) }
+        }
+    }
+
+    private fun convertDocumentToUser(doc: DocumentSnapshot): User? {
+        return try {
+            val uid = doc.get(UserField.UID.key) as String
+            val email = doc.get(UserField.EMAIL.key) as String
+            val name = doc.get(UserField.NAME.key) as String?
+            val isVerified = doc.get(UserField.IS_VERIFIED.key) as Boolean
+            User(uid = uid, email = email, name = name, isVerified = isVerified)
+        } catch (e: Exception) {
+            Log.d(TAG, "convertDocumentToUser: ${e} ")
+            null
+        }
     }
 
     private fun convertDocumentToLesson(doc: DocumentSnapshot): Lesson? {
@@ -126,7 +153,8 @@ class FirebaseRepository @Inject constructor(
             val startHour = doc.get(LessonField.START_HOUR.key) as String
             val endHour = doc.get(LessonField.END_HOUR.key) as String
             val studentUids = doc.get(LessonField.STUDENT_UIDS.key) as List<String>
-            val firebaseLesson = FirebaseLesson(uid, name, day.toInt(), startHour, endHour, studentUids)
+            val firebaseLesson =
+                FirebaseLesson(uid, name, day.toInt(), startHour, endHour, studentUids)
             val lesson = firebaseLesson.toLesson()
             lesson
         } catch (e: Exception) {

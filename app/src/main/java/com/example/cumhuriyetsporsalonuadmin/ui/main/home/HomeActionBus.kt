@@ -6,7 +6,7 @@ import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseActionBus
 sealed interface HomeActionBus : BaseActionBus {
     data object Init : HomeActionBus
 
-    data class Success(val list: List<User>) : HomeActionBus
+    data object Success : HomeActionBus
 
     data object Accepted : HomeActionBus
 

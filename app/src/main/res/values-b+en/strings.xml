@@ -29,10 +29,10 @@
     <string name="lesson_saving_error_message">Lesson could"'nt saved. Please check values.</string>
 
 
-
     <string name="add_lesson">Add Lesson</string>
     <string name="cancel">Cancel</string>
     <string name="lesson">Lesson</string>
+    <string name="lessons">Lessons</string>
     <string name="e_g_kick_box">e.g Kick Box</string>
     <string name="day">Day</string>
     <string name="press_to_select_a_day">Press To Select A Day</string>
@@ -46,8 +46,9 @@
     <string name="hours">Hours</string>
     <string name="student_number">Student Number</string>
     <string name="accept">Accept</string>
-    <string name="decline">Decline</string>
-    <string name="students">Students</string>\
+    <string name="deny">Deny</string>
+    <string name="students">Students</string>
+    <string name="sign_up_requests">Sign-up Request</string>
 
     <string name="monday">Monday</string>
     <string name="tuesday">Tuesday</string>

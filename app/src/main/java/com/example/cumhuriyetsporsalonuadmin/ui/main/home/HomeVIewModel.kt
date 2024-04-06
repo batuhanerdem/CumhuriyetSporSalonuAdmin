@@ -10,10 +10,12 @@ import javax.inject.Inject
 class HomeVIewModel @Inject constructor(
     private val firebaseRepository: FirebaseRepository
 ) : BaseViewModel<HomeActionBus>() {
+    var unverifiedList = listOf<User>()
 
     fun getUnverifiedUsers() {
         firebaseRepository.getUnverifiedUsers {
-            sendAction(HomeActionBus.Success(it))
+            unverifiedList = it
+            sendAction(HomeActionBus.Success)
         }
     }
 

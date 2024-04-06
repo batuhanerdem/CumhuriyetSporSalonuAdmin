@@ -11,4 +11,6 @@ sealed interface AddLessonActionBus : BaseActionBus {
     data object Success : AddLessonActionBus
 
     data object DayListGenerated : AddLessonActionBus
+
+    data object PageCleared : AddLessonActionBus
 }

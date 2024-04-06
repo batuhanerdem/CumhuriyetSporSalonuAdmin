@@ -25,10 +25,10 @@ class AddLessonViewModel @Inject constructor(private val firebaseRepository: Fir
         sendAction(AddLessonActionBus.DayListGenerated)
     }
 
-    fun getSelectedDaysList(): List<SelectableData<Days>> {
-        val selectedList = mutableListOf<SelectableData<Days>>()
+    fun getSelectedDaysList(): List<Days> {
+        val selectedList = mutableListOf<Days>()
         for (day in selectAbleDayList) {
-            if (day.isSelected) selectedList.add(day)
+            if (day.isSelected) selectedList.add(day.data)
         }
         return selectedList
     }
@@ -42,8 +42,13 @@ class AddLessonViewModel @Inject constructor(private val firebaseRepository: Fir
         sendAction(AddLessonActionBus.ShowError(R.string.lesson_saving_error_message.stringfy()))
     }
 
-    fun deleteLesson(uid: String) {
-        firebaseRepository.deleteLesson(uid, ::lessonCallback)
+    fun deleteAllLessons() {
+        firebaseRepository.deleteAllLessons()
+    }
+
+    fun clearDays() {
+        selectAbleDayList.clear()
+        sendAction(AddLessonActionBus.PageCleared)
     }
 
     private fun lessonCallback(result: Resource<Nothing>) {
