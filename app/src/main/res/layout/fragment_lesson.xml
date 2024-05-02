@@ -10,7 +10,7 @@
         android:id="@+id/tvLessons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:fontFamily="@font/lexend_medium"
         android:text="@string/lessons"
         android:textColor="@color/black"
@@ -20,18 +20,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView
+        android:id="@+id/imgPlus"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="16dp"
+        android:src="@drawable/plus"
+        app:layout_constraintBottom_toBottomOf="@+id/tvLessons"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tvLessons" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvLesson"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="25dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:listitem="@layout/item_lesson"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvLessons" />
+        app:layout_constraintTop_toBottomOf="@+id/tvLessons"
+        tools:listitem="@layout/item_lesson" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"

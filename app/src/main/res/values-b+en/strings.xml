@@ -49,6 +49,8 @@
     <string name="deny">Deny</string>
     <string name="students">Students</string>
     <string name="sign_up_requests">Sign-up Request</string>
+    <string name="change_admin_credentials">Change Admin Credentials</string>
+
 
     <string name="monday">Monday</string>
     <string name="tuesday">Tuesday</string>

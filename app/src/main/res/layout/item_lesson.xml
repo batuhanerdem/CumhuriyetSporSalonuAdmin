@@ -71,11 +71,11 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvStudent"
-        android:layout_width="0dp"
-        android:layout_height="100dp"
-        app:layout_constraintEnd_toEndOf="@id/layoutInnerConstraint"
-        app:layout_constraintStart_toStartOf="@+id/layoutInnerConstraint"
-        app:layout_constraintTop_toBottomOf="@id/layoutInnerConstraint" />
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/rvStudent"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="100dp"-->
+<!--        app:layout_constraintEnd_toEndOf="@id/layoutInnerConstraint"-->
+<!--        app:layout_constraintStart_toStartOf="@+id/layoutInnerConstraint"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/layoutInnerConstraint" />-->
 </androidx.constraintlayout.widget.ConstraintLayout>

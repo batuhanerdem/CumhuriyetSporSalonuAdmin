@@ -50,6 +50,8 @@
     <string name="students">Öğrenciler</string>
     <string name="add_lesson">Dersi Ekle</string>
     <string name="sign_up_requests">Kayıt Olma İstekleri</string>
+    <string name="change_admin_credentials">Admin Bilgilerini Değiştirin</string>
+
 
 
     <string name="monday">Pazartesi</string>

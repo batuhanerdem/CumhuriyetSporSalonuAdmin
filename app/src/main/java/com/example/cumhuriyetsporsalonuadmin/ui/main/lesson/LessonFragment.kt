@@ -1,7 +1,6 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main.lesson
 
 import android.util.Log
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.cumhuriyetsporsalonuadmin.databinding.FragmentLessonBinding
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseFragment
 import com.example.cumhuriyetsporsalonuadmin.ui.main.lesson.adapter.LessonAdapter
@@ -42,10 +41,10 @@ class LessonFragment : BaseFragment<LessonActionBus, LessonViewModel, FragmentLe
 
     private fun setOnClickListeners() {
         binding.apply {
-//            btnAdd.setOnClickListener {
-//                val action = LessonFragmentDirections.actionLessonFragmentToAddLessonFragment()
-//                navigateTo(action)
-//            }
+            imgPlus.setOnClickListener {
+                val action = LessonFragmentDirections.actionLessonFragmentToAddLessonFragment()
+                navigateTo(action)
+            }
         }
     }
 
