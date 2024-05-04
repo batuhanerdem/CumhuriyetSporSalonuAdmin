@@ -9,6 +9,7 @@ import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import com.example.cumhuriyetsporsalonuadmin.utils.SelectableData
 import com.example.cumhuriyetsporsalonuadmin.utils.Stringfy.Companion.stringfy
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -49,6 +50,10 @@ class AddLessonViewModel @Inject constructor(private val firebaseRepository: Fir
     fun clearDays() {
         selectAbleDayList.clear()
         sendAction(AddLessonActionBus.PageCleared)
+    }
+
+    fun isFirstHourBeforeSecondHour(firstHour: LocalTime, secondHour: LocalTime): Boolean {
+        return firstHour.isBefore(secondHour)
     }
 
     private fun lessonCallback(result: Resource<Nothing>) {

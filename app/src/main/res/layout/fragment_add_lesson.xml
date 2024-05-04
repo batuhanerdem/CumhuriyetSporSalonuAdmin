@@ -60,9 +60,9 @@
         android:fontFamily="@font/lexend_regular"
         android:hint="@string/e_g_kick_box"
         android:paddingStart="20dp"
-        android:textColorHint="@color/dark_gray"
         android:textAlignment="textStart"
         android:textColor="@color/black"
+        android:textColorHint="@color/dark_gray"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -86,26 +86,37 @@
         app:layout_constraintTop_toBottomOf="@+id/edtName" />
 
 
-    <EditText
-        android:id="@+id/edtStart"
+    <TextView
+        android:id="@+id/tvStartShow"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:textColorHint="@color/dark_gray"
         android:layout_marginHorizontal="15dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/bg_gray_edittext"
-        android:drawableEnd="@drawable/ic_clock"
         android:fontFamily="@font/lexend_regular"
+        android:gravity="center_vertical"
         android:hint="@string/e_g_14_00"
         android:paddingStart="20dp"
         android:paddingEnd="5dp"
-        android:textAlignment="textStart"
         android:textColor="@color/black"
+        android:textColorHint="@color/dark_gray"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/tvStart"
         app:layout_constraintTop_toBottomOf="@+id/tvStart" />
+
+    <ImageView
+        android:id="@+id/imgStartHour"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="15dp"
+        android:paddingHorizontal="5dp"
+        android:src="@drawable/ic_clock"
+        app:layout_constraintBottom_toBottomOf="@id/tvStartShow"
+        app:layout_constraintEnd_toEndOf="@+id/tvStartShow"
+        app:layout_constraintTop_toTopOf="@+id/tvStartShow" />
+
 
     <TextView
         android:id="@+id/tvEnd"
@@ -119,30 +130,39 @@
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtStart" />
+        app:layout_constraintTop_toBottomOf="@+id/tvStartShow" />
 
 
-    <EditText
-        android:id="@+id/edtEnd"
+    <TextView
+        android:id="@+id/tvEndShow"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginHorizontal="15dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/bg_gray_edittext"
-        android:drawableEnd="@drawable/ic_clock"
         android:fontFamily="@font/lexend_regular"
+        android:gravity="center_vertical"
         android:hint="@string/e_g_15_00"
         android:paddingStart="20dp"
         android:paddingEnd="5dp"
-        android:textColorHint="@color/dark_gray"
-        android:textAlignment="textStart"
         android:textColor="@color/black"
+        android:textColorHint="@color/dark_gray"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/tvEnd"
         app:layout_constraintTop_toBottomOf="@+id/tvEnd" />
 
+    <ImageView
+        android:id="@+id/imgEndHour"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="15dp"
+        android:paddingHorizontal="5dp"
+        android:src="@drawable/ic_clock"
+        app:layout_constraintBottom_toBottomOf="@id/tvEndShow"
+        app:layout_constraintEnd_toEndOf="@+id/tvEndShow"
+        app:layout_constraintTop_toTopOf="@+id/tvEndShow" />
 
     <TextView
         android:id="@+id/tvDay"
@@ -156,7 +176,7 @@
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edtEnd" />
+        app:layout_constraintTop_toBottomOf="@+id/tvEndShow" />
 
 
     <androidx.recyclerview.widget.RecyclerView

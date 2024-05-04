@@ -51,7 +51,9 @@
     <string name="add_lesson">Dersi Ekle</string>
     <string name="sign_up_requests">Kayıt Olma İstekleri</string>
     <string name="change_admin_credentials">Admin Bilgilerini Değiştirin</string>
-
+    <string name="second_hour_should_be_after">İkinci Saat İlk Saatten Önce Olmalıdır</string>
+    <string name="fill_the_blanks">Lütfen Boş Alanları Doldurun</string>
+    <string name="lesson_saved">Ders Kaydedildi</string>
 
 
     <string name="monday">Pazartesi</string>

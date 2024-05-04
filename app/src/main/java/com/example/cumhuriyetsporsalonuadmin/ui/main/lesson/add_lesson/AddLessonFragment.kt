@@ -1,6 +1,9 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main.lesson.add_lesson
 
+import android.app.TimePickerDialog
 import android.util.Log
+import android.widget.Toast
+import com.example.cumhuriyetsporsalonuadmin.R
 import com.example.cumhuriyetsporsalonuadmin.databinding.FragmentAddLessonBinding
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Days
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
@@ -33,7 +36,11 @@ class AddLessonFragment :
             AddLessonActionBus.Init -> {}
             AddLessonActionBus.Loading -> progressBar.show()
             is AddLessonActionBus.ShowError -> showErrorMessage(action.errorMessage)
-            AddLessonActionBus.Success -> showSuccessMessage("lesson saved".stringfy())
+            AddLessonActionBus.Success -> {
+                val lessonSavedString = getString(R.string.lesson_saved)
+                showSuccessMessage(lessonSavedString.stringfy())
+            }
+
             AddLessonActionBus.DayListGenerated -> {
                 progressBar.hide()
                 adapter.submitList(viewModel.selectAbleDayList.toList())
@@ -48,12 +55,28 @@ class AddLessonFragment :
     }
 
     private fun setOnClickListeners() {
+        val timePickerListenerForStart =
+            TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
+                val editedHour = if (hourOfDay < 10) "0$hourOfDay" else hourOfDay
+                val editedMinute = if (minute < 10) "0$minute" else minute
+                "$editedHour.$editedMinute".also { binding.tvStartShow.text = it }
+            }
+
+        val timePickerListenerForEnd =
+            TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
+                val editedHour = if (hourOfDay < 10) "0$hourOfDay" else hourOfDay
+                val editedMinute = if (minute < 10) "0$minute" else minute
+                "$editedHour.$editedMinute".also { binding.tvEndShow.text = it }
+            }
+
+
         binding.apply {
             btnAdd.setOnClickListener {
                 val name = edtName.text.toString()
-                val hourStart = edtStart.text.toString()
-                val hourEnd = edtEnd.text.toString()
+                val hourStart = tvStartShow.text.toString()
+                val hourEnd = tvEndShow.text.toString()
                 val selectedDayList = viewModel.getSelectedDaysList()
+
                 val isNotEmpty =
                     NullOrEmptyValidator.validate(name, hourStart, hourEnd, selectedDayList)
                 if (!isNotEmpty) {
@@ -62,15 +85,43 @@ class AddLessonFragment :
                 }
                 val firstHour = hourStart.toLocalTime()
                 val secondHour = hourEnd.toLocalTime()
-                if (firstHour == null || secondHour == null) {
-                    showErrorMessage("Lutfen tarihlerin formatini kontrol edin".stringfy())
+                if (firstHour == null || secondHour == null) return@setOnClickListener
+
+                if (!viewModel.isFirstHourBeforeSecondHour(
+                        firstHour, secondHour
+                    )
+                ) {
+                    val secondHourShouldBeAfterString =
+                        getString(R.string.second_hour_should_be_after)
+                    Toast.makeText(
+                        requireContext(), secondHourShouldBeAfterString, Toast.LENGTH_SHORT
+                    ).show()
+                    showErrorMessage(secondHourShouldBeAfterString.stringfy())
                     return@setOnClickListener
                 }
+
                 saveLesson(selectedDayList, firstHour, secondHour, name)
             }
             tvCancel.setOnClickListener {
                 navigateBack()
             }
+
+            imgStartHour.setOnClickListener {
+                showTimePicker(timePickerListenerForStart)
+            }
+
+            tvStartShow.setOnClickListener {
+                showTimePicker(timePickerListenerForStart)
+            }
+
+            imgEndHour.setOnClickListener {
+                showTimePicker(timePickerListenerForEnd)
+            }
+
+            tvEndShow.setOnClickListener {
+                showTimePicker(timePickerListenerForEnd)
+            }
+
 
         }
 
@@ -99,16 +150,22 @@ class AddLessonFragment :
     }
 
     private fun handleEmptyForm() {
-        showErrorMessage("Please fill all the blanks and select at least 1 day".stringfy())
+        val fillTheBlanksString = getString(R.string.fill_the_blanks)
+        showErrorMessage(fillTheBlanksString.stringfy())
+        Toast.makeText(requireContext(), fillTheBlanksString, Toast.LENGTH_SHORT).show()
     }
 
     private fun clearTexts() {
         binding.apply {
             edtName.text.clear()
-            edtStart.text.clear()
-            edtEnd.text.clear()
+            tvStartShow.text = null
+            tvEndShow.text = null
         }
         viewModel.clearDays()
+    }
+
+    private fun showTimePicker(listener: TimePickerDialog.OnTimeSetListener) {
+        TimePickerDialog(requireContext(), listener, 12, 0, true).show()
     }
 
     private fun generateUUID() = UUID.randomUUID().toString()

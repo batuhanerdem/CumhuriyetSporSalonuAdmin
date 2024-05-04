@@ -50,6 +50,10 @@
     <string name="students">Students</string>
     <string name="sign_up_requests">Sign-up Request</string>
     <string name="change_admin_credentials">Change Admin Credentials</string>
+    <string name="second_hour_should_be_after">Second Lesson Should be After the First Lesson</string>
+    <string name="fill_the_blanks">Please Fill the Blanks</string>
+    <string name="lesson_saved">Lesson is Saved</string>
+
 
 
     <string name="monday">Monday</string>

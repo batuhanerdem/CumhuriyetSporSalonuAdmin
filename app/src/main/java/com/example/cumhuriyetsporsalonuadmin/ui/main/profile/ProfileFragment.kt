@@ -29,13 +29,13 @@ class ProfileFragment : BaseFragment<ProfileActionBus, ProfileViewModel, Fragmen
     }
 
     private fun setOnClickListeners() {
-        binding.btnUpdate.setOnClickListener {
-            val username = binding.edtUsername.text.toString()
-            val password = binding.edtPassword.text.toString()
-            if (username.isEmpty() || password.isEmpty()) return@setOnClickListener
-            val admin = Admin(username, password)
-            viewModel.updateAdmin(admin)
-        }
+//        binding.btnUpdate.setOnClickListener {
+//            val username = binding.edtUsername.text.toString()
+//            val password = binding.edtPassword.text.toString()
+//            if (username.isEmpty() || password.isEmpty()) return@setOnClickListener
+//            val admin = Admin(username, password)
+//            viewModel.updateAdmin(admin)
+//        }
     }
 
 }
