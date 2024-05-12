@@ -11,7 +11,7 @@
     <ImageView
         android:id="@+id/imgLogin"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="350dp"
         android:scaleType="centerCrop"
         android:src="@drawable/login_photo"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -21,6 +21,7 @@
         app:layout_constraintVertical_bias="0.17" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutImage"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="@id/imgLogin"
@@ -57,18 +58,80 @@
             tools:text="Log in to Your Account" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <EditText
-        android:id="@+id/edtUserName"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutBottomSide"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginHorizontal="40dp"
-        android:layout_marginTop="30dp"
-        android:background="@drawable/bg_gray_edittext"
-        android:hint="Username"
-        android:textSize="16sp"
-        android:textColorHint="@color/dark_gray"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/imgLogin" />
+        app:layout_constraintTop_toBottomOf="@+id/layoutImage">
 
+        <EditText
+            android:id="@+id/edtUsername"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_gray_edittext"
+            android:fontFamily="@font/lexend_regular"
+            android:hint="username"
+            android:paddingStart="15dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/dark_gray"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/edtPassword"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_gray_edittext"
+            android:fontFamily="@font/lexend_regular"
+            android:hint="password"
+            android:paddingStart="15dp"
+            android:textColorHint="@color/dark_gray"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="@+id/edtUsername"
+            app:layout_constraintStart_toStartOf="@id/edtUsername"
+            app:layout_constraintTop_toBottomOf="@+id/edtUsername" />
+
+        <TextView
+            android:id="@+id/tvForgotPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="Forgot passowrd?"
+            android:textColor="@color/dark_gray"
+            app:layout_constraintStart_toStartOf="@id/edtPassword"
+            app:layout_constraintTop_toBottomOf="@id/edtPassword" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnLogin"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_btn_login"
+            android:fontFamily="@font/lexend_bold"
+            android:text="Log in"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toTopOf="@id/tvAppName"
+            app:layout_constraintEnd_toEndOf="@id/edtPassword"
+            app:layout_constraintStart_toStartOf="@id/edtPassword"
+            app:layout_constraintTop_toBottomOf="@+id/tvForgotPassword" />
+
+        <TextView
+            android:id="@+id/tvAppName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"
+            android:text="Cumhuriyet Spor Salonu Admin"
+            android:textColor="@color/dark_gray"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
