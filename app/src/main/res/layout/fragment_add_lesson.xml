@@ -28,7 +28,7 @@
         android:fontFamily="@font/lexend_regular"
         android:text="@string/cancel"
         android:textAlignment="center"
-        android:textColor="#637587"
+        android:textColor="@color/dark_gray"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/tvAddLesson"
@@ -103,6 +103,7 @@
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/tvStart"
         app:layout_constraintTop_toBottomOf="@+id/tvStart" />
 
