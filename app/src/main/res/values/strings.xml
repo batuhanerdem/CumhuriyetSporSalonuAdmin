@@ -4,6 +4,14 @@
     <string name="default_success_message">Başarılı</string>
     <string name="default_error_message">Bir hata oluştu</string>
 
+    <string name="monday">Pazartesi</string>
+    <string name="tuesday">Salı</string>
+    <string name="wednesday">Çarşamba</string>
+    <string name="thursday">Perşembe</string>
+    <string name="friday">Cuma</string>
+    <string name="saturday">Cumartesi</string>
+    <string name="sunday">Pazar</string>
+
     <string name="login_success">Başarıyla giriş yapıldı</string>
     <string name="login_error_default">Giriş yaparken bir sorun oluştu</string>
     <string name="login_error_invalid_credentials">Geçersiz kimlik bilgileri kullanıldı</string>
@@ -15,7 +23,6 @@
     <string name="firebase_error_too_many_request">Çok fazla istek gönderdiniz, lütfen biraz bekleyin ve tekrar deneyin</string>
     <string name="firebase_error_network">Lütfen internet bağlantınızı kontrol edin</string>
 
-
     <string name="register_success">Başarıyla kayıt olundu</string>
     <string name="register_error_user_collision">Bu e-posta adresi başka bir kullanıcı tarafından kullanılıyor.</string>
     <string name="register_error_invalid_credantial">Geçersiz format</string>
@@ -26,7 +33,6 @@
     <string name="update_success">Kaydetme başarılı</string>
 
     <string name="form_error_blank_spaces">Lütfen boş alan bırakmayınız</string>
-
     <string name="lesson_saving_error_message">Ders kaydedilemedi. Lütfen girdiğiniz değerleri kontrol edin.</string>
 
 
@@ -54,14 +60,10 @@
     <string name="second_hour_should_be_after">İkinci Saat İlk Saatten Önce Olmalıdır</string>
     <string name="fill_the_blanks">Lütfen Boş Alanları Doldurun</string>
     <string name="lesson_saved">Ders Kaydedildi</string>
-
-
-    <string name="monday">Pazartesi</string>
-    <string name="tuesday">Salı</string>
-    <string name="wednesday">Çarşamba</string>
-    <string name="thursday">Perşembe</string>
-    <string name="friday">Cuma</string>
-    <string name="saturday">Cumartesi</string>
-    <string name="sunday">Pazar</string>
+    <string name="username">Kullanıcı Adı</string>
+    <string name="password">Şifre</string>
+    <string name="forgot_passowrd">Şifrenizi mi unuttunuz?</string>
+    <string name="log_in">Giriş yap</string>
+    <string name="cumhuriyet_spor_salonu_admin">Cumhuriyet Spor Salonu Admin</string>
 
 </resources>

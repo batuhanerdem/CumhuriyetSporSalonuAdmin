@@ -4,6 +4,14 @@
     <string name="default_success_message">Successful</string>
     <string name="default_error_message">An error occurred</string>
 
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
+    <string name="sunday">Sunday</string>
+
     <string name="login_success">Logged in successfully</string>
     <string name="login_error_default">There was a problem logging in</string>
     <string name="login_error_invalid_credentials">Invalid credentials used</string>
@@ -14,7 +22,6 @@
 
     <string name="firebase_error_too_many_request">You have sent too many requests, please wait a moment and try again</string>
     <string name="firebase_error_network">Please check your internet connection</string>
-
 
     <string name="register_success">Registered successfully</string>
     <string name="register_error_user_collision">This email address is already in use by another user.</string>
@@ -27,7 +34,6 @@
 
     <string name="form_error_blank_spaces">Please do not leave blank spaces</string>
     <string name="lesson_saving_error_message">Lesson could"'nt saved. Please check values.</string>
-
 
     <string name="add_lesson">Add Lesson</string>
     <string name="cancel">Cancel</string>
@@ -53,14 +59,11 @@
     <string name="second_hour_should_be_after">Second Lesson Should be After the First Lesson</string>
     <string name="fill_the_blanks">Please Fill the Blanks</string>
     <string name="lesson_saved">Lesson is Saved</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="forgot_passowrd">Forgot passowrd?</string>
+    <string name="log_in">Log in</string>
+    <string name="cumhuriyet_spor_salonu_admin">Cumhuriyet Spor Salonu Admin</string>
 
 
-
-    <string name="monday">Monday</string>
-    <string name="tuesday">Tuesday</string>
-    <string name="wednesday">Wednesday</string>
-    <string name="thursday">Thursday</string>
-    <string name="friday">Friday</string>
-    <string name="saturday">Saturday</string>
-    <string name="sunday">Sunday</string>
 </resources>
