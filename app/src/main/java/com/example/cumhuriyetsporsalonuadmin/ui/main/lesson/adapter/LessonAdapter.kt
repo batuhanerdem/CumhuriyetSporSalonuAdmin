@@ -1,6 +1,5 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main.lesson.adapter
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -10,9 +9,9 @@ import com.example.cumhuriyetsporsalonuadmin.databinding.ItemLessonBinding
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
 
 class LessonAdapter(
+    private val lessonOnClick: (lesson: Lesson) -> Unit
 ) : ListAdapter<Lesson, LessonAdapter.LessonViewHolder>(LessonDiffCallback) {
     class LessonViewHolder(val binding: ItemLessonBinding) : RecyclerView.ViewHolder(binding.root) {
-        @SuppressLint("SetTextI18n")
         fun bind(lesson: Lesson) {
             val context = binding.tvName.context
             binding.apply {
@@ -21,10 +20,9 @@ class LessonAdapter(
                 val hoursText =
                     "${lesson.lessonDate?.startHour.toString()} - ${lesson.lessonDate?.endHour.toString()}"
 
-                tvDate.text = "$dayText, $hoursText"
+                "$dayText, $hoursText".also { tvDate.text = it }
                 tvStudentNumber.text = lesson.studentUids.count().toString()
             }
-
         }
     }
 
@@ -35,6 +33,9 @@ class LessonAdapter(
 
     override fun onBindViewHolder(holder: LessonViewHolder, position: Int) {
         val currentLesson = getItem(position)
+        holder.binding.layoutInnerConstraint.setOnClickListener {
+            lessonOnClick(currentLesson)
+        }
         holder.bind(currentLesson)
     }
 

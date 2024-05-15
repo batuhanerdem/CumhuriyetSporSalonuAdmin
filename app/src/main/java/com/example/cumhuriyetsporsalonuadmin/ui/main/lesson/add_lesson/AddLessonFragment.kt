@@ -2,6 +2,7 @@ package com.example.cumhuriyetsporsalonuadmin.ui.main.lesson.add_lesson
 
 import android.app.TimePickerDialog
 import android.util.Log
+import android.widget.TextView
 import android.widget.Toast
 import com.example.cumhuriyetsporsalonuadmin.R
 import com.example.cumhuriyetsporsalonuadmin.databinding.FragmentAddLessonBinding
@@ -56,18 +57,14 @@ class AddLessonFragment :
 
     private fun setOnClickListeners() {
         val timePickerListenerForStart =
-            TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
-                val editedHour = if (hourOfDay < 10) "0$hourOfDay" else hourOfDay
-                val editedMinute = if (minute < 10) "0$minute" else minute
-                "$editedHour.$editedMinute".also { binding.tvStartShow.text = it }
+            TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
+                setHoursTextView(binding.tvStartShow, hourOfDay, minute)
             }
 
-        val timePickerListenerForEnd =
-            TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
-                val editedHour = if (hourOfDay < 10) "0$hourOfDay" else hourOfDay
-                val editedMinute = if (minute < 10) "0$minute" else minute
-                "$editedHour.$editedMinute".also { binding.tvEndShow.text = it }
-            }
+        val timePickerListenerForEnd = TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
+            setHoursTextView(binding.tvEndShow, hourOfDay, minute)
+
+        }
 
 
         binding.apply {
@@ -166,6 +163,14 @@ class AddLessonFragment :
 
     private fun showTimePicker(listener: TimePickerDialog.OnTimeSetListener) {
         TimePickerDialog(requireContext(), listener, 12, 0, true).show()
+    }
+
+    private fun setHoursTextView(
+        textView: TextView, hourOfDay: Int, minute: Int
+    ) {
+        val editedHour = if (hourOfDay < 10) "0$hourOfDay" else hourOfDay
+        val editedMinute = if (minute < 10) "0$minute" else minute
+        "$editedHour.$editedMinute".also { textView.text = it }
     }
 
     private fun generateUUID() = UUID.randomUUID().toString()

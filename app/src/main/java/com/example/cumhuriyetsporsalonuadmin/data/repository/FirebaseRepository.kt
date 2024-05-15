@@ -16,8 +16,6 @@ import com.example.cumhuriyetsporsalonuadmin.utils.Stringfy.Companion.stringfy
 import com.example.cumhuriyetsporsalonuadmin.utils.TAG
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
-import com.google.firestore.v1.StructuredQuery.Order
 import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 
@@ -67,18 +65,55 @@ class FirebaseRepository @Inject constructor(
         }
     }
 
+    fun getAllStudents(callback: (Resource<List<User>>) -> Unit) {
+        callback(Resource.Loading())
+        userCollectionRef.get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val studentList = mutableListOf<User>()
+                val result = task.result ?: return@addOnCompleteListener
+                addUserToStudentList(result.documents, studentList)
+                callback(Resource.Success(studentList))
+            } else callback(Resource.Error(message = task.exception?.message?.stringfy()))
+        }
+    }
+
+    fun getStudentsByLesson(lessonUID: String, callback: (Resource<List<User>>) -> Unit) {
+        userCollectionRef.whereEqualTo(LessonField.UID.key, lessonUID).get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val studentList = mutableListOf<User>()
+                    val result = task.result ?: return@addOnCompleteListener
+                    addUserToStudentList(result.documents, studentList)
+                    callback(Resource.Success(studentList))
+                } else callback(Resource.Error(message = task.exception?.message?.stringfy()))
+            }
+    }
+
     fun getLessons(callback: (Resource<List<Lesson>>) -> Unit) {
         callback(Resource.Loading())
         lessonCollectionRef.orderBy(LessonField.DAY.key).orderBy(LessonField.START_HOUR.key).get()
             .addOnCompleteListener { task ->
-                val lessonList = mutableListOf<Lesson>()
                 if (task.isSuccessful) {
-                    val result = task.result
-                    result ?: return@addOnCompleteListener
+                    val lessonList = mutableListOf<Lesson>()
+                    val result = task.result ?: return@addOnCompleteListener
                     addLessonToList(result.documents, lessonList)
                     callback(Resource.Success(lessonList))
                 } else callback(Resource.Error(message = task.exception?.message?.stringfy()))
             }
+    }
+
+    fun getLessonByUID(lessonUID: String, callback: (Resource<Lesson>) -> Unit) {
+        callback(Resource.Loading())
+        lessonCollectionRef.whereEqualTo(LessonField.UID.key, lessonUID).get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val result = task.result ?: return@addOnCompleteListener
+                    val lesson =
+                        convertDocumentToLesson(result.documents[0]) ?: return@addOnCompleteListener
+                    callback(Resource.Success(lesson))
+                } else callback(Resource.Error(message = task.exception?.message?.stringfy()))
+            }
+
     }
 
     fun setLessons(lesson: FirebaseLesson, callback: (Resource<Nothing>) -> Unit) {
@@ -132,6 +167,15 @@ class FirebaseRepository @Inject constructor(
         }
     }
 
+    private fun addUserToStudentList(
+        documentSnapshot: List<DocumentSnapshot>, list: MutableList<User>
+    ) {
+        for (document in documentSnapshot) {
+            val student = convertDocumentToUser(document)
+            student?.let { list.add(it) }
+        }
+    }
+
     private fun convertDocumentToUser(doc: DocumentSnapshot): User? {
         return try {
             val uid = doc.get(UserField.UID.key) as String
@@ -140,7 +184,7 @@ class FirebaseRepository @Inject constructor(
             val isVerified = doc.get(UserField.IS_VERIFIED.key) as Boolean
             User(uid = uid, email = email, name = name, isVerified = isVerified)
         } catch (e: Exception) {
-            Log.d(TAG, "convertDocumentToUser: ${e} ")
+            Log.d(TAG, "convertDocumentToUser: ${e}\n ${e.cause} ")
             null
         }
     }

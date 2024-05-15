@@ -24,7 +24,6 @@ class LessonFragment : BaseFragment<LessonActionBus, LessonViewModel, FragmentLe
                 progressBar.hide()
             }
 
-            LessonActionBus.Loading -> progressBar.show()
         }
     }
 
@@ -35,7 +34,11 @@ class LessonFragment : BaseFragment<LessonActionBus, LessonViewModel, FragmentLe
     }
 
     private fun setupRV() {
-        adapter = LessonAdapter()
+        adapter = LessonAdapter {
+            val action =
+                LessonFragmentDirections.actionLessonFragmentToStudentListingFragment(it.uid)
+            navigateTo(action)
+        }
         binding.rvLesson.adapter = adapter
     }
 
