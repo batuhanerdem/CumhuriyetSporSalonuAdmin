@@ -10,5 +10,11 @@
         <item name="android:windowIsTranslucent">true</item>
     </style>
 
+    <style name="App.Custom.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:width">0dp</item>
+        <item name="android:height">0dp</item>
+    </style>
+
     <style name="Theme.CumhuriyetSporSalonuAdmin" parent="Base.Theme.CumhuriyetSporSalonuAdmin" />
+
 </resources>

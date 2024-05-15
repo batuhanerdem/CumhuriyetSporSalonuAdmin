@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="#FFFFFF"
     android:layout_height="match_parent"
+    android:background="@color/main_background"
     tools:context=".ui.main.MainActivity">
 
 
@@ -25,6 +25,12 @@
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
         android:layout_height="73dp"
+        android:background="@drawable/bg_bottom_bar"
+        android:paddingHorizontal="35dp"
+        app:itemActiveIndicatorStyle="@style/App.Custom.Indicator"
+        app:itemBackground="@null"
+        app:itemIconSize="25dp"
+        app:itemIconTint="@drawable/color_navbar_colors"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

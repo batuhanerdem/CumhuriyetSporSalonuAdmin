@@ -23,10 +23,27 @@
         <action
             android:id="@+id/action_lessonFragment_to_addLessonFragment"
             app:destination="@id/addLessonFragment" />
+        <action
+            android:id="@+id/action_lessonFragment_to_studentListingFragment"
+            app:destination="@id/studentListingFragment" />
     </fragment>
     <fragment
         android:id="@+id/addLessonFragment"
         android:name="com.example.cumhuriyetsporsalonuadmin.ui.main.lesson.add_lesson.AddLessonFragment"
         android:label="fragment_add_lesson"
         tools:layout="@layout/fragment_add_lesson" />
+    <fragment
+        android:id="@+id/studentListingFragment"
+        android:name="com.example.cumhuriyetsporsalonuadmin.ui.main.student_listing.StudentListingFragment"
+        android:label="fragment_student_listing"
+        tools:layout="@layout/fragment_student_listing" >
+        <argument
+            android:name="lessonUid"
+            app:argType="string"
+            android:defaultValue="@null"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_studentListingFragment_to_lessonFragment"
+            app:destination="@id/lessonFragment" />
+    </fragment>
 </navigation>
