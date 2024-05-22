@@ -10,3 +10,5 @@ data class User(
     var weight: String? = null,
     var isVerified: Boolean = false
 )
+
+typealias Student = User
