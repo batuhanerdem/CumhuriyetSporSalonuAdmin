@@ -1,14 +1,11 @@
-package com.example.cumhuriyetsporsalonuadmin.ui.main.student_listing.adapter
+package com.example.cumhuriyetsporsalonuadmin.ui.main.all_student_listing.adapter
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.cumhuriyetsporsalonuadmin.databinding.ItemLessonBinding
 import com.example.cumhuriyetsporsalonuadmin.databinding.ItemStudentBinding
-import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
 import com.example.cumhuriyetsporsalonuadmin.domain.model.User
 
 class StudentAdapter(

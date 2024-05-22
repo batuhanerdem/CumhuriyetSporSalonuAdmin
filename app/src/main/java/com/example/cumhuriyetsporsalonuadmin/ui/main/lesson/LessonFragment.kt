@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.cumhuriyetsporsalonuadmin.databinding.FragmentLessonBinding
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseFragment
 import com.example.cumhuriyetsporsalonuadmin.ui.main.lesson.adapter.LessonAdapter
+import com.example.cumhuriyetsporsalonuadmin.ui.main.all_student_listing.AllStudentListingFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -47,6 +48,8 @@ class LessonFragment : BaseFragment<LessonActionBus, LessonViewModel, FragmentLe
             imgPlus.setOnClickListener {
                 val action = LessonFragmentDirections.actionLessonFragmentToAddLessonFragment()
                 navigateTo(action)
+        val allStudentListingFragment = AllStudentListingFragment()
+                
             }
         }
     }

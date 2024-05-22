@@ -34,9 +34,9 @@
         tools:layout="@layout/fragment_add_lesson" />
     <fragment
         android:id="@+id/studentListingFragment"
-        android:name="com.example.cumhuriyetsporsalonuadmin.ui.main.student_listing.StudentListingFragment"
+        android:name="com.example.cumhuriyetsporsalonuadmin.ui.main.all_student_listing.AllStudentListingFragment"
         android:label="fragment_student_listing"
-        tools:layout="@layout/fragment_student_listing" >
+        tools:layout="@layout/fragment_all_student_listing" >
         <argument
             android:name="lessonUid"
             app:argType="string"

@@ -1,6 +1,5 @@
-package com.example.cumhuriyetsporsalonuadmin.ui.main.student_listing
+package com.example.cumhuriyetsporsalonuadmin.ui.main.all_student_listing
 
-import androidx.annotation.Nullable
 import com.example.cumhuriyetsporsalonuadmin.data.repository.FirebaseRepository
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
 import com.example.cumhuriyetsporsalonuadmin.domain.model.User
@@ -10,9 +9,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class StudentListingViewModel @Inject constructor(
+class AllStudentListingViewModel @Inject constructor(
     private val firebaseRepository: FirebaseRepository
-) : BaseViewModel<StudentListingActionBus>() {
+) : BaseViewModel<AllStudentListingActionBus>() {
 
     val studentList = mutableListOf<User>()
     lateinit var lesson: Lesson
@@ -31,7 +30,7 @@ class StudentListingViewModel @Inject constructor(
         when (result) {
             is Resource.Error -> {
                 setLoading(false)
-                sendAction(StudentListingActionBus.ShowError(result.message))
+                sendAction(AllStudentListingActionBus.ShowError(result.message))
             }
 
             is Resource.Loading -> setLoading(true)
@@ -39,7 +38,7 @@ class StudentListingViewModel @Inject constructor(
                 setLoading(false)
                 result.data?.let {
                     studentList.addAll(it)
-                    sendAction(StudentListingActionBus.StudentsLoaded)
+                    sendAction(AllStudentListingActionBus.StudentsLoaded)
                 }
             }
         }
@@ -49,7 +48,7 @@ class StudentListingViewModel @Inject constructor(
         firebaseRepository.getLessonByUID(lessonUid) {
             it.data?.let {
                 lesson = it
-                sendAction(StudentListingActionBus.LessonLoaded)
+                sendAction(AllStudentListingActionBus.LessonLoaded)
             }
         }
     }

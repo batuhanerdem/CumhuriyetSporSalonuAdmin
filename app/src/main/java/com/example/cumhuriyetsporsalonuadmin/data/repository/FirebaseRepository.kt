@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Admin
 import com.example.cumhuriyetsporsalonuadmin.domain.model.FirebaseLesson
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
+import com.example.cumhuriyetsporsalonuadmin.domain.model.Student
 import com.example.cumhuriyetsporsalonuadmin.domain.model.User
 import com.example.cumhuriyetsporsalonuadmin.domain.model.firebase_collection.AdminField
 import com.example.cumhuriyetsporsalonuadmin.domain.model.firebase_collection.CollectionName
@@ -43,7 +44,7 @@ class FirebaseRepository @Inject constructor(
 
     }
 
-    fun getUnverifiedUsers(callback: (userList: (List<User>)) -> Unit) {
+    fun getUnverifiedUsers(callback: (studentList: (List<Student>)) -> Unit) {
         userCollectionRef.addSnapshotListener { value, error ->
             val myList = mutableListOf<User>()
             value?.let { value ->
@@ -65,11 +66,11 @@ class FirebaseRepository @Inject constructor(
         }
     }
 
-    fun getAllStudents(callback: (Resource<List<User>>) -> Unit) {
+    fun getAllStudents(callback: (Resource<List<Student>>) -> Unit) {
         callback(Resource.Loading())
         userCollectionRef.get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                val studentList = mutableListOf<User>()
+                val studentList = mutableListOf<Student>()
                 val result = task.result ?: return@addOnCompleteListener
                 addUserToStudentList(result.documents, studentList)
                 callback(Resource.Success(studentList))
@@ -77,7 +78,7 @@ class FirebaseRepository @Inject constructor(
         }
     }
 
-    fun getStudentsByLesson(lessonUID: String, callback: (Resource<List<User>>) -> Unit) {
+    fun getStudentsByLesson(lessonUID: String, callback: (Resource<List<Student>>) -> Unit) {
         userCollectionRef.whereEqualTo(LessonField.UID.key, lessonUID).get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
