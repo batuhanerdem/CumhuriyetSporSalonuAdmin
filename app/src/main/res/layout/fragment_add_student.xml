@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.lesson.student_listing_by_lesson.StudentListingByLessonFragment">
+    tools:context=".ui.main.lesson.student_listing_by_lesson.add_student.AddStudentFragment">
+
 
     <TextView
         android:id="@+id/tvTitle"
@@ -16,22 +17,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:text="@string/students" />
-
-    <TextView
-        android:id="@+id/noStudentFound"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:fontFamily="@font/lexend_semibold"
-        android:text="@string/no_students"
-        android:textColor="@color/dark_gray"
-        android:textSize="20sp"
-        android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvTitle"
-        tools:visibility="visible" />
+        tools:text="Musait Ogrenciler" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvStudent"

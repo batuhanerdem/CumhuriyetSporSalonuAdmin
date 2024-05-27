@@ -66,5 +66,6 @@
     <string name="log_in">Giriş yap</string>
     <string name="cumhuriyet_spor_salonu_admin">Cumhuriyet Spor Salonu Admin</string>
     <string name="all_students">Öğrenciler</string>
+    <string name="no_students">Kayıtlı Öğrenci Yok</string>
 
 </resources>

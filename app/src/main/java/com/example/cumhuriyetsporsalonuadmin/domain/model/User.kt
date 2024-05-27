@@ -8,7 +8,8 @@ data class User(
     var age: String? = null,
     var height: String? = null,
     var weight: String? = null,
-    var isVerified: Boolean = false
+    var isVerified: Boolean = false,
+    var lessonUids: List<String> = emptyList()
 )
 
 typealias Student = User

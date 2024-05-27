@@ -28,6 +28,7 @@ class MainActivity : BaseActivity<MainActionBus, MainViewModel, ActivityMainBind
 
         navController.addOnDestinationChangedListener { _, navDestination, _ ->
             binding.bottomNavigationView.isGone = navDestination.id == R.id.addLessonFragment
+            binding.bottomNavigationView.isGone = navDestination.id == R.id.studentListingByLessonFragment
         }
         binding.bottomNavigationView.setupWithNavController(navController)
     }

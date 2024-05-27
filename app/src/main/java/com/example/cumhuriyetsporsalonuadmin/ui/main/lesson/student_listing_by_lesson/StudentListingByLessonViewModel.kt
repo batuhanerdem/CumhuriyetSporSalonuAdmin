@@ -1,4 +1,4 @@
-package com.example.cumhuriyetsporsalonuadmin.ui.main.all_student_listing
+package com.example.cumhuriyetsporsalonuadmin.ui.main.lesson.student_listing_by_lesson
 
 import com.example.cumhuriyetsporsalonuadmin.data.repository.FirebaseRepository
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
@@ -9,24 +9,24 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class AllStudentListingViewModel @Inject constructor(
+class StudentListingByLessonViewModel @Inject constructor(
     private val firebaseRepository: FirebaseRepository
-) : BaseViewModel<AllStudentListingActionBus>() {
+) : BaseViewModel<StudentListingByLessonActionBus>() {
 
     val studentList = mutableListOf<User>()
     lateinit var lesson: Lesson
 
 
-    fun getStudents() {
+    fun getStudents(lessonUid: String) {
         studentList.clear()
-        firebaseRepository.getAllStudents(::studentCallback)
+        firebaseRepository.getStudentsByLesson(lessonUid, ::studentCallback)
     }
 
     private fun studentCallback(result: Resource<List<User>>) {
         when (result) {
             is Resource.Error -> {
                 setLoading(false)
-                sendAction(AllStudentListingActionBus.ShowError(result.message))
+                sendAction(StudentListingByLessonActionBus.ShowError(result.message))
             }
 
             is Resource.Loading -> setLoading(true)
@@ -34,7 +34,7 @@ class AllStudentListingViewModel @Inject constructor(
                 setLoading(false)
                 result.data?.let {
                     studentList.addAll(it)
-                    sendAction(AllStudentListingActionBus.StudentsLoaded)
+                    sendAction(StudentListingByLessonActionBus.StudentsLoaded)
                 }
             }
         }
@@ -44,7 +44,7 @@ class AllStudentListingViewModel @Inject constructor(
         firebaseRepository.getLessonByUID(lessonUid) {
             it.data?.let {
                 lesson = it
-                sendAction(AllStudentListingActionBus.LessonLoaded)
+                sendAction(StudentListingByLessonActionBus.LessonLoaded)
             }
         }
     }

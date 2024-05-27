@@ -24,8 +24,8 @@
             android:id="@+id/action_lessonFragment_to_addLessonFragment"
             app:destination="@id/addLessonFragment" />
         <action
-            android:id="@+id/action_lessonFragment_to_studentListingFragment"
-            app:destination="@id/studentListingFragment" />
+            android:id="@+id/action_lessonFragment_to_studentListingByLessonFragment"
+            app:destination="@id/studentListingByLessonFragment" />
     </fragment>
     <fragment
         android:id="@+id/addLessonFragment"
@@ -33,17 +33,33 @@
         android:label="fragment_add_lesson"
         tools:layout="@layout/fragment_add_lesson" />
     <fragment
-        android:id="@+id/studentListingFragment"
+        android:id="@+id/allStudentListingFragment"
         android:name="com.example.cumhuriyetsporsalonuadmin.ui.main.all_student_listing.AllStudentListingFragment"
-        android:label="fragment_student_listing"
+        android:label="fragment_all_student_listing"
+        tools:layout="@layout/fragment_all_student_listing" >
+        <action
+            android:id="@+id/action_allStudentListingFragment_to_lessonFragment"
+            app:destination="@id/lessonFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/studentListingByLessonFragment"
+        android:name="com.example.cumhuriyetsporsalonuadmin.ui.main.lesson.student_listing_by_lesson.StudentListingByLessonFragment"
+        android:label="fragment_student_listing_by_lesson"
         tools:layout="@layout/fragment_all_student_listing" >
         <argument
             android:name="lessonUid"
-            app:argType="string"
-            android:defaultValue="@null"
-            app:nullable="true" />
+            app:argType="string" />
         <action
-            android:id="@+id/action_studentListingFragment_to_lessonFragment"
-            app:destination="@id/lessonFragment" />
+            android:id="@+id/action_studentListingByLessonFragment_to_addStudentFragment"
+            app:destination="@id/addStudentFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addStudentFragment"
+        android:name="com.example.cumhuriyetsporsalonuadmin.ui.main.lesson.student_listing_by_lesson.add_student.AddStudentFragment"
+        android:label="fragment_add_student"
+        tools:layout="@layout/fragment_add_student" >
+        <argument
+            android:name="lessonUid"
+            app:argType="string" />
     </fragment>
 </navigation>

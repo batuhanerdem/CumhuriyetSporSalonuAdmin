@@ -5,7 +5,7 @@ import android.content.Context
 data class Lesson(
     val uid: String,
     var name: String,
-    val lessonDate: LessonDate? = null,
+    val lessonDate: LessonDate,
     var studentUids: List<String> = emptyList()
 ) {
 
