@@ -30,7 +30,7 @@ class FirebaseRepository @Inject constructor(
     private val lessonCollectionRef = db.collection(CollectionName.LESSON.value)
     private val testCollectionRef = db.collection("test")
 
-    fun adminLogin(admin: Admin, callback: (Resource<Nothing>) -> Unit) {
+    fun adminLogin(admin: Admin, callback: (Resource<Unit>) -> Unit) {
         adminDocumentRef.get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val result = task.result ?: return@addOnCompleteListener
