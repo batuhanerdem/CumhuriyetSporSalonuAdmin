@@ -7,6 +7,7 @@ import com.example.cumhuriyetsporsalonuadmin.databinding.FragmentAllStudentListi
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseFragment
 import com.example.cumhuriyetsporsalonuadmin.ui.main.all_student_listing.adapter.StudentAdapter
+import com.example.cumhuriyetsporsalonuadmin.utils.SelectableData.Companion.toSelectable
 import com.example.cumhuriyetsporsalonuadmin.utils.Stringfy.Companion.stringfy
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -26,7 +27,7 @@ class AllStudentListingFragment :
             }
 
             AllStudentListingActionBus.StudentsLoaded -> {
-                studentAdapter.submitList(viewModel.studentList)
+                studentAdapter.submitList(viewModel.studentList.toSelectable())
                 binding.noStudentFound.isVisible = viewModel.studentList.isEmpty()
             }
 
@@ -47,7 +48,7 @@ class AllStudentListingFragment :
     }
 
     private fun setRV() {
-        studentAdapter = StudentAdapter()
+        studentAdapter = StudentAdapter(false)
         binding.rvStudent.adapter = studentAdapter
     }
 

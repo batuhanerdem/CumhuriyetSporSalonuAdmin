@@ -8,6 +8,7 @@ import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseFragment
 import com.example.cumhuriyetsporsalonuadmin.ui.main.all_student_listing.adapter.StudentAdapter
 import com.example.cumhuriyetsporsalonuadmin.ui.main.lesson.LessonFragmentDirections
+import com.example.cumhuriyetsporsalonuadmin.utils.SelectableData.Companion.toSelectable
 import com.example.cumhuriyetsporsalonuadmin.utils.Stringfy.Companion.stringfy
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,7 +30,7 @@ class StudentListingByLessonFragment :
             }
 
             StudentListingByLessonActionBus.StudentsLoaded -> {
-                studentAdapter.submitList(viewModel.studentList)
+                studentAdapter.submitList(viewModel.studentList.toSelectable())
                 setTvVisibility(viewModel.studentList.isEmpty())
             }
 
@@ -59,7 +60,7 @@ class StudentListingByLessonFragment :
     }
 
     private fun setRV() {
-        studentAdapter = StudentAdapter()
+        studentAdapter = StudentAdapter(false)
         binding.rvStudent.adapter = studentAdapter
     }
 

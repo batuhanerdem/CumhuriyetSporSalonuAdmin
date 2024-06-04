@@ -57,7 +57,6 @@ class DayAdapter(
         override fun areItemsTheSame(
             oldItem: SelectableData<Days>, newItem: SelectableData<Days>
         ): Boolean {
-//            Log.d("tag", "areItemsTheSame: ${oldItem == newItem} ")
             return oldItem == newItem
 //            return false //testing
         }
@@ -65,8 +64,6 @@ class DayAdapter(
         override fun areContentsTheSame(
             oldItem: SelectableData<Days>, newItem: SelectableData<Days>
         ): Boolean {
-//            Log.d("tag", "areContentsTheSame: ${oldItem.isSelected}")
-//            Log.d("tag", "areContentsTheSame: ${newItem.isSelected}")
             return oldItem.isSelected == newItem.isSelected
 //            return false //testing
         }

@@ -1,46 +1,58 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main.all_student_listing.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
+import com.example.cumhuriyetsporsalonuadmin.databinding.ItemStudentAddBinding
 import com.example.cumhuriyetsporsalonuadmin.databinding.ItemStudentBinding
-import com.example.cumhuriyetsporsalonuadmin.domain.model.User
+import com.example.cumhuriyetsporsalonuadmin.domain.model.Student
+import com.example.cumhuriyetsporsalonuadmin.utils.SelectableData
 
 class StudentAdapter(
-) : ListAdapter<User, StudentAdapter.StudentViewHolder>(StudentDiffCallback) {
-    class StudentViewHolder(val binding: ItemStudentBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-        fun bind(student: User) {
-            binding.apply {
-                tvName.text = student.name
-                tvEmail.text = student.email
-            }
+    private val isSelecting: Boolean,
+    private val addStudent: (SelectableData<Student>, Index) -> Unit = { _, _: Index -> }
+) : ListAdapter<SelectableData<Student>, StudentViewHolder>(StudentDiffCallback) {
 
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StudentViewHolder {
+        return if (isSelecting) {
+            val binding =
+                ItemStudentAddBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            StudentSelectingViewHolder(binding, addStudent)
+        } else {
+            val binding =
+                ItemStudentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            StudentListingViewHolder(
+                binding
+            )
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StudentViewHolder {
-        val binding = ItemStudentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return StudentViewHolder(binding)
-    }
-
     override fun onBindViewHolder(holder: StudentViewHolder, position: Int) {
-        val currentLesson = getItem(position)
-        holder.bind(currentLesson)
+        val currentStudent = getItem(position)
+        holder.bind(currentStudent)
+        if (holder is StudentSelectingViewHolder) {
+            holder.selectStudent(currentStudent, position)
+        }
     }
 
-    object StudentDiffCallback : DiffUtil.ItemCallback<User>() {
-        override fun areItemsTheSame(oldItem: User, newItem: User): Boolean {
+    object StudentDiffCallback : DiffUtil.ItemCallback<SelectableData<Student>>() {
+        override fun areItemsTheSame(
+            oldItem: SelectableData<Student>, newItem: SelectableData<Student>
+        ): Boolean {
             return oldItem == newItem
 //            return false //testing
         }
 
-        override fun areContentsTheSame(oldItem: User, newItem: User): Boolean {
-            return oldItem.uid == newItem.uid
+        override fun areContentsTheSame(
+            oldItem: SelectableData<Student>, newItem: SelectableData<Student>
+        ): Boolean {
 //            return false //testing
+            return oldItem.isSelected == newItem.isSelected
         }
     }
 
 }
+
+typealias Index = Int

@@ -28,7 +28,7 @@ class AddLessonViewModel @Inject constructor(private val firebaseRepository: Fir
 
     fun getSelectedDaysList(): List<Days> {
         val selectedList = mutableListOf<Days>()
-        for (day in selectAbleDayList) {
+        selectAbleDayList.map {day->
             if (day.isSelected) selectedList.add(day.data)
         }
         return selectedList
@@ -36,11 +36,7 @@ class AddLessonViewModel @Inject constructor(private val firebaseRepository: Fir
 
     fun saveLesson(lesson: Lesson) {
         val firebaseLesson = lesson.toFirebaseLesson()
-        firebaseLesson?.let {
-            firebaseRepository.setLessons(it, ::lessonCallback)
-            return
-        }
-        sendAction(AddLessonActionBus.ShowError(R.string.lesson_saving_error_message.stringfy()))
+            firebaseRepository.setLessons(firebaseLesson, ::lessonCallback)
     }
 
     fun deleteAllLessons() {

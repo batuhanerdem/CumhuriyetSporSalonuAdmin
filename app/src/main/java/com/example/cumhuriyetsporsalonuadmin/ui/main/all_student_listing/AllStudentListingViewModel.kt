@@ -2,6 +2,7 @@ package com.example.cumhuriyetsporsalonuadmin.ui.main.all_student_listing
 
 import com.example.cumhuriyetsporsalonuadmin.data.repository.FirebaseRepository
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
+import com.example.cumhuriyetsporsalonuadmin.domain.model.Student
 import com.example.cumhuriyetsporsalonuadmin.domain.model.User
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseViewModel
 import com.example.cumhuriyetsporsalonuadmin.utils.Resource
@@ -13,7 +14,7 @@ class AllStudentListingViewModel @Inject constructor(
     private val firebaseRepository: FirebaseRepository
 ) : BaseViewModel<AllStudentListingActionBus>() {
 
-    val studentList = mutableListOf<User>()
+    val studentList = mutableListOf<Student>()
     lateinit var lesson: Lesson
 
 
@@ -22,7 +23,7 @@ class AllStudentListingViewModel @Inject constructor(
         firebaseRepository.getAllStudents(::studentCallback)
     }
 
-    private fun studentCallback(result: Resource<List<User>>) {
+    private fun studentCallback(result: Resource<List<Student>>) {
         when (result) {
             is Resource.Error -> {
                 setLoading(false)

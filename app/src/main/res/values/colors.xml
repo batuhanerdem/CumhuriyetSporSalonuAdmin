@@ -11,5 +11,7 @@
     <color name="selected_color">#0D141C</color>
     <color name="unselected_color">#4F7396</color>
     <color name="bottom_bar_stroke">#E8EDF2</color>
+    <color name="checked_color">#339C39</color>
+    <color name="unchecked_color">#637587</color>
 
 </resources>

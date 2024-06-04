@@ -9,8 +9,8 @@ data class Lesson(
     var studentUids: List<String> = emptyList()
 ) {
 
-    fun toFirebaseLesson(): FirebaseLesson? {
-        this.lessonDate ?: return null
+    fun toFirebaseLesson(): FirebaseLesson {
+        this.lessonDate
         val day = lessonDate.day.number
 
         val startHourString =
@@ -25,7 +25,7 @@ data class Lesson(
         val startHour = "$startHourString.$startMinString"
         val endHour = "$endHourString.$endMinString"
         return FirebaseLesson(
-            this.uid, this.name, day, startHour, endHour
+            this.uid, this.name, day, startHour, endHour, this.studentUids
         )
     }
 

@@ -128,9 +128,7 @@ class AddLessonFragment :
         adapter = DayAdapter { day, index ->
             val newDayInstance = day.getReversed()
             viewModel.selectAbleDayList[index] = newDayInstance
-            Log.d(TAG, "setRV: day: ${day}, newDay: ${newDayInstance}")
             adapter.submitList(viewModel.selectAbleDayList.toList())
-
         }
         binding.rvDay.adapter = adapter
     }

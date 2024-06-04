@@ -54,7 +54,7 @@ class FirebaseRepository @Inject constructor(
                     val isNotNull = NullValidator.validate(isVerified)
                     if (!isNotNull) return@map
                     if (!isVerified!!) {
-                        val user = convertDocumentToUser(it)
+                        val user = convertDocumentToStudent(it)
                         user?.let {
                             myList.add(it)
                         }
@@ -79,10 +79,10 @@ class FirebaseRepository @Inject constructor(
     }
 
     fun getStudentsByLesson(lessonUID: String, callback: (Resource<List<Student>>) -> Unit) {
-        userCollectionRef.whereEqualTo(LessonField.UID.key, lessonUID).get()
+        userCollectionRef.whereArrayContains(UserField.LESSON_UIDS.key, lessonUID).get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    val studentList = mutableListOf<User>()
+                    val studentList = mutableListOf<Student>()
                     val result = task.result ?: return@addOnCompleteListener
                     addUserToStudentList(result.documents, studentList)
                     callback(Resource.Success(studentList))
@@ -107,11 +107,17 @@ class FirebaseRepository @Inject constructor(
         callback(Resource.Loading())
         lessonCollectionRef.whereEqualTo(LessonField.UID.key, lessonUID).get()
             .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val result = task.result ?: return@addOnCompleteListener
-                    val lesson =
-                        convertDocumentToLesson(result.documents[0]) ?: return@addOnCompleteListener
-                    callback(Resource.Success(lesson))
+                if (task.isSuccessful) { //test
+                    try {
+                        val result = task.result ?: return@addOnCompleteListener
+                        val lesson =
+                            convertDocumentToLesson(result.documents[0])
+                                ?: return@addOnCompleteListener
+                        callback(Resource.Success(lesson))
+                    } catch (e: Exception) {
+
+                    }
+
                 } else callback(Resource.Error(message = task.exception?.message?.stringfy()))
             }
 
@@ -125,6 +131,37 @@ class FirebaseRepository @Inject constructor(
         }
     }
 
+    fun addStudentToLesson(
+        lessonUid: String, studentList: List<Student>, callback: (Resource<Unit>) -> Unit
+    ) {
+        callback(Resource.Loading())
+        lessonCollectionRef.document(lessonUid).get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val result = task.result ?: return@addOnCompleteListener
+                val lesson = convertDocumentToLesson(result) ?: return@addOnCompleteListener
+                val tempUidList = mutableListOf<String>()
+                studentList.map {
+                    tempUidList.add(it.uid)
+                }
+                val savedStudentList = lesson.studentUids.toMutableList()
+                savedStudentList.addAll(tempUidList)
+                lesson.studentUids = savedStudentList
+                lessonCollectionRef.document(lessonUid).set(lesson.toFirebaseLesson())
+                    .addOnCompleteListener { lessonTask ->
+                        if (lessonTask.isSuccessful) {
+                            studentList.map {
+                                addLessonUidToStudent(it.uid, lessonUid) {
+                                    callback(Resource.Success())
+                                }
+                            }
+                        } else callback(Resource.Error(message = task.exception?.message?.stringfy()))
+                    }
+
+            } else callback(Resource.Error(message = task.exception?.message?.stringfy()))
+
+        }
+    }
+
     fun deleteLesson(uid: String, callback: (Resource<Nothing>) -> Unit) {
         callback(Resource.Loading())
         lessonCollectionRef.document(uid).delete().addOnCompleteListener { task ->
@@ -133,9 +170,11 @@ class FirebaseRepository @Inject constructor(
         }
     }
 
-    fun answerRequest(user: User, isAccepted: Boolean, callback: (Resource<Nothing>) -> Unit) {
-        user.isVerified = isAccepted
-        userCollectionRef.document(user.uid).set(user).addOnCompleteListener { task ->
+    fun answerRequest(
+        student: Student, isAccepted: Boolean, callback: (Resource<Nothing>) -> Unit
+    ) {
+        student.isVerified = isAccepted
+        userCollectionRef.document(student.uid).set(student).addOnCompleteListener { task ->
             if (task.isSuccessful) callback(Resource.Success())
             else callback(Resource.Error(message = task.exception?.message?.stringfy()))
         }
@@ -158,6 +197,28 @@ class FirebaseRepository @Inject constructor(
         }
     }
 
+    private fun addLessonUidToStudent(
+        studentUid: String, lessonUID: String, callback: (Resource<Unit>) -> Unit
+    ) {
+        userCollectionRef.document(studentUid).get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val result = task.result ?: return@addOnCompleteListener
+                val student = convertDocumentToStudent(result)
+                student?.let {
+                    val lessonUids = it.lessonUids.toMutableList()
+                    lessonUids.add(lessonUID)
+                    it.lessonUids = lessonUids
+                    userCollectionRef.document(studentUid).set(student)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) callback(Resource.Success())
+                            else callback(Resource.Error(message = task.exception?.message?.stringfy()))
+                        }
+                }
+            }
+
+        }
+    }
+
 
     private fun addLessonToList(
         documentSnapshot: List<DocumentSnapshot>, list: MutableList<Lesson>
@@ -172,20 +233,28 @@ class FirebaseRepository @Inject constructor(
         documentSnapshot: List<DocumentSnapshot>, list: MutableList<User>
     ) {
         for (document in documentSnapshot) {
-            val student = convertDocumentToUser(document)
+            Log.d(TAG, "addUserToStudentList: $document")
+            val student = convertDocumentToStudent(document)
             student?.let { list.add(it) }
         }
     }
 
-    private fun convertDocumentToUser(doc: DocumentSnapshot): User? {
+    private fun convertDocumentToStudent(doc: DocumentSnapshot): User? {
         return try {
             val uid = doc.get(UserField.UID.key) as String
             val email = doc.get(UserField.EMAIL.key) as String
             val name = doc.get(UserField.NAME.key) as String?
+            val lessonUids = doc.get(UserField.LESSON_UIDS.key) as List<String>
             val isVerified = doc.get(UserField.IS_VERIFIED.key) as Boolean
-            User(uid = uid, email = email, name = name, isVerified = isVerified)
+            User(
+                uid = uid,
+                email = email,
+                name = name,
+                isVerified = isVerified,
+                lessonUids = lessonUids
+            )
         } catch (e: Exception) {
-            Log.d(TAG, "convertDocumentToUser: ${e}\n ${e.cause} ")
+            Log.d(TAG, "convertDocumentToStudent: ${e}\n ${e.cause} message: ${e.message}")
             null
         }
     }
