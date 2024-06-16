@@ -1,6 +1,5 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main.all_student_listing.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -12,7 +11,8 @@ import com.example.cumhuriyetsporsalonuadmin.utils.SelectableData
 
 class StudentAdapter(
     private val isSelecting: Boolean,
-    private val addStudent: (SelectableData<Student>, Index) -> Unit = { _, _: Index -> }
+    private val studentOnClick: ((Student) -> Unit)? = null,
+    private val addStudent: (SelectableData<Student>, Index) -> Unit = { _, _: Index -> },
 ) : ListAdapter<SelectableData<Student>, StudentViewHolder>(StudentDiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StudentViewHolder {
@@ -24,7 +24,7 @@ class StudentAdapter(
             val binding =
                 ItemStudentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             StudentListingViewHolder(
-                binding
+                binding, studentOnClick!! //fix that sometime
             )
         }
     }

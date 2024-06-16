@@ -5,9 +5,9 @@ import androidx.navigation.fragment.navArgs
 import com.example.cumhuriyetsporsalonuadmin.R
 import com.example.cumhuriyetsporsalonuadmin.databinding.FragmentStudentListingByLessonBinding
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
+import com.example.cumhuriyetsporsalonuadmin.domain.model.Student
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseFragment
 import com.example.cumhuriyetsporsalonuadmin.ui.main.all_student_listing.adapter.StudentAdapter
-import com.example.cumhuriyetsporsalonuadmin.ui.main.lesson.LessonFragmentDirections
 import com.example.cumhuriyetsporsalonuadmin.utils.SelectableData.Companion.toSelectable
 import com.example.cumhuriyetsporsalonuadmin.utils.Stringfy.Companion.stringfy
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,7 +41,7 @@ class StudentListingByLessonFragment :
     }
 
     override fun initPage() {
-         val lessonUid = args.lessonUid
+        val lessonUid = args.lessonUid
         viewModel.getStudents(lessonUid)
         setOnClickListeners()
         setPageByLessonUID(lessonUid)
@@ -49,7 +49,7 @@ class StudentListingByLessonFragment :
     }
 
     private fun setOnClickListeners() {
-         val lessonUid = args.lessonUid
+        val lessonUid = args.lessonUid
         binding.imgAdd.setOnClickListener {
             val action =
                 StudentListingByLessonFragmentDirections.actionStudentListingByLessonFragmentToAddStudentFragment(
@@ -60,8 +60,16 @@ class StudentListingByLessonFragment :
     }
 
     private fun setRV() {
-        studentAdapter = StudentAdapter(false)
+        studentAdapter = StudentAdapter(false, studentOnClick = ::goToStudent)
         binding.rvStudent.adapter = studentAdapter
+    }
+
+    private fun goToStudent(student: Student) {
+        val action =
+            StudentListingByLessonFragmentDirections.actionStudentListingByLessonFragmentToLessonListingByStudent(
+                student.uid
+            )
+        navigateTo(action)
     }
 
     private fun setTitleByLesson(lesson: Lesson) {

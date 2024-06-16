@@ -26,13 +26,14 @@
         android:layout_width="match_parent"
         android:layout_height="73dp"
         android:background="@drawable/bg_bottom_bar"
-        android:paddingHorizontal="35dp"
+        android:paddingHorizontal="15dp"
         app:itemActiveIndicatorStyle="@style/App.Custom.Indicator"
         app:itemBackground="@null"
-        app:itemIconSize="25dp"
+        app:itemIconSize="27dp"
         app:itemIconTint="@drawable/color_navbar_colors"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/main_menu" />
 

@@ -1,12 +1,13 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main.all_student_listing
 
 import androidx.core.view.isVisible
-import androidx.navigation.fragment.navArgs
 import com.example.cumhuriyetsporsalonuadmin.R
 import com.example.cumhuriyetsporsalonuadmin.databinding.FragmentAllStudentListingBinding
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
+import com.example.cumhuriyetsporsalonuadmin.domain.model.Student
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseFragment
 import com.example.cumhuriyetsporsalonuadmin.ui.main.all_student_listing.adapter.StudentAdapter
+import com.example.cumhuriyetsporsalonuadmin.ui.main.lesson.student_listing_by_lesson.StudentListingByLessonFragmentDirections
 import com.example.cumhuriyetsporsalonuadmin.utils.SelectableData.Companion.toSelectable
 import com.example.cumhuriyetsporsalonuadmin.utils.Stringfy.Companion.stringfy
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,8 +49,17 @@ class AllStudentListingFragment :
     }
 
     private fun setRV() {
-        studentAdapter = StudentAdapter(false)
+        studentAdapter = StudentAdapter(false, studentOnClick = ::goToStudent)
+
         binding.rvStudent.adapter = studentAdapter
+    }
+
+    private fun goToStudent(student: Student) {
+        val action =
+            AllStudentListingFragmentDirections.actionAllStudentListingFragmentToLessonListingByStudent(
+                student.uid
+            )
+        navigateTo(action)
     }
 
     private fun setTitleByLesson(lesson: Lesson) {

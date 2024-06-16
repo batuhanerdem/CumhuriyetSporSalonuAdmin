@@ -40,6 +40,9 @@
         <action
             android:id="@+id/action_allStudentListingFragment_to_lessonFragment"
             app:destination="@id/lessonFragment" />
+        <action
+            android:id="@+id/action_allStudentListingFragment_to_lessonListingByStudent"
+            app:destination="@id/lessonListingByStudent" />
     </fragment>
     <fragment
         android:id="@+id/studentListingByLessonFragment"
@@ -52,6 +55,9 @@
         <action
             android:id="@+id/action_studentListingByLessonFragment_to_addStudentFragment"
             app:destination="@id/addStudentFragment" />
+        <action
+            android:id="@+id/action_studentListingByLessonFragment_to_lessonListingByStudent"
+            app:destination="@id/lessonListingByStudent" />
     </fragment>
     <fragment
         android:id="@+id/addStudentFragment"
@@ -61,5 +67,17 @@
         <argument
             android:name="lessonUid"
             app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/lessonListingByStudent"
+        android:name="com.example.cumhuriyetsporsalonuadmin.ui.main.all_student_listing.lesson_listing_by_student.LessonListingByStudentFragment"
+        android:label="fragment_lesson_listing_by_student"
+        tools:layout="@layout/fragment_lesson_listing_by_student" >
+        <argument
+            android:name="studentUid"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_lessonListingByStudent_to_studentListingByLessonFragment"
+            app:destination="@id/studentListingByLessonFragment" />
     </fragment>
 </navigation>

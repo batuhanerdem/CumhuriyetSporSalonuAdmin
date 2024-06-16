@@ -10,13 +10,16 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ProfileFragment : BaseFragment<ProfileActionBus, ProfileViewModel, FragmentProfileBinding>(
-    FragmentProfileBinding::inflate,
-    ProfileViewModel::class.java
+    FragmentProfileBinding::inflate, ProfileViewModel::class.java
 ) {
     override suspend fun onAction(action: ProfileActionBus) {
         when (action) {
-            ProfileActionBus.Init -> TODO()
-            ProfileActionBus.UpdatedSuccessFully -> showSuccessMessage(R.string.update_success.stringfy())
+            ProfileActionBus.Init -> {}
+            ProfileActionBus.UpdatedSuccessFully -> {
+                showSuccessMessage(R.string.update_success.stringfy())
+                clearFields()
+            }
+
             is ProfileActionBus.ShowError -> {
                 val message = action.error ?: R.string.update_error_default.stringfy()
                 showErrorMessage(message)
@@ -29,13 +32,17 @@ class ProfileFragment : BaseFragment<ProfileActionBus, ProfileViewModel, Fragmen
     }
 
     private fun setOnClickListeners() {
-//        binding.btnUpdate.setOnClickListener {
-//            val username = binding.edtUsername.text.toString()
-//            val password = binding.edtPassword.text.toString()
-//            if (username.isEmpty() || password.isEmpty()) return@setOnClickListener
-//            val admin = Admin(username, password)
-//            viewModel.updateAdmin(admin)
-//        }
+        binding.btnSave.setOnClickListener {
+            val username = binding.edtUserName.text.toString()
+            val password = binding.edtPassword.text.toString()
+            if (username.isEmpty() || password.isEmpty()) return@setOnClickListener
+            val admin = Admin(username, password)
+            viewModel.updateAdmin(admin)
+        }
     }
 
+    private fun clearFields() {
+        binding.edtPassword.text.clear()
+        binding.edtUserName.text.clear()
+    }
 }
