@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.main.lesson.LessonFragment">
 
-    <TextView
+`    <TextView
         android:id="@+id/tvLessons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvLessons"
-        tools:listitem="@layout/item_lesson" />
+        tools:listitem="@layout/item_lesson" />`
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"

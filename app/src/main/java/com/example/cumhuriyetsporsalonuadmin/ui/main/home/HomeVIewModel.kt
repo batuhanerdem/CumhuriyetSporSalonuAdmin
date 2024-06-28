@@ -14,8 +14,10 @@ class HomeVIewModel @Inject constructor(
 
     fun getUnverifiedUsers() {
         firebaseRepository.getUnverifiedUsers {
-            unverifiedList = it
-            sendAction(HomeActionBus.Success)
+             it.data?.let {
+                 unverifiedList =it
+                 sendAction(HomeActionBus.Success)
+            }
         }
     }
 

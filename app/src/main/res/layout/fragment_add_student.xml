@@ -19,19 +19,37 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Dersin Adi" />
 
+    <TextView
+        android:id="@+id/noStudentFound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:fontFamily="@font/lexend_semibold"
+        android:text="@string/no_student_found"
+        android:textAlignment="center"
+        android:textColor="@color/dark_gray"
+        android:textSize="20sp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        tools:visibility="visible" />
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvStudent"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginBottom="10dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@id/btnAdd"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvTitle"
-        android:layout_marginBottom="10dp"
         app:layout_constraintVertical_bias="0.0"
-        tools:listitem="@layout/item_student_add" />
+        tools:listitem="@layout/item_student_add"
+        tools:visibility="invisible" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnAdd"

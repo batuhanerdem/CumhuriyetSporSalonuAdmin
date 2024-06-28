@@ -61,12 +61,15 @@
     <string name="lesson_saved">Lesson is Saved</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
-    <string name="forgot_passowrd">Forgot passowrd?</string>
+    <string name="forgot_password">Forgot passowrd?</string>
     <string name="log_in">Log in</string>
     <string name="cumhuriyet_spor_salonu_admin">Cumhuriyet Spor Salonu Admin</string>
     <string name="all_students">Students</string>
     <string name="no_students">No Registered Students</string>
     <string name="save">Save</string>
+    <string name="no_student_found_for_this_lesson">There is no student registered for this lesson</string>
+    <string name="no_student_found">No available student found</string>
+    <string name="search_student">Search Student</string>
 
 
 </resources>

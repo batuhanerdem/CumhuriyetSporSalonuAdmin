@@ -6,12 +6,13 @@ import com.example.cumhuriyetsporsalonuadmin.domain.model.FirebaseLesson
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Student
 import com.example.cumhuriyetsporsalonuadmin.domain.model.User
+import com.example.cumhuriyetsporsalonuadmin.domain.model.VerifiedStatus
 import com.example.cumhuriyetsporsalonuadmin.domain.model.firebase_collection.AdminField
 import com.example.cumhuriyetsporsalonuadmin.domain.model.firebase_collection.CollectionName
 import com.example.cumhuriyetsporsalonuadmin.domain.model.firebase_collection.LessonField
 import com.example.cumhuriyetsporsalonuadmin.domain.model.firebase_collection.UserField
 import com.example.cumhuriyetsporsalonuadmin.domain.model.firebase_exception.LoginError
-import com.example.cumhuriyetsporsalonuadmin.utils.NullValidator
+import com.example.cumhuriyetsporsalonuadmin.domain.model.toVerifiedStatus
 import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import com.example.cumhuriyetsporsalonuadmin.utils.Stringfy.Companion.stringfy
 import com.example.cumhuriyetsporsalonuadmin.utils.TAG
@@ -33,38 +34,54 @@ class FirebaseRepository @Inject constructor(
     fun adminLogin(admin: Admin, callback: (Resource<Unit>) -> Unit) {
         adminDocumentRef.get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                val result = task.result ?: return@addOnCompleteListener
-                val username = result.get(AdminField.USERNAME.key) as String?
-                val password = result.get(AdminField.PASSWORD.key) as String?
-                if (admin.username == username && admin.password == password) callback(Resource.Success())
-                else callback(Resource.Error(message = LoginError.InvalidCredentialsException.errorMessage))
+                try {
+                    val result = task.result ?: return@addOnCompleteListener
+                    val username = result.get(AdminField.USERNAME.key) as String?
+                    val password = result.get(AdminField.PASSWORD.key) as String?
+                    if (admin.username == username && admin.password == password) callback(Resource.Success())
+                    else callback(Resource.Error(message = LoginError.InvalidCredentialsException.errorMessage))
+                } catch (e: Exception) {
+                    callback(Resource.Error())
+                }
 
             } else callback(Resource.Error(message = task.exception?.message?.stringfy()))
         }
 
     }
 
-    fun getUnverifiedUsers(callback: (studentList: (List<Student>)) -> Unit) {
-        userCollectionRef.addSnapshotListener { value, error ->
+    fun getUnverifiedUsers(callback: (Resource<List<Student>>) -> Unit) {
+        userCollectionRef.whereEqualTo(
+            UserField.IS_VERIFIED.key, VerifiedStatus.NOTANSWERED.asString
+        ).addSnapshotListener { value, error ->
+            callback(Resource.Loading())
             val myList = mutableListOf<User>()
+            error?.let {
+                callback(Resource.Error(message = error.message?.stringfy()))
+            }
             value?.let { value ->
-                val allDocuments = value.documents as MutableList<DocumentSnapshot>
-                allDocuments.map {
-                    val isVerified = it.get(UserField.IS_VERIFIED.key) as Boolean?
-                    val isNotNull = NullValidator.validate(isVerified)
-                    if (!isNotNull) return@map
-                    if (!isVerified!!) {
-                        val user = convertDocumentToStudent(it)
-                        user?.let {
-                            myList.add(it)
-                        }
+                value.documents.map {
+                    val user = convertDocumentToStudent(it)
+                    user?.let {
+                        myList.add(it)
                     }
                 }
-                callback(myList)
             }
-
+            callback(Resource.Success(myList))
         }
     }
+
+    fun getVerifiedStudents(callback: (Resource<List<Student>>) -> Unit) {
+        callback(Resource.Loading())
+        userCollectionRef.whereEqualTo(UserField.IS_VERIFIED.key, VerifiedStatus.VERIFIED.asString)
+            .get().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val result = task.result ?: return@addOnCompleteListener
+                    val studentList = convertDocumentToStudentList(result.documents)
+                    callback(Resource.Success(studentList))
+                } else callback(Resource.Error(message = task.exception?.message?.stringfy()))
+            }
+    }
+
 
     fun getAllStudents(callback: (Resource<List<Student>>) -> Unit) {
         callback(Resource.Loading())
@@ -78,7 +95,8 @@ class FirebaseRepository @Inject constructor(
     }
 
     fun getStudentsByLesson(lessonUID: String, callback: (Resource<List<Student>>) -> Unit) {
-        userCollectionRef.whereArrayContains(UserField.LESSON_UIDS.key, lessonUID).get()
+        userCollectionRef.whereEqualTo(UserField.IS_VERIFIED.key, VerifiedStatus.VERIFIED.asString)
+            .whereArrayContains(UserField.LESSON_UIDS.key, lessonUID).get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val result = task.result ?: return@addOnCompleteListener
@@ -140,12 +158,27 @@ class FirebaseRepository @Inject constructor(
         }
     }
 
+    fun getAvailableStudents(lessonUid: String, callback: (Resource<List<Student>>) -> Unit) {
+        callback(Resource.Loading())
+        userCollectionRef.whereEqualTo(UserField.IS_VERIFIED.key, VerifiedStatus.VERIFIED.asString)
+            .get().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val result = task.result ?: return@addOnCompleteListener
+                    val studentList = convertDocumentToStudentList(result.documents)
+                    val itemsToRemove = studentList.filter { it.lessonUids.contains(lessonUid) }
+                    studentList.removeAll(itemsToRemove)
+                    callback(Resource.Success(studentList))
+                } else callback(Resource.Error(message = task.exception?.message?.stringfy()))
+            }
+    }
+
     fun addStudentToLesson(
         lessonUid: String, studentList: List<Student>, callback: (Resource<Unit>) -> Unit
     ) {
         callback(Resource.Loading())
         lessonCollectionRef.document(lessonUid).get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
+                Log.d(TAG, "addStudentToLesson: success")
                 val result = task.result ?: return@addOnCompleteListener
                 val lesson = convertDocumentToLesson(result) ?: return@addOnCompleteListener
                 val tempUidList = mutableListOf<String>()
@@ -194,11 +227,12 @@ class FirebaseRepository @Inject constructor(
     fun answerRequest(
         student: Student, isAccepted: Boolean, callback: (Resource<Nothing>) -> Unit
     ) {
-        student.isVerified = isAccepted
-        userCollectionRef.document(student.uid).set(student).addOnCompleteListener { task ->
-            if (task.isSuccessful) callback(Resource.Success())
-            else callback(Resource.Error(message = task.exception?.message?.stringfy()))
-        }
+        student.isVerified = isAccepted.toVerifiedStatus()
+        userCollectionRef.document(student.uid).set(student.toHashMap())
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) callback(Resource.Success())
+                else callback(Resource.Error(message = task.exception?.message?.stringfy()))
+            }
     }
 
     fun deleteAllLessons() {
@@ -249,7 +283,7 @@ class FirebaseRepository @Inject constructor(
                     val lessonUids = it.lessonUids.toMutableList()
                     lessonUids.add(lessonUID)
                     it.lessonUids = lessonUids
-                    userCollectionRef.document(studentUid).set(student)
+                    userCollectionRef.document(studentUid).set(student.toHashMap())
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) callback(Resource.Success())
                             else callback(Resource.Error(message = task.exception?.message?.stringfy()))
@@ -262,24 +296,25 @@ class FirebaseRepository @Inject constructor(
 
 
     private fun convertDocumentToLessonList(
-        documentSnapshot: List<DocumentSnapshot>
-    ): MutableList<Lesson> {
-        val list = mutableListOf<Lesson>()
-        for (document in documentSnapshot) {
-            val lesson = convertDocumentToLesson(document)
-            lesson?.let { list.add(it) }
+        docs: List<DocumentSnapshot>
+    ): List<Lesson> {
+        val lessonList = mutableListOf<Lesson>()
+        docs.map {
+            val lessonNullable = convertDocumentToLesson(it)
+            lessonNullable?.let { lesson -> lessonList.add(lesson) }
         }
-        return list
+        return lessonList
     }
 
     private fun convertDocumentToStudentList(
         documentSnapshot: List<DocumentSnapshot>
     ): MutableList<Student> {
         val list = mutableListOf<Student>()
-        for (document in documentSnapshot) {
-            val student = convertDocumentToStudent(document)
+        documentSnapshot.map {
+            val student = convertDocumentToStudent(it)
             student?.let { list.add(it) }
         }
+
         return list
     }
 
@@ -287,15 +322,26 @@ class FirebaseRepository @Inject constructor(
         return try {
             val uid = doc.get(UserField.UID.key) as String
             val email = doc.get(UserField.EMAIL.key) as String
-            val name = doc.get(UserField.NAME.key) as String?
+            val name = doc.get(UserField.NAME.key) as String
+            val surname = doc.get(UserField.SURNAME.key) as String?
+            val age = doc.get(UserField.AGE.key) as String?
+            val height = doc.get(UserField.HEIGHT.key) as String?
+            val weight = doc.get(UserField.WEIGHT.key) as String?
             val lessonUids = doc.get(UserField.LESSON_UIDS.key) as List<String>
-            val isVerified = doc.get(UserField.IS_VERIFIED.key) as Boolean
+            val isVerified = doc.get(UserField.IS_VERIFIED.key) as String?
+            val bmi = doc.get(UserField.BMI.key) as String?
+            val isVerifiedTranslated = isVerified?.toVerifiedStatus()
             User(
-                uid = uid,
-                email = email,
-                name = name,
-                isVerified = isVerified,
-                lessonUids = lessonUids
+                uid,
+                email,
+                name,
+                surname,
+                age,
+                height,
+                weight,
+                bmi,
+                isVerifiedTranslated!!,
+                lessonUids
             )
         } catch (e: Exception) {
             Log.d(TAG, "convertDocumentToStudent: ${e}\n ${e.cause} message: ${e.message}")
@@ -320,5 +366,6 @@ class FirebaseRepository @Inject constructor(
             null
         }
     }
+
 
 }

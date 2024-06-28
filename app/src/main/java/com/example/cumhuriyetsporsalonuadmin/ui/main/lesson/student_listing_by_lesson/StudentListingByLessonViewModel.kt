@@ -1,5 +1,6 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main.lesson.student_listing_by_lesson
 
+import android.util.Log
 import com.example.cumhuriyetsporsalonuadmin.data.repository.FirebaseRepository
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
 import com.example.cumhuriyetsporsalonuadmin.domain.model.User
@@ -23,6 +24,7 @@ class StudentListingByLessonViewModel @Inject constructor(
     }
 
     private fun studentCallback(result: Resource<List<User>>) {
+        Log.d(TAG, "studentCallback: t")
         when (result) {
             is Resource.Error -> {
                 setLoading(false)
@@ -34,6 +36,7 @@ class StudentListingByLessonViewModel @Inject constructor(
                 setLoading(false)
                 result.data?.let {
                     studentList.addAll(it)
+                    Log.d(TAG, "studentCallback: $studentList")
                     sendAction(StudentListingByLessonActionBus.StudentsLoaded)
                 }
             }

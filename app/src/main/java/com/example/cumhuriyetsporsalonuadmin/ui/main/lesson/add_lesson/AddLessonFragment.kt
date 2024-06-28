@@ -65,6 +65,7 @@ class AddLessonFragment :
             setHoursTextView(binding.tvEndShow, hourOfDay, minute)
 
         }
+        // set clickable after first is selected
 
 
         binding.apply {

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -81,15 +82,18 @@ abstract class BaseFragment<ActionBus : BaseActionBus, ViewModel : BaseViewModel
 
     fun showSuccessMessage(message: Stringfy? = null) {
         progressBar.hide()
-        val _message = message?.getString(requireContext())
-
-        messageHandler.sneakerApiMessage(MessageHandler.StateRequest.Success, _message)
+        val _message = message ?: R.string.default_success_message.stringfy()
+        val messageShowing = _message.getString(requireContext())
+        Toast.makeText(requireContext(), messageShowing, Toast.LENGTH_SHORT).show()
+//        messageHandler.sneakerApiMessage(MessageHandler.StateRequest.Success, _message)
     }
 
     fun showErrorMessage(message: Stringfy? = null) {
         progressBar.hide()
-        val _message = message?.getString(requireContext())
-        messageHandler.sneakerApiMessage(MessageHandler.StateRequest.Error, _message)
+        val _message = message ?: R.string.default_error_message.stringfy()
+        val messageShowing = _message.getString(requireContext())
+        Toast.makeText(requireContext(), messageShowing, Toast.LENGTH_SHORT).show()
+//        messageHandler.sneakerApiMessage(MessageHandler.StateRequest.Error, _message)
     }
 
     abstract fun initPage()

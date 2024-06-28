@@ -1,13 +1,15 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main.lesson.student_listing_by_lesson.add_student
 
+import android.util.Log
+import androidx.core.view.isVisible
 import androidx.navigation.fragment.navArgs
 import com.example.cumhuriyetsporsalonuadmin.R
 import com.example.cumhuriyetsporsalonuadmin.databinding.FragmentAddStudentBinding
-import com.example.cumhuriyetsporsalonuadmin.domain.model.Student
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseFragment
 import com.example.cumhuriyetsporsalonuadmin.ui.main.all_student_listing.adapter.StudentAdapter
 import com.example.cumhuriyetsporsalonuadmin.utils.Stringfy.Companion.stringfy
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 
 @AndroidEntryPoint
 class AddStudentFragment :
@@ -24,12 +26,18 @@ class AddStudentFragment :
             is AddStudentActionBus.ShowError -> {}
 
             AddStudentActionBus.StudentsLoaded -> {
-                studentAdapter.submitList(viewModel.selectableStudentList)
+//                studentAdapter.submitList(viewModel.selectableStudentList)
+//                setTvVisibility(viewModel.selectableStudentList.value?.isEmpty())
             }
 
             AddStudentActionBus.StudentsAdded -> {
-                showSuccessMessage("Student Added".stringfy())
+//                showSuccessMessage("Student Added".stringfy())
+//                delay(10000)
+                viewModel.getStudents()
+//                setBtnSpecs(viewModel.getSelectedStudents().count())
+//                setTvVisibility(viewModel.selectableStudentList.isEmpty())
             }
+
             AddStudentActionBus.LessonNameLoaded -> {
                 setLessonName(viewModel.lessonName)
             }
@@ -37,10 +45,11 @@ class AddStudentFragment :
     }
 
     override fun initPage() {
-        val lessonUid = args.lessonUid
+        viewModel.args = args
         setRV()
-        viewModel.getLessonName(lessonUid)
-        viewModel.getStudents(lessonUid)
+        setObserver()
+        viewModel.getLessonName()
+        viewModel.getStudents()
         setOnClickListeners()
     }
 
@@ -48,17 +57,11 @@ class AddStudentFragment :
         studentAdapter = StudentAdapter(true) { student, index ->
             val newStudentInstance = student.getReversed()
 
-            // Listenin kopyasını oluşturun ve güncelleyin
-            val updatedList = viewModel.selectableStudentList.toMutableList()
-            updatedList[index] = newStudentInstance
+            val updatedList = viewModel.selectableStudentList.value?.toMutableList()
+            updatedList?.set(index, newStudentInstance)
 
-            // Güncellenmiş listeyi viewModel'e atayın
-            viewModel.selectableStudentList = updatedList
+            viewModel.selectableStudentList.value = updatedList
 
-            // Adapter'e güncellenmiş listeyi verin ve adapter'i bilgilendirin
-            studentAdapter.submitList(viewModel.selectableStudentList.toList())
-//            viewModel.getSelectedStudents()
-            setBtnSpecs(viewModel.getSelectedStudents().count())
         }
         binding.rvStudent.adapter = studentAdapter
     }
@@ -66,8 +69,18 @@ class AddStudentFragment :
     private fun setOnClickListeners() {
         binding.apply {
             btnAdd.setOnClickListener {
-                viewModel.addStudent(args.lessonUid, viewModel.getSelectedStudents())
+                Log.d(TAG, "setOnClickListeners: tikladim")
+                viewModel.addStudent(viewModel.getSelectedStudents())
             }
+        }
+    }
+
+    private fun setObserver() {
+        viewModel.selectableStudentList.observe(viewLifecycleOwner) {
+            studentAdapter.submitList(it)
+            setTvVisibility(it.isEmpty())
+            setBtnSpecs(viewModel.getSelectedStudents().count())
+
         }
     }
 
@@ -75,14 +88,22 @@ class AddStudentFragment :
         binding.tvTitle.text = lessonName
     }
 
-    private fun addStudent(lessonId: String, studentList: List<Student>) {
-        viewModel.addStudent(lessonId, studentList)
-    }
 
     private fun setBtnSpecs(studentCount: Int) {
+        if (studentCount == 0) {
+            binding.btnAdd.isClickable = false
+            " ${
+                R.string.add_students.stringfy().getString(requireContext())
+            }".also { binding.btnAdd.text = it }
+            return
+        }
+        binding.btnAdd.isClickable = true
         " ${
             R.string.add_students.stringfy().getString(requireContext())
         } ($studentCount)".also { binding.btnAdd.text = it }
-        binding.btnAdd.isClickable = studentCount != 0
+    }
+
+    private fun setTvVisibility(isVisible: Boolean) {
+        binding.noStudentFound.isVisible = isVisible
     }
 }

@@ -12,4 +12,6 @@ sealed interface AllStudentListingActionBus : BaseActionBus {
 
     data class ShowError(val error: Stringfy?) : AllStudentListingActionBus
 
+    data object StudentsFiltered : AllStudentListingActionBus
+
 }

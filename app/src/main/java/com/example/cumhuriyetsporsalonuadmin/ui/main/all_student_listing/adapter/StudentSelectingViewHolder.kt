@@ -12,7 +12,7 @@ class StudentSelectingViewHolder(
 
     override fun bind(student: SelectableData<Student>) {
         binding.apply {
-            tvName.text = student.data.name
+            "${student.data.name} ${student.data.surname}".also { tvName.text = it }
             tvEmail.text = student.data.email
             val resId =
                 if (student.isSelected) R.drawable.ic_check_green else R.drawable.ic_check_gray

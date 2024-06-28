@@ -8,6 +8,7 @@ enum class UserField(val key: String) {
     AGE("age"),
     HEIGHT("height"),
     WEIGHT("weight"),
+    BMI("bmi"),
     IS_VERIFIED("verified"),
     LESSON_UIDS("lessonUids")
 }

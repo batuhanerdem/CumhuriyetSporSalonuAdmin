@@ -1,12 +1,13 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main.all_student_listing
 
+import androidx.lifecycle.viewModelScope
 import com.example.cumhuriyetsporsalonuadmin.data.repository.FirebaseRepository
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Student
-import com.example.cumhuriyetsporsalonuadmin.domain.model.User
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseViewModel
 import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -15,14 +16,16 @@ class AllStudentListingViewModel @Inject constructor(
 ) : BaseViewModel<AllStudentListingActionBus>() {
 
     val studentList = mutableListOf<Student>()
+    val filteredList = mutableListOf<Student>()
     lateinit var lesson: Lesson
+
     init {
 //        firebaseRepository.deleteEverything()
     }
 
     fun getStudents() {
         studentList.clear()
-        firebaseRepository.getAllStudents(::studentCallback)
+        firebaseRepository.getVerifiedStudents(::studentCallback)
     }
 
     private fun studentCallback(result: Resource<List<Student>>) {
@@ -49,6 +52,22 @@ class AllStudentListingViewModel @Inject constructor(
                 lesson = it
                 sendAction(AllStudentListingActionBus.LessonLoaded)
             }
+        }
+    }
+
+    fun filterList(query: String?) {
+        filteredList.clear()
+        viewModelScope.launch {
+            if (query == null) return@launch
+            studentList.map {
+                if (it.name.toString().lowercase()
+                        .contains(query.toString().lowercase()) || it.surname.toString().lowercase()
+                        .contains(query.toString().lowercase())
+                ) {
+                    filteredList.add(it)
+                }
+            }
+            sendAction(AllStudentListingActionBus.StudentsFiltered)
         }
     }
 }

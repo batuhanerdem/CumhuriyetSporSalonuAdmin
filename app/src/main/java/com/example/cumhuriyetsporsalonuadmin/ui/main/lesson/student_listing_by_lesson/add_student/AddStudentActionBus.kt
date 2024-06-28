@@ -7,7 +7,7 @@ sealed interface AddStudentActionBus : BaseActionBus {
 
     data object Init : AddStudentActionBus
 
-    data class ShowError(val error: Stringfy?) : AddStudentActionBus
+    data class ShowError(val error: Stringfy? = null) : AddStudentActionBus
 
     data object StudentsLoaded : AddStudentActionBus
 

@@ -1,13 +1,13 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main.all_student_listing
 
 import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
 import com.example.cumhuriyetsporsalonuadmin.R
 import com.example.cumhuriyetsporsalonuadmin.databinding.FragmentAllStudentListingBinding
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Student
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseFragment
 import com.example.cumhuriyetsporsalonuadmin.ui.main.all_student_listing.adapter.StudentAdapter
-import com.example.cumhuriyetsporsalonuadmin.ui.main.lesson.student_listing_by_lesson.StudentListingByLessonFragmentDirections
 import com.example.cumhuriyetsporsalonuadmin.utils.SelectableData.Companion.toSelectable
 import com.example.cumhuriyetsporsalonuadmin.utils.Stringfy.Companion.stringfy
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,11 +29,15 @@ class AllStudentListingFragment :
 
             AllStudentListingActionBus.StudentsLoaded -> {
                 studentAdapter.submitList(viewModel.studentList.toSelectable())
-                binding.noStudentFound.isVisible = viewModel.studentList.isEmpty()
+                setVisibility(viewModel.studentList.isEmpty())
             }
 
             AllStudentListingActionBus.LessonLoaded -> {
                 setTitleByLesson(viewModel.lesson)
+            }
+
+            AllStudentListingActionBus.StudentsFiltered -> {
+                studentAdapter.submitList(viewModel.filteredList.toSelectable())
             }
         }
     }
@@ -42,16 +46,35 @@ class AllStudentListingFragment :
         viewModel.getStudents()
         setOnClickListeners()
         setRV()
+        setSearchListener()
     }
 
     private fun setOnClickListeners() {
-
+        binding.apply {
+            imgCancel.setOnClickListener {
+                edtSearch.text.clear()
+            }
+        }
     }
 
     private fun setRV() {
         studentAdapter = StudentAdapter(false, studentOnClick = ::goToStudent)
-
         binding.rvStudent.adapter = studentAdapter
+    }
+
+    private fun setVisibility(isVisible: Boolean) {
+        binding.noStudentFound.isVisible = isVisible
+        binding.edtSearch.isVisible = !isVisible
+
+    }
+
+    private fun setSearchListener() {
+        binding.edtSearch.text.clear()
+        binding.edtSearch.doOnTextChanged { text, _, _, _ ->
+            changeXButtonVisibility(text.toString().isEmpty())
+            viewModel.filterList(text.toString())
+        }
+
     }
 
     private fun goToStudent(student: Student) {
@@ -67,6 +90,8 @@ class AllStudentListingFragment :
         binding.tvTitle.text = titleString
     }
 
-
+    private fun changeXButtonVisibility(visibility: Boolean) {
+        binding.imgCancel.isVisible = !visibility
+    }
 
 }
