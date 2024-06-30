@@ -57,6 +57,10 @@ class StudentListingByLessonFragment :
                 )
             navigateTo(action)
         }
+//        binding.tvEdit.setOnClickListener {
+//            binding.tvEdit.isVisible = false
+//            binding.tvShow.isVisible = true
+//        }
     }
 
     private fun setRV() {
@@ -66,7 +70,7 @@ class StudentListingByLessonFragment :
 
     private fun goToStudent(student: Student) {
         val action =
-            StudentListingByLessonFragmentDirections.actionStudentListingByLessonFragmentToLessonListingByStudent(
+            StudentListingByLessonFragmentDirections.actionStudentListingByLessonFragmentToStudentProfileFragment(
                 student.uid
             )
         navigateTo(action)

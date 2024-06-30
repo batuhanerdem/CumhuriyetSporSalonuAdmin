@@ -14,7 +14,7 @@ class LessonViewModel @Inject constructor(
     var lessonList = listOf<Lesson>()
 
     fun getClasses() {
-        firebaseRepository.getLessons { result ->
+        firebaseRepository.getAllLessons { result ->
             when (result) {
                 is Resource.Loading -> setLoading(true)
                 is Resource.Error -> sendAction(LessonActionBus.ShowError(result.message))

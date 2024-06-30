@@ -38,11 +38,8 @@
         android:label="fragment_all_student_listing"
         tools:layout="@layout/fragment_all_student_listing" >
         <action
-            android:id="@+id/action_allStudentListingFragment_to_lessonFragment"
-            app:destination="@id/lessonFragment" />
-        <action
-            android:id="@+id/action_allStudentListingFragment_to_lessonListingByStudent"
-            app:destination="@id/lessonListingByStudent" />
+            android:id="@+id/action_allStudentListingFragment_to_studentProfileFragment"
+            app:destination="@id/studentProfileFragment" />
     </fragment>
     <fragment
         android:id="@+id/studentListingByLessonFragment"
@@ -56,8 +53,8 @@
             android:id="@+id/action_studentListingByLessonFragment_to_addStudentFragment"
             app:destination="@id/addStudentFragment" />
         <action
-            android:id="@+id/action_studentListingByLessonFragment_to_lessonListingByStudent"
-            app:destination="@id/lessonListingByStudent" />
+            android:id="@+id/action_studentListingByLessonFragment_to_studentProfileFragment"
+            app:destination="@id/studentProfileFragment" />
     </fragment>
     <fragment
         android:id="@+id/addStudentFragment"
@@ -79,5 +76,29 @@
         <action
             android:id="@+id/action_lessonListingByStudent_to_studentListingByLessonFragment"
             app:destination="@id/studentListingByLessonFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/studentProfileFragment"
+        android:name="com.example.cumhuriyetsporsalonuadmin.ui.main.all_student_listing.student_profile.StudentProfileFragment"
+        android:label="fragment_student_profile"
+        tools:layout="@layout/fragment_student_profile" >
+        <action
+            android:id="@+id/action_studentProfileFragment_to_lessonListingByStudent"
+            app:destination="@id/lessonListingByStudent" />
+        <argument
+            android:name="uid"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_studentProfileFragment_to_editStudentProfileFragment"
+            app:destination="@id/editStudentProfileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editStudentProfileFragment"
+        android:name="com.example.cumhuriyetsporsalonuadmin.ui.main.all_student_listing.student_profile.edit_profile.EditStudentProfileFragment"
+        android:label="fragment_edit_student_profile"
+        tools:layout="@layout/fragment_edit_student_profile" >
+        <argument
+            android:name="uid"
+            app:argType="string" />
     </fragment>
 </navigation>

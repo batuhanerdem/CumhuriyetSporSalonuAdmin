@@ -26,8 +26,7 @@
         android:src="@drawable/ic_plus"
         app:layout_constraintBottom_toBottomOf="@id/tvTitle"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tvTitle"
-        />
+        app:layout_constraintTop_toTopOf="@id/tvTitle" />
 
     <TextView
         android:id="@+id/tvEdit"
@@ -36,12 +35,25 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="24dp"
         android:fontFamily="@font/lexend_semibold"
-        android:text="Edit"
+        android:text="@string/edit"
         android:textSize="17sp"
         app:layout_constraintBottom_toBottomOf="@id/tvTitle"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tvTitle"
-        />
+        app:layout_constraintTop_toTopOf="@id/tvTitle" />
+
+    <TextView
+        android:id="@+id/tvShow"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="24dp"
+        android:fontFamily="@font/lexend_semibold"
+        android:text="@string/cancel"
+        android:textSize="17sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@id/tvTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvTitle" />
 
     <TextView
         android:id="@+id/noStudentFound"
@@ -50,9 +62,9 @@
         android:layout_marginTop="30dp"
         android:fontFamily="@font/lexend_semibold"
         android:text="@string/no_student_found_for_this_lesson"
+        android:textAlignment="center"
         android:textColor="@color/dark_gray"
         android:textSize="20sp"
-        android:textAlignment="center"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

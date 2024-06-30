@@ -17,7 +17,7 @@ class LessonListingByStudentViewModel @Inject constructor(
     lateinit var student: Student
 
     fun getClasses(studentUid: String) {
-        firebaseRepository.getLessonByStudentUid(studentUid) { result ->
+        firebaseRepository.getLessonsByStudentUid(studentUid) { result ->
             when (result) {
                 is Resource.Loading -> setLoading(true)
                 is Resource.Error -> {

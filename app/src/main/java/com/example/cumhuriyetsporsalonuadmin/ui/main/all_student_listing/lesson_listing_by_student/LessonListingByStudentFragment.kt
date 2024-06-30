@@ -52,7 +52,10 @@ class LessonListingByStudentFragment :
     }
 
     private fun setOnClickListeners() {
-        
+        binding.imgBack.setOnClickListener {
+            navigateBack()
+        }
+
     }
 
 }

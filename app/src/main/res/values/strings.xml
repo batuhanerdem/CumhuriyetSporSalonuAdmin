@@ -73,4 +73,18 @@
     <string name="search_student">Öğrenci Ara</string>
 
 
+    <string name="profile">Profil</string>
+    <string name="edit_profile">Profili Düzenle</string>
+
+    <string name="age">Yaş</string>
+    <string name="profile_info">* Boy, kilo ve bmi(vücut kitle endeksi) yalnızca bmi hesaplama alanından değiştirilebilir</string>
+    <string name="name">İsim</string>
+    <string name="surname">Soyisim</string>
+
+    <string name="student_saved">Öğrenci kaydedildi</string>
+    <string name="edit">Düzenle</string>
+    <string name="show">Göster</string>
+
+
+
 </resources>

@@ -106,7 +106,7 @@ class FirebaseRepository @Inject constructor(
             }
     }
 
-    fun getLessons(callback: (Resource<List<Lesson>>) -> Unit) {
+    fun getAllLessons(callback: (Resource<List<Lesson>>) -> Unit) {
         callback(Resource.Loading())
         lessonCollectionRef.orderBy(LessonField.DAY.key).orderBy(LessonField.START_HOUR.key).get()
             .addOnCompleteListener { task ->
@@ -120,7 +120,8 @@ class FirebaseRepository @Inject constructor(
 
     fun getLessonByUID(lessonUID: String, callback: (Resource<Lesson>) -> Unit) {
         callback(Resource.Loading())
-        lessonCollectionRef.whereEqualTo(LessonField.UID.key, lessonUID).get()
+        lessonCollectionRef.whereEqualTo(LessonField.UID.key, lessonUID)
+            .orderBy(LessonField.DAY.key).orderBy(LessonField.START_HOUR.key).get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) { //test
                     try {
@@ -137,7 +138,7 @@ class FirebaseRepository @Inject constructor(
 
     }
 
-    fun getLessonByStudentUid(studentUid: String, callback: (Resource<List<Lesson>>) -> Unit) {
+    fun getLessonsByStudentUid(studentUid: String, callback: (Resource<List<Lesson>>) -> Unit) {
         callback(Resource.Loading())
         lessonCollectionRef.whereArrayContains(LessonField.STUDENT_UIDS.key, studentUid).get()
             .addOnCompleteListener { task ->
@@ -249,6 +250,14 @@ class FirebaseRepository @Inject constructor(
         adminDocumentRef.set(admin).addOnCompleteListener { task ->
             if (task.isSuccessful) callback(Resource.Success())
             else callback(Resource.Error(message = task.exception?.message?.stringfy()))
+        }
+    }
+
+    fun setUser(user: User, callback: (Resource<Unit>) -> Unit) {
+        userCollectionRef.document(user.uid).set(user.toHashMap()).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                callback(Resource.Success())
+            } else callback(Resource.Error(message = task.exception?.message?.stringfy()))
         }
     }
 

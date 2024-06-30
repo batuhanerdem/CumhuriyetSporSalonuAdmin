@@ -71,5 +71,17 @@
     <string name="no_student_found">No available student found</string>
     <string name="search_student">Search Student</string>
 
+    <string name="profile">Profile</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="age">Age</string>
+    <string name="profile_info">* Age, weight, and BMI (body mass index) can only be changed from the BMI calculation section</string>
+    <string name="name">Name</string>
+    <string name="surname">Surname</string>
+    <string name="student_saved">Student saved</string>
+
+    <string name="edit">Edit</string>
+    <string name="show">Show</string>
+
+
 
 </resources>

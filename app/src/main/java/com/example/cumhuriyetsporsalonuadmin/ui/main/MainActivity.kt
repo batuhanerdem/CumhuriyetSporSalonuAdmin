@@ -27,8 +27,16 @@ class MainActivity : BaseActivity<MainActionBus, MainViewModel, ActivityMainBind
         val navController = navHostFragment.navController
 
         navController.addOnDestinationChangedListener { _, navDestination, _ ->
-            binding.bottomNavigationView.isGone =
-                navDestination.id == R.id.addLessonFragment || navDestination.id == R.id.studentListingByLessonFragment || navDestination.id == R.id.addStudentFragment || navDestination.id == R.id.lessonListingByStudent
+            binding.bottomNavigationView.isGone = when (navDestination.id) {
+                R.id.addLessonFragment,
+                R.id.studentListingByLessonFragment,
+                R.id.addStudentFragment,
+                R.id.lessonListingByStudent,
+                R.id.editStudentProfileFragment,
+                R.id.studentProfileFragment -> true
+
+                else -> false
+            }
         }
         binding.bottomNavigationView.setupWithNavController(navController)
     }

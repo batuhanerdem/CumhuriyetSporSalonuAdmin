@@ -19,10 +19,6 @@ class AllStudentListingViewModel @Inject constructor(
     val filteredList = mutableListOf<Student>()
     lateinit var lesson: Lesson
 
-    init {
-//        firebaseRepository.deleteEverything()
-    }
-
     fun getStudents() {
         studentList.clear()
         firebaseRepository.getVerifiedStudents(::studentCallback)

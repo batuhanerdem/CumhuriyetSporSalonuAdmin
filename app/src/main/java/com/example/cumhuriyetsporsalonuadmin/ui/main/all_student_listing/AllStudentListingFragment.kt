@@ -79,7 +79,7 @@ class AllStudentListingFragment :
 
     private fun goToStudent(student: Student) {
         val action =
-            AllStudentListingFragmentDirections.actionAllStudentListingFragmentToLessonListingByStudent(
+            AllStudentListingFragmentDirections.actionAllStudentListingFragmentToStudentProfileFragment(
                 student.uid
             )
         navigateTo(action)

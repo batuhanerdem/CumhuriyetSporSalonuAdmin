@@ -26,7 +26,7 @@ class LoginFragment : BaseFragment<LoginActionBus, LoginViewModel, FragmentLogin
             LoginActionBus.LoggedIn -> {
                 progressBar.hide()
                 val message = R.string.login_success.stringfy()
-                showSuccessMessage(message)
+//                showSuccessMessage(message)
                 navigateHome()
             }
 

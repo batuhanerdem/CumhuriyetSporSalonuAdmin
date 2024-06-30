@@ -87,6 +87,7 @@
             android:id="@+id/edtPassword"
             android:layout_width="0dp"
             android:layout_height="50dp"
+            android:inputType="textPassword"
             android:layout_marginTop="20dp"
             android:background="@drawable/bg_gray_edittext"
             android:fontFamily="@font/lexend_regular"

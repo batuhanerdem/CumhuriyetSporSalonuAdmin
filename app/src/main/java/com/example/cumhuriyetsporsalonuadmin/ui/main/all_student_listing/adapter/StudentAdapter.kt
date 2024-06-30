@@ -53,6 +53,10 @@ class StudentAdapter(
         }
     }
 
+//    fun test(){
+//        this
+//    }
+
 }
 
 typealias Index = Int
