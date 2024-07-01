@@ -85,6 +85,9 @@
     <string name="edit">Düzenle</string>
     <string name="show">Göster</string>
 
+    <string name="student_removed">Öğrenci kaydı silindi</string>
+
+
 
 
 </resources>

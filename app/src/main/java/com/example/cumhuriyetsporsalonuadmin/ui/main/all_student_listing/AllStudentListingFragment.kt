@@ -6,6 +6,7 @@ import com.example.cumhuriyetsporsalonuadmin.R
 import com.example.cumhuriyetsporsalonuadmin.databinding.FragmentAllStudentListingBinding
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Student
+import com.example.cumhuriyetsporsalonuadmin.domain.model.StudentViewHolderTypes
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseFragment
 import com.example.cumhuriyetsporsalonuadmin.ui.main.all_student_listing.adapter.StudentAdapter
 import com.example.cumhuriyetsporsalonuadmin.utils.SelectableData.Companion.toSelectable
@@ -58,7 +59,7 @@ class AllStudentListingFragment :
     }
 
     private fun setRV() {
-        studentAdapter = StudentAdapter(false, studentOnClick = ::goToStudent)
+        studentAdapter = StudentAdapter(StudentViewHolderTypes.LISTING, studentOnClick = ::goToStudent)
         binding.rvStudent.adapter = studentAdapter
     }
 

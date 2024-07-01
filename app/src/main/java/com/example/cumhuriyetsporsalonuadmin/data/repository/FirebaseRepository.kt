@@ -18,6 +18,7 @@ import com.example.cumhuriyetsporsalonuadmin.utils.Stringfy.Companion.stringfy
 import com.example.cumhuriyetsporsalonuadmin.utils.TAG
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 
@@ -123,14 +124,14 @@ class FirebaseRepository @Inject constructor(
         lessonCollectionRef.whereEqualTo(LessonField.UID.key, lessonUID)
             .orderBy(LessonField.DAY.key).orderBy(LessonField.START_HOUR.key).get()
             .addOnCompleteListener { task ->
-                if (task.isSuccessful) { //test
+                if (task.isSuccessful) {
                     try {
                         val result = task.result ?: return@addOnCompleteListener
                         val lesson = convertDocumentToLesson(result.documents[0])
                             ?: return@addOnCompleteListener
                         callback(Resource.Success(lesson))
                     } catch (e: Exception) {
-
+                        Log.d(TAG, "getLessonByUID: ${e.message}")
                     }
 
                 } else callback(Resource.Error(message = task.exception?.message?.stringfy()))
@@ -217,11 +218,71 @@ class FirebaseRepository @Inject constructor(
         }
     }
 
-    fun deleteLesson(uid: String, callback: (Resource<Nothing>) -> Unit) {
+    fun deleteLesson(lessonUid: String, callback: (Resource<Nothing>) -> Unit) {
         callback(Resource.Loading())
-        lessonCollectionRef.document(uid).delete().addOnCompleteListener { task ->
+        lessonCollectionRef.document(lessonUid).delete().addOnCompleteListener { task ->
             if (task.isSuccessful) callback(Resource.Success())
             else callback(Resource.Error(message = task.exception?.message?.stringfy()))
+        }
+    }
+
+    fun deleteStudent(studentUid: String, callback: (Resource<Nothing>) -> Unit) {
+        callback(Resource.Loading())
+        userCollectionRef.document(studentUid).delete().addOnCompleteListener { task ->
+            if (task.isSuccessful) callback(Resource.Success())
+            else callback(Resource.Error(message = task.exception?.message?.stringfy()))
+        }
+    }
+
+    fun deleteStudentFromLesson(
+        studentUid: String, lessonUid: String, callback: (Resource<Unit>) -> Unit
+    ) {
+        callback(Resource.Loading())
+        deleteLessonUidFromStudent(studentUid, lessonUid, callback)
+        deleteStudentUidFromLesson(studentUid, lessonUid, callback)
+    }
+
+    private fun deleteStudentUidFromLesson(
+        studentUid: String, lessonUid: String, callback: (Resource<Unit>) -> Unit
+    ) {
+        lessonCollectionRef.document(lessonUid).get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val result = task.result
+                val lesson = convertDocumentToLesson(result)
+                lesson?.let {
+                    val newStudentUids = it.studentUids.toMutableList()
+                    newStudentUids.remove(studentUid)
+                    it.studentUids = newStudentUids
+                    val firebaseLesson = it.toFirebaseLesson()
+                    lessonCollectionRef.document(it.uid).set(firebaseLesson)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) callback(Resource.Success())
+                            else callback(Resource.Error(message = task.exception?.message?.stringfy()))
+                        }
+                }
+            } else callback(Resource.Error(message = task.exception?.message?.stringfy()))
+
+        }
+    }
+
+    private fun deleteLessonUidFromStudent(
+        studentUid: String, lessonUid: String, callback: (Resource<Unit>) -> Unit
+    ) {
+        userCollectionRef.document(studentUid).get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val result = task.result
+                val student = convertDocumentToStudent(result)
+                student?.let {
+                    val newList = it.lessonUids.toMutableList()
+                    newList.remove(lessonUid)
+                    it.lessonUids = newList
+                    userCollectionRef.document(it.uid).set(it.toHashMap()).addOnCompleteListener { task ->
+                        if (!task.isSuccessful) {
+                            callback(Resource.Error(message = task.exception?.message?.stringfy()))
+                        }
+                    }
+                }
+            } else callback(Resource.Error(message = task.exception?.message?.stringfy()))
         }
     }
 

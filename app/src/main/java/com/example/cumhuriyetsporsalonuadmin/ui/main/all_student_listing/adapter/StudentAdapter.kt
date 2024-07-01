@@ -6,27 +6,47 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.example.cumhuriyetsporsalonuadmin.databinding.ItemStudentAddBinding
 import com.example.cumhuriyetsporsalonuadmin.databinding.ItemStudentBinding
+import com.example.cumhuriyetsporsalonuadmin.databinding.ItemStudentRemoveBinding
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Student
+import com.example.cumhuriyetsporsalonuadmin.domain.model.StudentViewHolderTypes
+import com.example.cumhuriyetsporsalonuadmin.domain.model.StudentViewHolderTypes.ADDING
+import com.example.cumhuriyetsporsalonuadmin.domain.model.StudentViewHolderTypes.LISTING
+import com.example.cumhuriyetsporsalonuadmin.domain.model.StudentViewHolderTypes.REMOVING
 import com.example.cumhuriyetsporsalonuadmin.utils.SelectableData
 
 class StudentAdapter(
-    private val isSelecting: Boolean,
-    private val studentOnClick: ((Student) -> Unit)? = null,
+    private var type: StudentViewHolderTypes,
+    private val studentOnClick: ((Student) -> Unit) = {},
+    private val removeStudent: ((studentUid: String) -> Unit) = {},
     private val addStudent: (SelectableData<Student>, Index) -> Unit = { _, _: Index -> },
 ) : ListAdapter<SelectableData<Student>, StudentViewHolder>(StudentDiffCallback) {
 
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StudentViewHolder {
-        return if (isSelecting) {
-            val binding =
-                ItemStudentAddBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            StudentSelectingViewHolder(binding, addStudent)
-        } else {
-            val binding =
-                ItemStudentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            StudentListingViewHolder(
-                binding, studentOnClick!! //fix that sometime
-            )
+        return when (type) {
+            LISTING -> {
+                val binding =
+                    ItemStudentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                StudentListingViewHolder(
+                    binding, studentOnClick
+                )
+            }
+
+            ADDING -> {
+                val binding = ItemStudentAddBinding.inflate(
+                    LayoutInflater.from(parent.context), parent, false
+                )
+                StudentSelectingViewHolder(binding, addStudent)
+            }
+
+            REMOVING -> {
+                val binding = ItemStudentRemoveBinding.inflate(
+                    LayoutInflater.from(parent.context), parent, false
+                )
+                StudentRemoveViewHolder(binding, removeStudent)
+            }
         }
+
     }
 
     override fun onBindViewHolder(holder: StudentViewHolder, position: Int) {
@@ -37,26 +57,41 @@ class StudentAdapter(
         }
     }
 
-    object StudentDiffCallback : DiffUtil.ItemCallback<SelectableData<Student>>() {
+    companion object StudentDiffCallback : DiffUtil.ItemCallback<SelectableData<Student>>() {
+
+        var isViewTypeChanged = false
         override fun areItemsTheSame(
             oldItem: SelectableData<Student>, newItem: SelectableData<Student>
         ): Boolean {
-            return oldItem == newItem
-//            return false //testing
+            val refreshItems = (oldItem == newItem) && !isViewTypeChanged
+
+            return refreshItems
         }
 
         override fun areContentsTheSame(
             oldItem: SelectableData<Student>, newItem: SelectableData<Student>
         ): Boolean {
-//            return false //testing
-            return oldItem.isSelected == newItem.isSelected
+            val refreshItems = (oldItem.isSelected == newItem.isSelected) && !isViewTypeChanged
+            isViewTypeChanged = false
+            return refreshItems
         }
     }
 
-//    fun test(){
-//        this
-//    }
+    override fun getItemViewType(position: Int): Int {
+        return when (type) {
+            LISTING -> LISTING.ordinal
+            ADDING -> ADDING.ordinal
+            REMOVING -> REMOVING.ordinal
+        }
+    }
+
+    fun setViewHolderType(viewHolderType: StudentViewHolderTypes) {
+        this.type = viewHolderType
+        isViewTypeChanged = true
+    }
 
 }
+
+const val TAG = "tag"
 
 typealias Index = Int

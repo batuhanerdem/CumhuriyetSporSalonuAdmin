@@ -1,15 +1,14 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main.lesson.student_listing_by_lesson.add_student
 
-import android.util.Log
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.navArgs
 import com.example.cumhuriyetsporsalonuadmin.R
 import com.example.cumhuriyetsporsalonuadmin.databinding.FragmentAddStudentBinding
+import com.example.cumhuriyetsporsalonuadmin.domain.model.StudentViewHolderTypes
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseFragment
 import com.example.cumhuriyetsporsalonuadmin.ui.main.all_student_listing.adapter.StudentAdapter
 import com.example.cumhuriyetsporsalonuadmin.utils.Stringfy.Companion.stringfy
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 
 @AndroidEntryPoint
 class AddStudentFragment :
@@ -31,11 +30,11 @@ class AddStudentFragment :
             }
 
             AddStudentActionBus.StudentsAdded -> {
-//                showSuccessMessage("Student Added".stringfy())
-//                delay(10000)
-                viewModel.getStudents()
+                showSuccessMessage(R.string.student_saved.stringfy())
+//                viewModel.getStudents()
 //                setBtnSpecs(viewModel.getSelectedStudents().count())
 //                setTvVisibility(viewModel.selectableStudentList.isEmpty())
+                navigateBack()
             }
 
             AddStudentActionBus.LessonNameLoaded -> {
@@ -54,7 +53,7 @@ class AddStudentFragment :
     }
 
     private fun setRV() {
-        studentAdapter = StudentAdapter(true) { student, index ->
+        studentAdapter = StudentAdapter(StudentViewHolderTypes.ADDING) { student, index ->
             val newStudentInstance = student.getReversed()
 
             val updatedList = viewModel.selectableStudentList.value?.toMutableList()
@@ -69,7 +68,6 @@ class AddStudentFragment :
     private fun setOnClickListeners() {
         binding.apply {
             btnAdd.setOnClickListener {
-                Log.d(TAG, "setOnClickListeners: tikladim")
                 viewModel.addStudent(viewModel.getSelectedStudents())
             }
         }

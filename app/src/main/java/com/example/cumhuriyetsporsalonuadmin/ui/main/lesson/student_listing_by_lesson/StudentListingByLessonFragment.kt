@@ -6,6 +6,7 @@ import com.example.cumhuriyetsporsalonuadmin.R
 import com.example.cumhuriyetsporsalonuadmin.databinding.FragmentStudentListingByLessonBinding
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Student
+import com.example.cumhuriyetsporsalonuadmin.domain.model.StudentViewHolderTypes
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseFragment
 import com.example.cumhuriyetsporsalonuadmin.ui.main.all_student_listing.adapter.StudentAdapter
 import com.example.cumhuriyetsporsalonuadmin.utils.SelectableData.Companion.toSelectable
@@ -37,6 +38,12 @@ class StudentListingByLessonFragment :
             StudentListingByLessonActionBus.LessonLoaded -> {
                 setTitleByLesson(viewModel.lesson)
             }
+
+            StudentListingByLessonActionBus.StudentRemoved -> {
+                showSuccessMessage(R.string.student_removed.stringfy())
+                studentAdapter.submitList(viewModel.studentList.toSelectable())
+                setTitleByLesson(viewModel.lesson)
+            }
         }
     }
 
@@ -57,14 +64,27 @@ class StudentListingByLessonFragment :
                 )
             navigateTo(action)
         }
-//        binding.tvEdit.setOnClickListener {
-//            binding.tvEdit.isVisible = false
-//            binding.tvShow.isVisible = true
-//        }
+        binding.tvEdit.setOnClickListener {
+            setEditingMode(true)
+            studentAdapter.setViewHolderType(StudentViewHolderTypes.REMOVING)
+            studentAdapter.submitList(viewModel.studentList.toSelectable().toList())
+
+
+        }
+        binding.tvShow.setOnClickListener {
+            setEditingMode(false)
+            studentAdapter.setViewHolderType(StudentViewHolderTypes.LISTING)
+            studentAdapter.submitList(viewModel.studentList.toSelectable().toList())
+
+        }
     }
 
     private fun setRV() {
-        studentAdapter = StudentAdapter(false, studentOnClick = ::goToStudent)
+        studentAdapter = StudentAdapter(
+            StudentViewHolderTypes.LISTING,
+            studentOnClick = ::goToStudent,
+            removeStudent = ::deleteStudentFromLesson
+        )
         binding.rvStudent.adapter = studentAdapter
     }
 
@@ -74,6 +94,10 @@ class StudentListingByLessonFragment :
                 student.uid
             )
         navigateTo(action)
+    }
+
+    private fun deleteStudentFromLesson(studentUid: String) {
+        viewModel.deleteStudentFromLesson(studentUid)
     }
 
     private fun setTitleByLesson(lesson: Lesson) {
@@ -88,5 +112,10 @@ class StudentListingByLessonFragment :
     private fun setTvVisibility(isVisible: Boolean) {
         binding.noStudentFound.isVisible = isVisible
         binding.tvEdit.isVisible = !isVisible
+    }
+
+    private fun setEditingMode(isEditing: Boolean) {
+        binding.tvEdit.isVisible = !isEditing
+        binding.tvShow.isVisible = isEditing
     }
 }
