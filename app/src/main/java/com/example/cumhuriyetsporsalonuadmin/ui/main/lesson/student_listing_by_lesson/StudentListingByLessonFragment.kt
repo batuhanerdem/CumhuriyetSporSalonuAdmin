@@ -25,7 +25,7 @@ class StudentListingByLessonFragment :
         when (action) {
             StudentListingByLessonActionBus.Init -> {}
             is StudentListingByLessonActionBus.ShowError -> {
-                val message = action.error ?: R.string.default_error_message.stringfy()
+                val message = action.error
                 showErrorMessage(message)
             }
 
