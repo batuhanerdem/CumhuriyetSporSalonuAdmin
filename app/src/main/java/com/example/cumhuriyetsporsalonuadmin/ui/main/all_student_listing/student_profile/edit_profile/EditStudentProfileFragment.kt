@@ -30,14 +30,14 @@ class EditStudentProfileFragment :
             }
 
             EditStudentProfileActionBus.StudentLoaded -> {
-                viewModel.user?.let {
-                    setEdittexts(it)
+                viewModel.student?.let {
+                    setEdittext(it)
                 }
             }
         }
     }
 
-    private fun setEdittexts(user: Student) {
+    private fun setEdittext(user: Student) {
         binding.apply {
             edtName.setText(user.name)
             edtSurname.setText(user.surname)
@@ -63,8 +63,8 @@ class EditStudentProfileFragment :
             edtSurname.text.clear()
             edtName.text.clear()
         }
-        viewModel.user?.let {
-            setEdittexts(it)
+        viewModel.student?.let {
+            setEdittext(it)
         }
     }
 
