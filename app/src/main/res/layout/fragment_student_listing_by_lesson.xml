@@ -6,6 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".ui.main.lesson.student_listing_by_lesson.StudentListingByLessonFragment">
 
+    <include
+        android:id="@+id/layoutNotificationBar"
+        layout="@layout/layout_top_notification_limit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
@@ -15,7 +21,7 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layoutNotificationBar"
         tools:text="Dersin adi" />
 
     <ImageView

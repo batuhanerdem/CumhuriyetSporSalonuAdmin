@@ -6,6 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".ui.main.profile.ProfileFragment">
 
+    <include
+        android:id="@+id/layoutNotificationBar"
+        layout="@layout/layout_top_notification_limit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageView
         android:id="@+id/imgBack"
         android:layout_width="24dp"
@@ -14,7 +21,7 @@
         android:layout_marginTop="20dp"
         android:src="@drawable/back"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/layoutNotificationBar" />
 
     <TextView
         android:id="@+id/tvChangeAdmin"
@@ -66,15 +73,15 @@
         android:id="@+id/btnSave"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/bg_btn_login"
         android:fontFamily="@font/lexend_bold"
         android:text="@string/save"
         android:textAllCaps="false"
         android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@id/guideline"
         app:layout_constraintEnd_toEndOf="@id/edtPassword"
-        app:layout_constraintStart_toStartOf="@id/edtPassword"
-        android:layout_marginBottom="20dp"
-      app:layout_constraintBottom_toBottomOf="@id/guideline" />
+        app:layout_constraintStart_toStartOf="@id/edtPassword" />
 
 
     <androidx.constraintlayout.widget.Guideline
