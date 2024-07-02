@@ -10,6 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:textColor="@color/black"
         android:fontFamily="@font/lexend_regular"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
