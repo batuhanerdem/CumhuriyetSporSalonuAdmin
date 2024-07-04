@@ -7,11 +7,7 @@ data class SelectableData<T>(val data: T, var isSelected: Boolean) {
 
     companion object {
         fun <T> MutableList<T>.toSelectable(): MutableList<SelectableData<T>> {
-            val newList = mutableListOf<SelectableData<T>>()
-            this.map {
-                newList.add(SelectableData(it, false))
-            }
-            return newList
+            return this.map { SelectableData(it, false) }.toMutableList()
         }
 
         fun <T> T.toSelectable(): SelectableData<T> {

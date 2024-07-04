@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.main.lesson.LessonFragment">
+
     <include
         android:id="@+id/layoutNotificationBar"
         layout="@layout/layout_top_notification_limit"
@@ -25,6 +26,34 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/layoutNotificationBar" />
+
+    <TextView
+        android:id="@+id/tvEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="24dp"
+        android:fontFamily="@font/lexend_semibold"
+        android:text="@string/edit"
+        android:textSize="17sp"
+        app:layout_constraintBottom_toBottomOf="@id/tvLessons"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvLessons" />
+
+    <TextView
+        android:id="@+id/tvShow"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="24dp"
+        android:fontFamily="@font/lexend_semibold"
+        android:text="@string/cancel"
+        android:textSize="17sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@id/tvLessons"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvLessons" />
+
 
     <ImageView
         android:id="@+id/imgAdd"
@@ -47,7 +76,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvLessons"
-        tools:listitem="@layout/item_lesson" />`
+        tools:listitem="@layout/item_lesson_listing" />`
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"

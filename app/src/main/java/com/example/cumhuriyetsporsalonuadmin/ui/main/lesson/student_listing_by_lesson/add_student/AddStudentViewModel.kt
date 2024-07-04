@@ -19,7 +19,6 @@ class AddStudentViewModel @Inject constructor(
     private val firebaseRepository: FirebaseRepository
 ) : BaseViewModel<AddStudentActionBus>() {
 
-    //    var selectableStudentList = mutableListOf<SelectableData<Student>>()
     val selectableStudentList: MutableLiveData<MutableList<SelectableData<Student>>> by lazy {
         MutableLiveData<MutableList<SelectableData<Student>>>(mutableListOf())
     }
@@ -46,10 +45,6 @@ class AddStudentViewModel @Inject constructor(
             }
         }
 
-    }
-
-    private fun triggerStudentListLiveData() {
-        selectableStudentList.value = selectableStudentList.value
     }
 
     fun getLessonName() {
@@ -97,61 +92,7 @@ class AddStudentViewModel @Inject constructor(
         selectableStudentList.value?.map {
             if (it.isSelected) selectedStudentList.add(it.data) else selectedStudentList.remove(it.data)
         }
-        Log.d(TAG, "getSelectedStudents: $selectedStudentList")
         return selectedStudentList
     }
 
-
-    private fun studentCallback(result: Resource<List<Student>>, lessonUid: String) {
-        firebaseRepository.getLessonByUID(lessonUid) {
-            it.data?.let { lesson ->
-                when (result) {
-                    is Resource.Error -> {
-                        setLoading(false)
-                        sendAction(AddStudentActionBus.ShowError(result.message))
-                    }
-
-                    is Resource.Loading -> setLoading(true)
-                    is Resource.Success -> {
-                        setLoading(false)
-                        result.data?.let {
-//                            val studentList = mutableListOf<Student>()
-//                            it.map { student ->
-//                                checkLessonDateConflictThenAddStudentToList(
-//                                    student, lesson.lessonDate, studentList
-//                                )
-//                            }
-
-                            sendAction(AddStudentActionBus.StudentsLoaded)
-                        }
-                        setLoading(false)
-                    }
-                }
-            }
-        }
-
-    }
-
-    private fun checkLessonDateConflictThenAddStudentToList(
-        student: Student, lessonDate: LessonDate, studentList: MutableList<Student>
-    ) {
-        if (student.lessonUids.isEmpty()) {
-            studentList.add(student)
-            selectableStudentList.value = studentList.toSelectable()
-            studentList.clear()
-            return
-        }
-
-        student.lessonUids.map {
-            firebaseRepository.getLessonByUID(it) { result ->
-                result.data?.let {
-                    val isConflicting = LessonDate.isConflicting(it.lessonDate, lessonDate)
-                    if (!isConflicting) {
-                        studentList.add(student)
-                    }
-                }
-                selectableStudentList.value = studentList.toSelectable()
-            }
-        }
-    }
 }

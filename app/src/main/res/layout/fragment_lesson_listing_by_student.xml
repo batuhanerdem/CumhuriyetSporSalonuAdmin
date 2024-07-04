@@ -45,7 +45,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvStudentName"
-        tools:listitem="@layout/item_lesson" />
+        tools:listitem="@layout/item_lesson_listing" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

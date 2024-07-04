@@ -11,4 +11,6 @@ sealed interface LessonActionBus : BaseActionBus {
 
     data object ClassesLoaded : LessonActionBus
 
+    data object LessonDeleted : LessonActionBus
+
 }

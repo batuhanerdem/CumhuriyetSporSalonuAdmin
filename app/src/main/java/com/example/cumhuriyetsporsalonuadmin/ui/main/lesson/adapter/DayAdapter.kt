@@ -8,11 +8,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cumhuriyetsporsalonuadmin.R
 import com.example.cumhuriyetsporsalonuadmin.databinding.ItemDayBinding
-import com.example.cumhuriyetsporsalonuadmin.databinding.ItemLessonBinding
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Days
-import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
 import com.example.cumhuriyetsporsalonuadmin.utils.SelectableData
-import kotlin.math.log
 
 class DayAdapter(
     private val daySelected: (SelectableData<Days>, Int) -> Unit
@@ -31,12 +28,10 @@ class DayAdapter(
         }
 
         fun selectItem(
-            day: SelectableData<Days>,
-            position: Int
+            day: SelectableData<Days>, position: Int
         ) {
             binding.root.setOnClickListener {
-                Log.d("tag", "selectItem: ${day.isSelected} ${day.data.name} ${position}")
-                daySelected(day,position)
+                daySelected(day, position)
             }
         }
 
@@ -50,14 +45,14 @@ class DayAdapter(
     override fun onBindViewHolder(holder: DaysViewHolder, position: Int) {
         val currentDay = getItem(position)
         holder.bind(currentDay)
-        holder.selectItem(currentDay,position)
+        holder.selectItem(currentDay, position)
     }
 
     object DayDiffCallback : DiffUtil.ItemCallback<SelectableData<Days>>() {
         override fun areItemsTheSame(
             oldItem: SelectableData<Days>, newItem: SelectableData<Days>
         ): Boolean {
-            return oldItem == newItem
+            return oldItem.data == newItem.data
 //            return false //testing
         }
 
