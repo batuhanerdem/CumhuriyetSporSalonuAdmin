@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/homeFragment"
-        android:icon="@drawable/raised_hand"
+        android:icon="@drawable/ic_raised_hand"
         android:title="" />
     <item
         android:id="@+id/lessonFragment"
@@ -13,6 +13,6 @@
         android:title="" />
     <item
         android:id="@+id/allStudentListingFragment"
-        android:icon="@drawable/student_cap"
+        android:icon="@drawable/ic_student_cap"
         android:title="" />
 </menu>
