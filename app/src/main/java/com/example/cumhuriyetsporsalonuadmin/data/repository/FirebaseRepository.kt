@@ -37,6 +37,7 @@ class FirebaseRepository @Inject constructor(
 
 
     fun adminLogin(admin: Admin, callback: (Resource<Unit>) -> Unit) {
+        callback(Resource.Loading())
         adminDocumentRef.get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 try {
@@ -55,10 +56,10 @@ class FirebaseRepository @Inject constructor(
     }
 
     fun getUnverifiedUsers(callback: (Resource<List<Student>>) -> Unit) {
+        callback(Resource.Loading())
         userCollectionRef.whereEqualTo(
             UserField.IS_VERIFIED.key, VerifiedStatus.NOTANSWERED.asString
         ).addSnapshotListener { value, error ->
-            callback(Resource.Loading())
             val myList = mutableListOf<User>()
             error?.let {
                 callback(Resource.Error(message = error.message?.stringfy()))
@@ -101,6 +102,7 @@ class FirebaseRepository @Inject constructor(
     }
 
     fun getStudentsByLesson(lessonUID: String, callback: (Resource<List<Student>>) -> Unit) {
+        callback(Resource.Loading())
         userCollectionRef.whereEqualTo(UserField.IS_VERIFIED.key, VerifiedStatus.VERIFIED.asString)
             .whereArrayContains(UserField.LESSON_UIDS.key, lessonUID).get()
             .addOnCompleteListener { task ->
@@ -126,32 +128,30 @@ class FirebaseRepository @Inject constructor(
 
     fun getLessonByUID(lessonUID: String, callback: (Resource<Lesson>) -> Unit) {
         callback(Resource.Loading())
-        lessonCollectionRef.whereEqualTo(LessonField.UID.key, lessonUID)
-            .orderBy(LessonField.DAY.key).orderBy(LessonField.START_HOUR.key).get()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    try {
-                        val result = task.result ?: return@addOnCompleteListener
-                        val lesson = convertDocumentToLesson(result.documents[0])
-                            ?: return@addOnCompleteListener
-                        callback(Resource.Success(lesson))
-                    } catch (e: Exception) {
-                        Log.d(TAG, "getLessonByUID: ${e.message}")
-                    }
+        lessonCollectionRef.document(lessonUID).get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                try {
+                    val result = task.result ?: return@addOnCompleteListener
+                    val lesson = convertDocumentToLesson(result) ?: return@addOnCompleteListener
+                    callback(Resource.Success(lesson))
+                } catch (e: Exception) {
+                    Log.d(TAG, "getLessonByUID: ${e.message}")
+                }
 
-                } else callback(Resource.Error(message = task.exception?.message?.stringfy()))
-            }
+            } else callback(Resource.Error(message = task.exception?.message?.stringfy()))
+        }
 
     }
 
     fun getLessonsByStudentUid(studentUid: String, callback: (Resource<List<Lesson>>) -> Unit) {
         callback(Resource.Loading())
-        lessonCollectionRef.whereArrayContains(LessonField.STUDENT_UIDS.key, studentUid).get()
+        lessonCollectionRef.whereArrayContains(LessonField.STUDENT_UIDS.key, studentUid)
+            .orderBy(LessonField.DAY.key).orderBy(LessonField.START_HOUR.key).get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val result = task.result ?: return@addOnCompleteListener
-                    val leesonList = convertDocumentToLessonList(result.documents)
-                    callback(Resource.Success(leesonList))
+                    val lessonList = convertDocumentToLessonList(result.documents)
+                    callback(Resource.Success(lessonList))
                 } else callback(Resource.Error(message = task.exception?.message?.stringfy()))
             }
 
