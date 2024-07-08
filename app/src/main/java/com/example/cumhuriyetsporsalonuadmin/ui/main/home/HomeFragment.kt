@@ -1,5 +1,6 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main.home
 
+import androidx.core.view.isVisible
 import com.example.cumhuriyetsporsalonuadmin.databinding.FragmentHomeBinding
 import com.example.cumhuriyetsporsalonuadmin.domain.model.User
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseFragment
@@ -14,11 +15,15 @@ class HomeFragment : BaseFragment<HomeActionBus, HomeVIewModel, FragmentHomeBind
     override suspend fun onAction(action: HomeActionBus) {
         when (action) {
             HomeActionBus.Init -> {}
-            is HomeActionBus.Success -> {
+            is HomeActionBus.ApplicationsLoaded -> {
                 adapter.submitList(viewModel.unverifiedList)
+                setNoFoundVisibility(viewModel.unverifiedList.isEmpty())
             }
 
             HomeActionBus.Accepted -> viewModel.getUnverifiedUsers()
+            is HomeActionBus.ShowError -> {
+                showErrorMessage(action.error)
+            }
         }
     }
 
@@ -29,12 +34,16 @@ class HomeFragment : BaseFragment<HomeActionBus, HomeVIewModel, FragmentHomeBind
 
     private fun setRV() {
         adapter = RequestAdapter(::answerRequest)
-        binding.recyclerView.adapter = adapter
+        binding.rvApplication.adapter = adapter
+    }
+
+    private fun setNoFoundVisibility(isEmpty: Boolean) {
+        binding.noApplicationFound.isVisible = isEmpty
+        binding.rvApplication.isVisible = !isEmpty
     }
 
     private fun answerRequest(user: User, isAccepted: Boolean) {
         viewModel.answerRequest(user, isAccepted)
     }
-
 
 }

@@ -31,14 +31,13 @@ class AddStudentFragment :
 
             AddStudentActionBus.StudentsAdded -> {
                 showSuccessMessage(R.string.student_saved.stringfy())
-//                viewModel.getStudents()
-//                setBtnSpecs(viewModel.getSelectedStudents().count())
-//                setTvVisibility(viewModel.selectableStudentList.isEmpty())
                 navigateBack()
             }
 
-            AddStudentActionBus.LessonNameLoaded -> {
-                setLessonName(viewModel.lessonName)
+            AddStudentActionBus.LessonLoaded -> {
+                viewModel.lesson?.let {
+                    setLessonName(it.name)
+                }
             }
         }
     }
@@ -47,7 +46,7 @@ class AddStudentFragment :
         viewModel.args = args
         setRV()
         setObserver()
-        viewModel.getLessonName()
+        viewModel.getLesson()
         viewModel.getStudents()
         setOnClickListeners()
     }
@@ -68,7 +67,7 @@ class AddStudentFragment :
     private fun setOnClickListeners() {
         binding.apply {
             btnAdd.setOnClickListener {
-                viewModel.addStudent(viewModel.getSelectedStudents())
+                viewModel.addSelectedStudents()
             }
         }
     }

@@ -18,7 +18,7 @@ class EditStudentProfileViewModel @Inject constructor(
     ) {
         val currentUser = student ?: return
         val newUser = currentUser.copy(name = name, surname = surname, age = age)
-        firebaseRepository.setUser(newUser) { action ->
+        firebaseRepository.setStudent(newUser) { action ->
             when (action) {
                 is Resource.Error -> sendAction(EditStudentProfileActionBus.ShowError(action.message))
                 is Resource.Loading -> {}

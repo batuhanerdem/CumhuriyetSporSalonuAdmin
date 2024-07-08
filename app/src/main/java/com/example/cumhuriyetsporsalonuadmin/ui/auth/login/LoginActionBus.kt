@@ -9,8 +9,6 @@ sealed interface LoginActionBus : BaseActionBus {
 
     data object LoggedIn : LoginActionBus
 
-    data object Loading : LoginActionBus
-
     data class ShowError(val error: Stringfy?) : LoginActionBus
 
 }

@@ -37,5 +37,4 @@ data class User(
 }
 
 
-
 typealias Student = User

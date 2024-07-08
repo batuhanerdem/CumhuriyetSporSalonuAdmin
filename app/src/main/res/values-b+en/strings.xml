@@ -70,6 +70,8 @@
     <string name="no_student_found_for_this_lesson">There is no student registered for this lesson</string>
     <string name="no_student_found">No available student found</string>
     <string name="search_student">Search Student</string>
+    <string name="no_lesson_found">No lesson found</string>
+    <string name="no_application_found">No application found</string>
 
     <string name="profile">Profile</string>
     <string name="edit_profile">Edit Profile</string>

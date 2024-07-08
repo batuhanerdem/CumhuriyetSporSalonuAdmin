@@ -1,13 +1,11 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main.lesson.add_lesson
 
-import com.example.cumhuriyetsporsalonuadmin.R
 import com.example.cumhuriyetsporsalonuadmin.data.repository.FirebaseRepository
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Days
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseViewModel
 import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import com.example.cumhuriyetsporsalonuadmin.utils.SelectableData
-import com.example.cumhuriyetsporsalonuadmin.utils.Stringfy.Companion.stringfy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalTime
 import javax.inject.Inject
@@ -28,19 +26,31 @@ class AddLessonViewModel @Inject constructor(private val firebaseRepository: Fir
 
     fun getSelectedDaysList(): List<Days> {
         val selectedList = mutableListOf<Days>()
-        selectAbleDayList.map {day->
+        selectAbleDayList.map { day ->
             if (day.isSelected) selectedList.add(day.data)
         }
         return selectedList
     }
 
     fun saveLesson(lesson: Lesson) {
-        val firebaseLesson = lesson.toFirebaseLesson()
-            firebaseRepository.setLessons(firebaseLesson, ::lessonCallback)
-    }
+        firebaseRepository.setLesson(lesson) { result ->
+            when (result) {
+                is Resource.Error -> {
+                    setLoading(false)
+                    sendAction(AddLessonActionBus.ShowError(result.message))
+                }
 
-    fun deleteAllLessons() {
-        firebaseRepository.deleteAllLessons()
+                is Resource.Loading -> {
+                    setLoading(true)
+                }
+
+                is Resource.Success -> {
+                    setLoading(false)
+                    sendAction(AddLessonActionBus.Success)
+                }
+            }
+        }
+
     }
 
     fun clearDays() {
@@ -50,16 +60,6 @@ class AddLessonViewModel @Inject constructor(private val firebaseRepository: Fir
 
     fun isFirstHourBeforeSecondHour(firstHour: LocalTime, secondHour: LocalTime): Boolean {
         return firstHour.isBefore(secondHour)
-    }
-
-    private fun lessonCallback(result: Resource<Nothing>) {
-        when (result) {
-            is Resource.Error -> sendAction(AddLessonActionBus.ShowError(result.message))
-            is Resource.Loading -> {}
-            is Resource.Success -> {
-                sendAction(AddLessonActionBus.Success)
-            }
-        }
     }
 
 }

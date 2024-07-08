@@ -16,13 +16,22 @@ class LoginViewModel @Inject constructor(
         sendAction(LoginActionBus.LoggedIn)
     }
 
-    fun loginWithEmailAndPassword(admin: Admin) {
-        sendAction(LoginActionBus.Loading)
+    fun login(admin: Admin) {
         firebaseRepository.adminLogin(admin) { result ->
             when (result) {
-                is Resource.Loading -> {}
-                is Resource.Error -> sendAction(LoginActionBus.ShowError(result.message))
-                is Resource.Success -> sendAction(LoginActionBus.LoggedIn)
+                is Resource.Loading -> {
+                    setLoading(true)
+                }
+
+                is Resource.Error -> {
+                    setLoading(false)
+                    sendAction(LoginActionBus.ShowError(result.message))
+                }
+
+                is Resource.Success -> {
+                    setLoading(false)
+                    sendAction(LoginActionBus.LoggedIn)
+                }
             }
         }
 

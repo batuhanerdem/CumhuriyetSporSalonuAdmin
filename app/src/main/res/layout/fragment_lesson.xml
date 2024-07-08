@@ -65,6 +65,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tvLessons" />
 
+    <TextView
+        android:id="@+id/noLessonFound"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="25dp"
+        android:layout_marginTop="30dp"
+        android:fontFamily="@font/lexend_semibold"
+        android:text="@string/no_lesson_found"
+        android:textAlignment="center"
+        android:textColor="@color/dark_gray"
+        android:textSize="20sp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvLessons"
+        tools:visibility="visible" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvLesson"
@@ -76,7 +92,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvLessons"
-        tools:listitem="@layout/item_lesson_listing" />`
+        tools:listitem="@layout/item_lesson_listing"
+        tools:visibility="invisible" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"

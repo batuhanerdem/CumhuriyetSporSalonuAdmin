@@ -106,7 +106,7 @@ class StudentListingByLessonFragment :
     }
 
     private fun setPageByLessonUID(uid: String) {
-        viewModel.getLessonByUID(uid)
+        viewModel.getLesson(uid)
     }
 
     private fun setTvVisibility(isVisible: Boolean) {

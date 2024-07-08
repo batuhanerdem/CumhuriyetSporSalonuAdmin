@@ -1,16 +1,11 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main.lesson
 
-import android.util.Log
 import androidx.core.view.isVisible
 import com.example.cumhuriyetsporsalonuadmin.R
 import com.example.cumhuriyetsporsalonuadmin.databinding.FragmentLessonBinding
-import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
-import com.example.cumhuriyetsporsalonuadmin.domain.model.LessonViewHolderTypes
-import com.example.cumhuriyetsporsalonuadmin.domain.model.Student
-import com.example.cumhuriyetsporsalonuadmin.domain.model.StudentViewHolderTypes
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseFragment
 import com.example.cumhuriyetsporsalonuadmin.ui.main.lesson.adapter.LessonAdapter
-import com.example.cumhuriyetsporsalonuadmin.utils.SelectableData.Companion.toSelectable
+import com.example.cumhuriyetsporsalonuadmin.ui.main.lesson.adapter.LessonRemovingAdapter
 import com.example.cumhuriyetsporsalonuadmin.utils.Stringfy.Companion.stringfy
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -18,7 +13,8 @@ import dagger.hilt.android.AndroidEntryPoint
 class LessonFragment : BaseFragment<LessonActionBus, LessonViewModel, FragmentLessonBinding>(
     FragmentLessonBinding::inflate, LessonViewModel::class.java
 ) {
-    private lateinit var adapter: LessonAdapter
+    private lateinit var lessonAdapter: LessonAdapter
+    private lateinit var lessonRemovingAdapter: LessonRemovingAdapter
     override suspend fun onAction(action: LessonActionBus) {
         when (action) {
             LessonActionBus.Init -> {}
@@ -27,12 +23,17 @@ class LessonFragment : BaseFragment<LessonActionBus, LessonViewModel, FragmentLe
             }
 
             is LessonActionBus.ClassesLoaded -> {
-                adapter.submitList(viewModel.lessonList)
+                lessonAdapter.submitList(viewModel.lessonList)
+                setNoLessonFoundVisibility(viewModel.lessonList.isEmpty())
             }
 
             LessonActionBus.LessonDeleted -> {
-                showSuccessMessage(R.string.lesson_removed.stringfy())
-                adapter.submitList(viewModel.lessonList)
+                showSuccessMessage(
+                    ("${viewModel.deletedLessonName} ${
+                        R.string.lesson_removed.stringfy().getString(requireContext())
+                    }").stringfy()
+                )
+                submitLists()
             }
         }
     }
@@ -44,17 +45,15 @@ class LessonFragment : BaseFragment<LessonActionBus, LessonViewModel, FragmentLe
     }
 
     private fun setupRV() {
-        adapter = LessonAdapter(removeStudent = ::removeLesson) {
+        lessonAdapter = LessonAdapter {
             val action =
                 LessonFragmentDirections.actionLessonFragmentToStudentListingByLessonFragment(it.uid)
             navigateTo(action)
         }
-        binding.rvLesson.adapter = adapter
-    }
-
-    private fun removeLesson(lessonUid: String) {
-        viewModel.deleteLesson(lessonUid)
-        adapter.submitList(viewModel.lessonList.toList())
+        lessonRemovingAdapter = LessonRemovingAdapter {
+            viewModel.deleteLesson(it)
+        }
+        binding.rvLesson.adapter = lessonAdapter
     }
 
     private fun setOnClickListeners() {
@@ -63,25 +62,31 @@ class LessonFragment : BaseFragment<LessonActionBus, LessonViewModel, FragmentLe
                 val action = LessonFragmentDirections.actionLessonFragmentToAddLessonFragment()
                 navigateTo(action)
             }
+            tvEdit.setOnClickListener {
+                setEditingMode(true)
+            }
+            tvShow.setOnClickListener {
+                setEditingMode(false)
+            }
         }
-        binding.tvEdit.setOnClickListener {
-            setEditingMode(true)
-            adapter.setViewHolderType(LessonViewHolderTypes.REMOVING)
-            adapter.submitList(viewModel.lessonList.toList())
+    }
 
-
-        }
-        binding.tvShow.setOnClickListener {
-            setEditingMode(false)
-            adapter.setViewHolderType(LessonViewHolderTypes.LISTING)
-            adapter.submitList(viewModel.lessonList.toList())
-
-        }
+    private fun setNoLessonFoundVisibility(isEmpty: Boolean) {
+        binding.noLessonFound.isVisible = isEmpty
+        binding.rvLesson.isVisible = !isEmpty
     }
 
     private fun setEditingMode(isEditing: Boolean) {
-        binding.tvEdit.isVisible = !isEditing
-        binding.tvShow.isVisible = isEditing
+        binding.apply {
+            tvEdit.isVisible = !isEditing
+            tvShow.isVisible = isEditing
+            rvLesson.adapter = if (isEditing) lessonRemovingAdapter else lessonAdapter
+        }
+        submitLists()
     }
 
+    private fun submitLists() {
+        lessonAdapter.submitList(viewModel.lessonList.toList())
+        lessonRemovingAdapter.submitList(viewModel.lessonList.toList())
+    }
 }

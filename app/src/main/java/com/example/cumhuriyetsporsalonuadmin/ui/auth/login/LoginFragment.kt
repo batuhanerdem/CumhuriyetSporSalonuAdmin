@@ -6,6 +6,7 @@ import com.example.cumhuriyetsporsalonuadmin.databinding.FragmentLoginBinding
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Admin
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseFragment
 import com.example.cumhuriyetsporsalonuadmin.ui.main.MainActivity
+import com.example.cumhuriyetsporsalonuadmin.utils.NullOrEmptyValidator
 import com.example.cumhuriyetsporsalonuadmin.utils.Stringfy.Companion.stringfy
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -22,16 +23,11 @@ class LoginFragment : BaseFragment<LoginActionBus, LoginViewModel, FragmentLogin
     override suspend fun onAction(action: LoginActionBus) {
         when (action) {
             LoginActionBus.Init -> {}
-            LoginActionBus.Loading -> progressBar.show()
             LoginActionBus.LoggedIn -> {
-                progressBar.hide()
-                val message = R.string.login_success.stringfy()
-//                showSuccessMessage(message)
                 navigateHome()
             }
 
             is LoginActionBus.ShowError -> {
-                progressBar.hide()
                 val message = action.error ?: R.string.login_error_default.stringfy()
                 showErrorMessage(message)
             }
@@ -43,11 +39,11 @@ class LoginFragment : BaseFragment<LoginActionBus, LoginViewModel, FragmentLogin
             btnLogin.setOnClickListener {
                 viewModel.loginForTest()
                 return@setOnClickListener
+                val isValidated = NullOrEmptyValidator.validate(edtUsername.text, edtPassword.text)
+                if (!isValidated) return@setOnClickListener
                 val username = edtUsername.text.toString()
                 val password = edtPassword.text.toString()
-                if (username.isEmpty() || password.isEmpty()) return@setOnClickListener
-                val admin = Admin(username, password)
-                viewModel.loginWithEmailAndPassword(admin)
+                viewModel.login(Admin(username, password))
             }
         }
     }

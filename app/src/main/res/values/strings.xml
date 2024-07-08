@@ -69,10 +69,10 @@
     <string name="no_students">Kayıtlı Öğrenci Yok</string>
     <string name="save">Kaydet</string>
     <string name="no_student_found_for_this_lesson">Bu derse kayıtlı öğrenci bulunmamaktadır</string>
-    <string name="no_student_found">Müsait öğrenci bulunamadı</string>
+    <string name="no_student_found">Müsait öğrenci bulunmuyor</string>
     <string name="search_student">Öğrenci Ara</string>
-
-
+    <string name="no_lesson_found">Kayıtlı ders bulunmuyor</string>
+    <string name="no_application_found">Başvuru bulunmuyor</string>
     <string name="profile">Profil</string>
     <string name="edit_profile">Profili Düzenle</string>
 

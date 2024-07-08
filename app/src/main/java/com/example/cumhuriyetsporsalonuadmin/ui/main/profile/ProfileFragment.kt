@@ -4,6 +4,7 @@ import com.example.cumhuriyetsporsalonuadmin.R
 import com.example.cumhuriyetsporsalonuadmin.databinding.FragmentProfileBinding
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Admin
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseFragment
+import com.example.cumhuriyetsporsalonuadmin.utils.NullOrEmptyValidator
 import com.example.cumhuriyetsporsalonuadmin.utils.Stringfy.Companion.stringfy
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,11 +34,14 @@ class ProfileFragment : BaseFragment<ProfileActionBus, ProfileViewModel, Fragmen
 
     private fun setOnClickListeners() {
         binding.btnSave.setOnClickListener {
-            val username = binding.edtUserName.text.toString()
-            val password = binding.edtPassword.text.toString()
-            if (username.isEmpty() || password.isEmpty()) return@setOnClickListener
-            val admin = Admin(username, password)
-            viewModel.updateAdmin(admin)
+            binding.apply {
+                val isValidated = NullOrEmptyValidator.validate(edtUserName.text, edtPassword.text)
+                if (!isValidated) return@setOnClickListener
+                val username = binding.edtUserName.text.toString()
+                val password = binding.edtPassword.text.toString()
+                val admin = Admin(username, password)
+                viewModel.updateAdmin(admin)
+            }
         }
     }
 

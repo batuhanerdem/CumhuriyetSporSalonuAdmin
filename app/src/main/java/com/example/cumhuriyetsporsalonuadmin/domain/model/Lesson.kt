@@ -1,7 +1,5 @@
 package com.example.cumhuriyetsporsalonuadmin.domain.model
 
-import android.content.Context
-
 data class Lesson(
     val uid: String,
     var name: String,

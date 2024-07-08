@@ -55,7 +55,5 @@ class LessonListingByStudentFragment :
         binding.imgBack.setOnClickListener {
             navigateBack()
         }
-
     }
-
 }
