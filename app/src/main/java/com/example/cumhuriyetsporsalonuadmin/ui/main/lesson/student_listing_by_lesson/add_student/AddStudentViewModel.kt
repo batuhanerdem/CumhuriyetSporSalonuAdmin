@@ -4,8 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import com.example.cumhuriyetsporsalonuadmin.data.repository.FirebaseRepository
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Student
-import com.example.cumhuriyetsporsalonuadmin.domain.usacases.AddStudentToLessonUseCase
-import com.example.cumhuriyetsporsalonuadmin.domain.usacases.GetAvailableStudentsUseCase
+import com.example.cumhuriyetsporsalonuadmin.domain.use_case.AddStudentToLessonUseCase
+import com.example.cumhuriyetsporsalonuadmin.domain.use_case.GetAvailableStudentsUseCase
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseViewModel
 import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import com.example.cumhuriyetsporsalonuadmin.utils.SelectableData

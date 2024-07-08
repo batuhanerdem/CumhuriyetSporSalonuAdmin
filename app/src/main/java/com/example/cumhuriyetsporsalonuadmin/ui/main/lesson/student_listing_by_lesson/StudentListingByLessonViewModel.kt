@@ -3,7 +3,7 @@ package com.example.cumhuriyetsporsalonuadmin.ui.main.lesson.student_listing_by_
 import com.example.cumhuriyetsporsalonuadmin.data.repository.FirebaseRepository
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Student
-import com.example.cumhuriyetsporsalonuadmin.domain.usacases.DeleteStudentFromLessonUseCase
+import com.example.cumhuriyetsporsalonuadmin.domain.use_case.DeleteStudentFromLessonUseCase
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseViewModel
 import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -2,7 +2,7 @@ package com.example.cumhuriyetsporsalonuadmin.ui.main.home
 
 import com.example.cumhuriyetsporsalonuadmin.data.repository.FirebaseRepository
 import com.example.cumhuriyetsporsalonuadmin.domain.model.User
-import com.example.cumhuriyetsporsalonuadmin.domain.usacases.AnswerRequestUseCase
+import com.example.cumhuriyetsporsalonuadmin.domain.use_case.AnswerRequestUseCase
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseViewModel
 import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel

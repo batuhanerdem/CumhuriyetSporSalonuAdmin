@@ -1,4 +1,4 @@
-package com.example.cumhuriyetsporsalonuadmin.domain.usacases
+package com.example.cumhuriyetsporsalonuadmin.domain.use_case
 
 import android.util.Log
 import com.example.cumhuriyetsporsalonuadmin.data.repository.FirebaseRepository
