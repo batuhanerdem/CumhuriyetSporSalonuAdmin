@@ -2,10 +2,11 @@ package com.example.cumhuriyetsporsalonuadmin.utils
 
 object NullValidator {
     fun validate(vararg list: Any?): Boolean {
-        for (item in list) {
-            if (item == null) return false
-        }
-        return true
+        return list.all { it != null }
+    }
+
+    fun getNotNull(vararg list: Any?): List<Any> {
+        return list.filterNotNull()
     }
 
 }
