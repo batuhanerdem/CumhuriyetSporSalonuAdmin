@@ -26,7 +26,6 @@ class DeleteStudentUseCase @Inject constructor(private val repository: FirebaseR
                 is Resource.Success -> {
                     val lessonList = result.data
                     if (lessonList.isNullOrEmpty()) {
-                        Log.d("tag", "deleteLessonFromStudent:$lessonList ")
                         callback(Resource.Success())
                         return@getLessonsByStudentUid
                     }
@@ -38,7 +37,8 @@ class DeleteStudentUseCase @Inject constructor(private val repository: FirebaseR
                     }
                 }
 
-                else -> callback
+                is Resource.Error -> callback(Resource.Error(result.message))
+                is Resource.Loading -> callback(Resource.Loading())
             }
         }
     }

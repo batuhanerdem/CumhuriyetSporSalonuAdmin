@@ -24,7 +24,7 @@ class AddStudentToLessonUseCase @Inject constructor(private val repository: Fire
                     callback(Resource.Success())
                 }
 
-                else -> callback
+                else -> callback(result)
             }
         }
     }
@@ -43,12 +43,13 @@ class AddStudentToLessonUseCase @Inject constructor(private val repository: Fire
                     repository.setStudent(student) { result ->
                         when (result) {
                             is Resource.Success -> {}
-                            else -> callback
+                            else -> callback(result)
                         }
                     }
                 }
 
-                else -> callback
+                is Resource.Error -> callback(Resource.Error(result.message))
+                is Resource.Loading -> callback(Resource.Loading())
             }
         }
     }

@@ -1,6 +1,5 @@
 package com.example.cumhuriyetsporsalonuadmin.domain.use_case
 
-import android.util.Log
 import com.example.cumhuriyetsporsalonuadmin.data.repository.FirebaseRepository
 import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import dagger.hilt.android.scopes.ViewModelScoped
@@ -26,7 +25,6 @@ class DeleteLessonUseCase @Inject constructor(private val repository: FirebaseRe
                 is Resource.Success -> {
                     val studentList = result.data
                     if (studentList.isNullOrEmpty()) {
-                        Log.d("tag", "deleteLessonFromStudent:$studentList ")
                         callback(Resource.Success())
                         return@getStudentsByLessonUid
                     }
@@ -38,7 +36,8 @@ class DeleteLessonUseCase @Inject constructor(private val repository: FirebaseRe
                     }
                 }
 
-                else -> callback
+                is Resource.Error -> callback(Resource.Error(result.message))
+                is Resource.Loading -> callback(Resource.Loading())
             }
         }
     }

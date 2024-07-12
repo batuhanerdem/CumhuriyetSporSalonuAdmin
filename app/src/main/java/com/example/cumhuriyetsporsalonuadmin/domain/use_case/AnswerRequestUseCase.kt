@@ -11,19 +11,16 @@ import javax.inject.Inject
 class AnswerRequestUseCase @Inject constructor(private val repository: FirebaseRepository) {
     fun execute(studentUid: String, answer: Boolean, callback: (Resource<out Student>) -> Unit) {
         callback(Resource.Loading())
-        repository.getStudentByUid(studentUid) {
-            when (it) {
+        repository.getStudentByUid(studentUid) { result ->
+            when (result) {
                 is Resource.Success -> {
-                    val user = it.data ?: return@getStudentByUid
+                    val user = result.data ?: return@getStudentByUid
                     val answeredUser = user.copy(isVerified = answer.toVerifiedStatus())
                     repository.setStudent(answeredUser, callback)
                 }
 
-                else -> {
-                    callback(it)
-                }
+                else -> callback(result)
             }
-
         }
     }
 }

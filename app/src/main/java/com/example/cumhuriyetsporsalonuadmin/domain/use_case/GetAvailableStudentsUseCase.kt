@@ -18,7 +18,7 @@ class GetAvailableStudentsUseCase @Inject constructor(private val repository: Fi
                     callback(Resource.Success(studentList))
                 }
 
-                else -> callback
+                else -> callback(result)
             }
         }
 

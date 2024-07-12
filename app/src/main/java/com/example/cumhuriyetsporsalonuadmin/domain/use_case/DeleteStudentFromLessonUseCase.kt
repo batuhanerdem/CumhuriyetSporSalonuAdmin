@@ -18,7 +18,7 @@ class DeleteStudentFromLessonUseCase @Inject constructor(private val repository:
                     deleteLessonUidFromStudent(lesson.uid, studentUid, callback)
                 }
 
-                else -> callback
+                else -> callback(result)
             }
         }
     }
@@ -37,7 +37,8 @@ class DeleteStudentFromLessonUseCase @Inject constructor(private val repository:
                     repository.setStudent(student, callback)
                 }
 
-                else -> callback
+                is Resource.Error -> callback(Resource.Error(result.message))
+                is Resource.Loading -> callback(Resource.Loading())
             }
         }
     }
