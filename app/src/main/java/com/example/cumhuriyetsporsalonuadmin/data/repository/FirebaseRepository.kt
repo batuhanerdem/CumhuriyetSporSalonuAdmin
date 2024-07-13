@@ -115,9 +115,8 @@ class FirebaseRepository @Inject constructor(
         callback(Resource.Loading())
         userCollectionRef.document(student.uid).set(student.toHashMap())
             .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    callback(Resource.Success())
-                } else callback(Resource.Error(message = task.exception?.message?.stringfy()))
+                if (task.isSuccessful) callback(Resource.Success())
+                else callback(Resource.Error(message = task.exception?.message?.stringfy()))
             }
     }
 
