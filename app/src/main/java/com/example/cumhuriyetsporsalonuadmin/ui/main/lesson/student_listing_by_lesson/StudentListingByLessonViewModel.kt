@@ -1,5 +1,6 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main.lesson.student_listing_by_lesson
 
+import androidx.lifecycle.viewModelScope
 import com.example.cumhuriyetsporsalonuadmin.data.repository.FirebaseRepository
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Student
@@ -7,6 +8,10 @@ import com.example.cumhuriyetsporsalonuadmin.domain.use_case.DeleteStudentFromLe
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseViewModel
 import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,7 +26,7 @@ class StudentListingByLessonViewModel @Inject constructor(
 
     fun getStudents(lessonUid: String) {
         studentList.clear()
-        firebaseRepository.getStudentsByLessonUid(lessonUid) { result ->
+        firebaseRepository.getStudentsByLessonUid(lessonUid).onEach { result ->
             when (result) {
                 is Resource.Error -> {
                     setLoading(false)
@@ -38,11 +43,11 @@ class StudentListingByLessonViewModel @Inject constructor(
                 }
             }
 
-        }
+        }.launchIn(viewModelScope)
     }
 
     fun getLesson(lessonUid: String) {
-        firebaseRepository.getLessonByUID(lessonUid) { result ->
+        firebaseRepository.getLessonByUID(lessonUid).onEach { result ->
             when (result) {
                 is Resource.Error -> {
                     setLoading(false)
@@ -59,28 +64,31 @@ class StudentListingByLessonViewModel @Inject constructor(
                 }
             }
 
-        }
+        }.launchIn(viewModelScope)
     }
 
     fun deleteStudentFromLesson(studentUid: String) {
-        deleteStudentFromLessonUseCase.execute(lesson, studentUid) { result ->
-            when (result) {
-                is Resource.Error -> {
-                    setLoading(false)
-                    sendAction(StudentListingByLessonActionBus.ShowError(result.message))
-                }
+        viewModelScope.launch {
 
-                is Resource.Loading -> setLoading(true)
-                is Resource.Success -> {
-                    setLoading(false)
-                    val removedStudent: Student? = studentList.find {
-                        it.uid == studentUid
+            deleteStudentFromLessonUseCase.execute(lesson, studentUid).collect { result ->
+                when (result) {
+                    is Resource.Error -> {
+                        setLoading(false)
+                        sendAction(StudentListingByLessonActionBus.ShowError(result.message))
                     }
-                    val newList = lesson.studentUids.toMutableList()
-                    newList.remove(removedStudent?.uid)
-                    studentList.remove(removedStudent)
-                    lesson.studentUids = newList
-                    sendAction(StudentListingByLessonActionBus.StudentRemoved)
+
+                    is Resource.Loading -> setLoading(true)
+                    is Resource.Success -> {
+                        setLoading(false)
+                        val removedStudent: Student? = studentList.find {
+                            it.uid == studentUid
+                        }
+                        val newList = lesson.studentUids.toMutableList()
+                        newList.remove(removedStudent?.uid)
+                        studentList.remove(removedStudent)
+                        lesson.studentUids = newList
+                        sendAction(StudentListingByLessonActionBus.StudentRemoved)
+                    }
                 }
             }
         }

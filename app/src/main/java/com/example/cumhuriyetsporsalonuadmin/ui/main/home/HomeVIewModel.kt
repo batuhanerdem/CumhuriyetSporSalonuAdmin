@@ -1,11 +1,16 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main.home
 
+import android.util.Log
+import androidx.lifecycle.viewModelScope
 import com.example.cumhuriyetsporsalonuadmin.data.repository.FirebaseRepository
 import com.example.cumhuriyetsporsalonuadmin.domain.model.User
 import com.example.cumhuriyetsporsalonuadmin.domain.use_case.AnswerRequestUseCase
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseViewModel
 import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -16,7 +21,7 @@ class HomeVIewModel @Inject constructor(
     var unverifiedList = listOf<User>()
 
     fun getUnverifiedUsers() {
-        firebaseRepository.getUnverifiedStudents { result ->
+        firebaseRepository.getUnverifiedStudents().onEach { result ->
             when (result) {
                 is Resource.Error -> {
                     setLoading(false)
@@ -32,23 +37,12 @@ class HomeVIewModel @Inject constructor(
                     }
                 }
             }
-        }
+        }.launchIn(viewModelScope)
     }
 
     fun answerRequest(user: User, isAccepted: Boolean) {
-        answerRequestUseCase.execute(user.uid, isAccepted) { result ->
-            when (result) {
-                is Resource.Error -> {
-                    setLoading(false)
-                    sendAction(HomeActionBus.ShowError(result.message))
-                }
-
-                is Resource.Loading -> setLoading(true)
-                is Resource.Success -> {
-                    setLoading(false)
-                    sendAction(HomeActionBus.Accepted)
-                }
-            }
+        viewModelScope.launch {
+            answerRequestUseCase.execute(user.uid, isAccepted).collect{}
         }
     }
 }

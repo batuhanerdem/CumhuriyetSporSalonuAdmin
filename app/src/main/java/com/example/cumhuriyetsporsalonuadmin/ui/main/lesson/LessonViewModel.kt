@@ -1,11 +1,16 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main.lesson
 
+import androidx.lifecycle.viewModelScope
 import com.example.cumhuriyetsporsalonuadmin.data.repository.FirebaseRepository
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
 import com.example.cumhuriyetsporsalonuadmin.domain.use_case.DeleteLessonUseCase
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseViewModel
 import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -17,7 +22,7 @@ class LessonViewModel @Inject constructor(
     var deletedLessonName = ""
 
     fun getClasses() {
-        firebaseRepository.getAllLessons { result ->
+        firebaseRepository.getAllLessons().onEach { result ->
             when (result) {
                 is Resource.Loading -> setLoading(true)
                 is Resource.Error -> sendAction(LessonActionBus.ShowError(result.message))
@@ -29,26 +34,27 @@ class LessonViewModel @Inject constructor(
                     }
                 }
             }
-
-        }
+        }.launchIn(viewModelScope)
     }
 
     fun deleteLesson(lessonUid: String) {
-        deleteLessonUseCase.execute(lessonUid) { result ->
-            when (result) {
-                is Resource.Error -> {
-                    setLoading(false)
-                    sendAction(LessonActionBus.ShowError(result.message))
-                }
-
-                is Resource.Loading -> setLoading(true)
-                is Resource.Success -> {
-                    setLoading(false)
-                    updateDeletedLessonName(lessonUid)
-                    lessonList.removeIf {
-                        it.uid == lessonUid
+        viewModelScope.launch {
+            deleteLessonUseCase.execute(lessonUid).collect { result ->
+                when (result) {
+                    is Resource.Error -> {
+                        setLoading(false)
+                        sendAction(LessonActionBus.ShowError(result.message))
                     }
-                    sendAction(LessonActionBus.LessonDeleted)
+
+                    is Resource.Loading -> setLoading(true)
+                    is Resource.Success -> {
+                        setLoading(false)
+                        updateDeletedLessonName(lessonUid)
+                        lessonList.removeIf {
+                            it.uid == lessonUid
+                        }
+                        sendAction(LessonActionBus.LessonDeleted)
+                    }
                 }
             }
         }

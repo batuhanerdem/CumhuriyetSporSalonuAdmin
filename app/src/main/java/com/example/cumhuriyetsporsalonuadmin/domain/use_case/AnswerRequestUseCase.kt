@@ -5,21 +5,25 @@ import com.example.cumhuriyetsporsalonuadmin.domain.mappers.VerifiedStatusMapper
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Student
 import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import dagger.hilt.android.scopes.ViewModelScoped
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 @ViewModelScoped
 class AnswerRequestUseCase @Inject constructor(private val repository: FirebaseRepository) {
-    fun execute(studentUid: String, answer: Boolean, callback: (Resource<out Student>) -> Unit) {
-        callback(Resource.Loading())
-        repository.getStudentByUid(studentUid) { result ->
+    suspend fun execute(
+        studentUid: String, answer: Boolean
+    ): Flow<Resource<out Student>> = flow {
+        emit(Resource.Loading())
+        repository.getStudentByUid(studentUid).collect { result ->
             when (result) {
                 is Resource.Success -> {
-                    val user = result.data ?: return@getStudentByUid
+                    val user = result.data ?: return@collect
                     val answeredUser = user.copy(isVerified = answer.toVerifiedStatus())
-                    repository.setStudent(answeredUser, callback)
+                    repository.setStudent(answeredUser).collect { emit(it) }
                 }
 
-                else -> callback(result)
+                else -> emit(result)
             }
         }
     }

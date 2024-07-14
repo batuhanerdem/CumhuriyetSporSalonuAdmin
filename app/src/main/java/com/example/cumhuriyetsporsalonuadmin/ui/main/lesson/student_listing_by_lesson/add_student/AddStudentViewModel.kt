@@ -1,6 +1,7 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main.lesson.student_listing_by_lesson.add_student
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.cumhuriyetsporsalonuadmin.data.repository.FirebaseRepository
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Student
@@ -11,6 +12,8 @@ import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import com.example.cumhuriyetsporsalonuadmin.utils.SelectableData
 import com.example.cumhuriyetsporsalonuadmin.utils.SelectableData.Companion.toSelectable
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,19 +30,21 @@ class AddStudentViewModel @Inject constructor(
     lateinit var args: AddStudentFragmentArgs
 
     fun getLesson() {
-        firebaseRepository.getLessonByUID(args.lessonUid) { result ->
-            when (result) {
-                is Resource.Error -> {
-                    setLoading(false)
-                    sendAction(AddStudentActionBus.ShowError(result.message))
-                }
+        viewModelScope.launch {
+            firebaseRepository.getLessonByUID(args.lessonUid).collect() { result ->
+                when (result) {
+                    is Resource.Error -> {
+                        setLoading(false)
+                        sendAction(AddStudentActionBus.ShowError(result.message))
+                    }
 
-                is Resource.Loading -> setLoading(true)
-                is Resource.Success -> {
-                    setLoading(false)
-                    result.data?.let {
-                        lesson = it
-                        sendAction(AddStudentActionBus.LessonLoaded)
+                    is Resource.Loading -> setLoading(true)
+                    is Resource.Success -> {
+                        setLoading(false)
+                        result.data?.let {
+                            lesson = it
+                            sendAction(AddStudentActionBus.LessonLoaded)
+                        }
                     }
                 }
             }
@@ -48,23 +53,25 @@ class AddStudentViewModel @Inject constructor(
 
     fun getStudents() {
         selectableStudentList.value = emptyList<SelectableData<Student>>().toMutableList()
-        getAvailableStudentsUseCase.execute(args.lessonUid) { result ->
-            when (result) {
-                is Resource.Error -> {
-                    setLoading(false)
-                    sendAction(AddStudentActionBus.ShowError(result.message))
-                }
-
-                is Resource.Loading -> setLoading(true)
-                is Resource.Success -> {
-                    setLoading(false)
-                    val studentList = mutableListOf<SelectableData<Student>>()
-                    val availableStudentList = result.data ?: return@execute
-                    availableStudentList.map {
-                        studentList.add(it.toSelectable())
+        viewModelScope.launch {
+            getAvailableStudentsUseCase.execute(args.lessonUid).collect { result ->
+                when (result) {
+                    is Resource.Error -> {
+                        setLoading(false)
+                        sendAction(AddStudentActionBus.ShowError(result.message))
                     }
-                    selectableStudentList.value = studentList
 
+                    is Resource.Loading -> setLoading(true)
+                    is Resource.Success -> {
+                        setLoading(false)
+                        val studentList = mutableListOf<SelectableData<Student>>()
+                        val availableStudentList = result.data ?: return@collect
+                        availableStudentList.map {
+                            studentList.add(it.toSelectable())
+                        }
+                        selectableStudentList.value = studentList
+
+                    }
                 }
             }
         }
@@ -74,18 +81,21 @@ class AddStudentViewModel @Inject constructor(
         val studentList = getSelectedStudents()
         val lesson = lesson ?: return
         if (studentList.isEmpty()) return
-        addStudentToLessonUseCase.execute(lesson, studentList) { result ->
-            when (result) {
-                is Resource.Error -> {
-                    setLoading(false)
-                    sendAction(AddStudentActionBus.ShowError(result.message))
-                }
+        viewModelScope.launch {
+            addStudentToLessonUseCase.execute(lesson, studentList).collect { result ->
+                when (result) {
+                    is Resource.Error -> {
+                        setLoading(false)
+                        sendAction(AddStudentActionBus.ShowError(result.message))
+                    }
 
-                is Resource.Loading -> setLoading(true)
-                is Resource.Success -> {
-                    selectableStudentList.value =
-                        emptyList<SelectableData<Student>>().toMutableList()
-                    sendAction(AddStudentActionBus.StudentsAdded)
+                    is Resource.Loading -> {}//setLoading(true)
+                    is Resource.Success -> {
+                        setLoading(false)
+                        selectableStudentList.value =
+                            emptyList<SelectableData<Student>>().toMutableList()
+                        sendAction(AddStudentActionBus.StudentsAdded)
+                    }
                 }
             }
         }

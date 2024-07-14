@@ -4,21 +4,23 @@ import com.example.cumhuriyetsporsalonuadmin.data.repository.FirebaseRepository
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Student
 import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import dagger.hilt.android.scopes.ViewModelScoped
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 @ViewModelScoped
 class GetAvailableStudentsUseCase @Inject constructor(private val repository: FirebaseRepository) {
-    fun execute(lessonUid: String, callback: (Resource<List<Student>>) -> Unit) {
-        repository.getVerifiedStudents { result ->
+    suspend fun execute(lessonUid: String): Flow<Resource<List<Student>>> = flow {
+        repository.getVerifiedStudents().collect { result ->
             when (result) {
                 is Resource.Success -> {
-                    val studentList = result.data?.toMutableList() ?: return@getVerifiedStudents
+                    val studentList = result.data?.toMutableList() ?: return@collect
                     val itemsToRemove = studentList.filter { it.lessonUids.contains(lessonUid) }
                     studentList.removeAll(itemsToRemove)
-                    callback(Resource.Success(studentList))
+                    emit(Resource.Success(studentList))
                 }
 
-                else -> callback(result)
+                else -> emit(result)
             }
         }
 

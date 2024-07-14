@@ -7,6 +7,8 @@ import com.example.cumhuriyetsporsalonuadmin.domain.model.Student
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseViewModel
 import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,34 +23,33 @@ class AllStudentListingViewModel @Inject constructor(
 
     fun getStudents() {
         studentList.clear()
-        firebaseRepository.getVerifiedStudents(::studentCallback)
-    }
+        firebaseRepository.getVerifiedStudents().onEach { result ->
+            when (result) {
+                is Resource.Error -> {
+                    setLoading(false)
+                    sendAction(AllStudentListingActionBus.ShowError(result.message))
+                }
 
-    private fun studentCallback(result: Resource<List<Student>>) {
-        when (result) {
-            is Resource.Error -> {
-                setLoading(false)
-                sendAction(AllStudentListingActionBus.ShowError(result.message))
-            }
-
-            is Resource.Loading -> setLoading(true)
-            is Resource.Success -> {
-                setLoading(false)
-                result.data?.let {
-                    studentList.addAll(it)
-                    sendAction(AllStudentListingActionBus.StudentsLoaded)
+                is Resource.Loading -> setLoading(true)
+                is Resource.Success -> {
+                    setLoading(false)
+                    result.data?.let {
+                        studentList.addAll(it)
+                        sendAction(AllStudentListingActionBus.StudentsLoaded)
+                    }
                 }
             }
-        }
+        }.launchIn(viewModelScope)
     }
 
+
     fun getLessonByUID(lessonUid: String) {
-        firebaseRepository.getLessonByUID(lessonUid) {
+        firebaseRepository.getLessonByUID(lessonUid).onEach {
             it.data?.let {
                 lesson = it
                 sendAction(AllStudentListingActionBus.LessonLoaded)
             }
-        }
+        }.launchIn(viewModelScope)
     }
 
     fun filterList(query: String?) {

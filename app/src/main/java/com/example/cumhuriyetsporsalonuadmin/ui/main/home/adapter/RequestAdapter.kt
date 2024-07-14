@@ -1,5 +1,6 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main.home.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -7,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cumhuriyetsporsalonuadmin.databinding.ItemRequestBinding
 import com.example.cumhuriyetsporsalonuadmin.domain.model.User
+import com.example.cumhuriyetsporsalonuadmin.ui.main.all_student_listing.adapter.TAG
 
 
 class RequestAdapter(
@@ -22,7 +24,8 @@ class RequestAdapter(
     override fun onBindViewHolder(holder: RequestViewHolder, position: Int) {
         val currentUser = getItem(position)
         holder.binding.tvName.text = currentUser.email
-        holder.binding.btnAccept.setOnClickListener { answerRequestOnClick(currentUser, true) }
+        holder.binding.btnAccept.setOnClickListener {
+            answerRequestOnClick(currentUser, true) }
         holder.binding.btnDeny.setOnClickListener { answerRequestOnClick(currentUser, false) }
     }
 

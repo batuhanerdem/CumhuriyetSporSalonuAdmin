@@ -1,5 +1,6 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main.lesson.add_lesson
 
+import androidx.lifecycle.viewModelScope
 import com.example.cumhuriyetsporsalonuadmin.data.repository.FirebaseRepository
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Days
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
@@ -7,6 +8,8 @@ import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseViewModel
 import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import com.example.cumhuriyetsporsalonuadmin.utils.SelectableData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import java.time.LocalTime
 import javax.inject.Inject
 
@@ -33,7 +36,7 @@ class AddLessonViewModel @Inject constructor(private val firebaseRepository: Fir
     }
 
     fun saveLesson(lesson: Lesson) {
-        firebaseRepository.setLesson(lesson) { result ->
+        firebaseRepository.setLesson(lesson).onEach { result ->
             when (result) {
                 is Resource.Error -> {
                     setLoading(false)
@@ -49,7 +52,7 @@ class AddLessonViewModel @Inject constructor(private val firebaseRepository: Fir
                     sendAction(AddLessonActionBus.Success)
                 }
             }
-        }
+        }.launchIn(viewModelScope)
 
     }
 

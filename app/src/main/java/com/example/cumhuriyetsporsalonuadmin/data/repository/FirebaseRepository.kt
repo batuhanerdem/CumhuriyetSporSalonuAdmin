@@ -13,6 +13,10 @@ import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import com.example.cumhuriyetsporsalonuadmin.utils.Stringfy.Companion.stringfy
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.scopes.ViewModelScoped
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @ViewModelScoped
@@ -23,159 +27,174 @@ class FirebaseRepository @Inject constructor(
     private val userCollectionRef = db.collection(CollectionName.USER.value)
     private val lessonCollectionRef = db.collection(CollectionName.LESSON.value)
 
-
-    fun adminLogin(admin: Admin, callback: (Resource<Unit>) -> Unit) {
-        callback(Resource.Loading())
-        adminDocumentRef.get().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val result = task.result ?: return@addOnCompleteListener
-                val dbAdmin = DocumentConverters.convertDocumentToAdmin(result)
-                dbAdmin ?: return@addOnCompleteListener
-                if (admin.username == dbAdmin.username && admin.password == dbAdmin.password) callback(
-                    Resource.Success()
-                ) else callback(Resource.Error(message = R.string.login_error_invalid_credentials.stringfy()))
-            } else callback(Resource.Error(message = task.exception?.message?.stringfy()))
+    fun adminLogin(admin: Admin): Flow<Resource<Unit>> = callbackFlow {
+        trySend(Resource.Loading())
+        try {
+            val task = adminDocumentRef.get().await()
+            val dbAdmin = DocumentConverters.convertDocumentToAdmin(task)
+            if (admin.username == dbAdmin?.username && admin.password == dbAdmin.password) {
+                trySend(Resource.Success(Unit))
+            } else {
+                trySend(Resource.Error(message = R.string.login_error_invalid_credentials.stringfy()))
+            }
+        } catch (e: Exception) {
+            trySend(Resource.Error(message = e.message?.stringfy()))
         }
+        awaitClose { }
     }
 
-    fun updateAdmin(admin: Admin, callback: (Resource<Nothing>) -> Unit) {
-        adminDocumentRef.set(admin).addOnCompleteListener { task ->
-            if (task.isSuccessful) callback(Resource.Success())
-            else callback(Resource.Error(message = task.exception?.message?.stringfy()))
+    fun updateAdmin(admin: Admin): Flow<Resource<Nothing>> = callbackFlow {
+        trySend(Resource.Loading())
+        try {
+            adminDocumentRef.set(admin).await()
+            trySend(Resource.Success())
+        } catch (e: Exception) {
+            trySend(Resource.Error(message = e.message?.stringfy()))
         }
+        awaitClose { }
     }
 
-    fun getUnverifiedStudents(callback: (Resource<List<Student>>) -> Unit) {
-        callback(Resource.Loading())
-        userCollectionRef.whereEqualTo(
+    fun getUnverifiedStudents(): Flow<Resource<List<Student>>> = callbackFlow {
+        trySend(Resource.Loading())
+        val listenerRegistration = userCollectionRef.whereEqualTo(
             UserField.IS_VERIFIED.key, VerifiedStatus.NOTANSWERED.asString
         ).addSnapshotListener { value, error ->
             if (error != null) {
-                callback(Resource.Error(message = error.message?.stringfy()))
+                trySend(Resource.Error(message = error.message?.stringfy()))
                 return@addSnapshotListener
             }
 
-            val unverifiedStudents =
-                value?.documents?.mapNotNull { DocumentConverters.convertDocumentToStudent(it) }
-                    ?: emptyList()
-            callback(Resource.Success(unverifiedStudents))
+            val unverifiedStudents = value?.documents?.mapNotNull {
+                DocumentConverters.convertDocumentToStudent(it)
+            } ?: emptyList()
+            trySend(Resource.Success(unverifiedStudents))
+        }
+
+        awaitClose {
+            listenerRegistration.remove()
         }
     }
 
-
-    fun getVerifiedStudents(callback: (Resource<List<Student>>) -> Unit) {
-        callback(Resource.Loading())
-        userCollectionRef.whereEqualTo(
-            UserField.IS_VERIFIED.key, VerifiedStatus.VERIFIED.asString
-        ).get().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val result = task.result ?: return@addOnCompleteListener
-                val studentList = DocumentConverters.convertDocumentToStudentList(result.documents)
-                callback(Resource.Success(studentList))
-            } else callback(Resource.Error(message = task.exception?.message?.stringfy()))
+    fun getVerifiedStudents(): Flow<Resource<List<Student>>> = callbackFlow {
+        trySend(Resource.Loading())
+        try {
+            val result = userCollectionRef.whereEqualTo(
+                UserField.IS_VERIFIED.key, VerifiedStatus.VERIFIED.asString
+            ).get().await()
+            val studentList = DocumentConverters.convertDocumentToStudentList(result.documents)
+            trySend(Resource.Success(studentList))
+        } catch (e: Exception) {
+            trySend(Resource.Error(message = e.message?.stringfy()))
         }
+        awaitClose { }
     }
 
-    fun getStudentByUid(studentUid: String, callback: (Resource<Student>) -> Unit) {
-        userCollectionRef.document(studentUid).get().addOnCompleteListener { task ->
-            callback(Resource.Loading())
-            if (task.isSuccessful) {
-                val result = task.result
-                val student = DocumentConverters.convertDocumentToStudent(result)
-                callback(Resource.Success(student))
-            } else callback(Resource.Error(message = task.exception?.message?.stringfy()))
-
+    fun getStudentByUid(studentUid: String): Flow<Resource<Student>> = callbackFlow {
+        trySend(Resource.Loading())
+        try {
+            val result = userCollectionRef.document(studentUid).get().await()
+            val student = DocumentConverters.convertDocumentToStudent(result)
+            trySend(Resource.Success(student))
+        } catch (e: Exception) {
+            trySend(Resource.Error(message = e.message?.stringfy()))
         }
+        awaitClose { }
     }
 
-    fun getStudentsByLessonUid(lessonUID: String, callback: (Resource<List<Student>>) -> Unit) {
-        callback(Resource.Loading())
-        userCollectionRef.whereEqualTo(
-            UserField.IS_VERIFIED.key, VerifiedStatus.VERIFIED.asString
-        ).whereArrayContains(UserField.LESSON_UIDS.key, lessonUID).get()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val result = task.result ?: return@addOnCompleteListener
-                    val studentList =
-                        DocumentConverters.convertDocumentToStudentList(result.documents)
-                    callback(Resource.Success(studentList))
-                } else callback(Resource.Error(message = task.exception?.message?.stringfy()))
-            }
-    }
-
-    fun deleteStudent(studentUid: String, callback: (Resource<Nothing>) -> Unit) {
-        callback(Resource.Loading())
-        userCollectionRef.document(studentUid).delete().addOnCompleteListener { task ->
-            if (task.isSuccessful) callback(Resource.Success())
-            else callback(Resource.Error(message = task.exception?.message?.stringfy()))
+    fun getStudentsByLessonUid(lessonUID: String): Flow<Resource<List<Student>>> = callbackFlow {
+        trySend(Resource.Loading())
+        try {
+            val result = userCollectionRef.whereEqualTo(
+                UserField.IS_VERIFIED.key, VerifiedStatus.VERIFIED.asString
+            ).whereArrayContains(UserField.LESSON_UIDS.key, lessonUID).get().await()
+            val studentList = DocumentConverters.convertDocumentToStudentList(result.documents)
+            trySend(Resource.Success(studentList))
+        } catch (e: Exception) {
+            trySend(Resource.Error(message = e.message?.stringfy()))
         }
+        awaitClose { }
     }
 
-    fun setStudent(student: Student, callback: (Resource<Nothing>) -> Unit) {
-        callback(Resource.Loading())
-        userCollectionRef.document(student.uid).set(student.toHashMap())
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) callback(Resource.Success())
-                else callback(Resource.Error(message = task.exception?.message?.stringfy()))
-            }
-    }
-
-    fun getAllLessons(callback: (Resource<List<Lesson>>) -> Unit) {
-        callback(Resource.Loading())
-        lessonCollectionRef.orderBy(LessonField.DAY.key).orderBy(LessonField.START_HOUR.key).get()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val result = task.result ?: return@addOnCompleteListener
-                    val lessonList =
-                        DocumentConverters.convertDocumentToLessonList(result.documents)
-                    callback(Resource.Success(lessonList))
-                } else callback(Resource.Error(message = task.exception?.message?.stringfy()))
-            }
-    }
-
-    fun getLessonByUID(lessonUID: String, callback: (Resource<Lesson>) -> Unit) {
-        callback(Resource.Loading())
-        lessonCollectionRef.document(lessonUID).get().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val result = task.result ?: return@addOnCompleteListener
-                val lesson = DocumentConverters.convertDocumentToLesson(result)
-                    ?: return@addOnCompleteListener
-                callback(Resource.Success(lesson))
-            } else callback(Resource.Error(message = task.exception?.message?.stringfy()))
+    fun deleteStudent(studentUid: String): Flow<Resource<Nothing>> = callbackFlow {
+        trySend(Resource.Loading())
+        try {
+            userCollectionRef.document(studentUid).delete().await()
+            trySend(Resource.Success())
+        } catch (e: Exception) {
+            trySend(Resource.Error(message = e.message?.stringfy()))
         }
-
+        awaitClose { }
     }
 
-    fun getLessonsByStudentUid(studentUid: String, callback: (Resource<List<Lesson>>) -> Unit) {
-        callback(Resource.Loading())
-        lessonCollectionRef.whereArrayContains(LessonField.STUDENT_UIDS.key, studentUid)
-            .orderBy(LessonField.DAY.key).orderBy(LessonField.START_HOUR.key).get()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val result = task.result ?: return@addOnCompleteListener
-                    val lessonList =
-                        DocumentConverters.convertDocumentToLessonList(result.documents)
-                    callback(Resource.Success(lessonList))
-                } else callback(Resource.Error(message = task.exception?.message?.stringfy()))
-            }
-
-    }
-
-    fun setLesson(lesson: Lesson, callback: (Resource<Nothing>) -> Unit) {
-        callback(Resource.Loading())
-        lessonCollectionRef.document(lesson.uid).set(lesson.toFirebaseLesson())
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) callback(Resource.Success())
-                else callback(Resource.Error(message = task.exception?.message?.stringfy()))
-            }
-    }
-
-    fun deleteLesson(lessonUid: String, callback: (Resource<Nothing>) -> Unit) {
-        callback(Resource.Loading())
-        lessonCollectionRef.document(lessonUid).delete().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                callback(Resource.Success())
-            } else callback(Resource.Error(message = task.exception?.message?.stringfy()))
+    fun setStudent(student: Student): Flow<Resource<Nothing>> = callbackFlow {
+        trySend(Resource.Loading())
+        try {
+            userCollectionRef.document(student.uid).set(student.toHashMap()).await()
+            trySend(Resource.Success())
+        } catch (e: Exception) {
+            trySend(Resource.Error(message = e.message?.stringfy()))
         }
+        awaitClose { }
+    }
+
+    fun getAllLessons(): Flow<Resource<List<Lesson>>> = callbackFlow {
+        trySend(Resource.Loading())
+        try {
+            val result = lessonCollectionRef.orderBy(LessonField.DAY.key)
+                .orderBy(LessonField.START_HOUR.key).get().await()
+            val lessonList = DocumentConverters.convertDocumentToLessonList(result.documents)
+            trySend(Resource.Success(lessonList))
+        } catch (e: Exception) {
+            trySend(Resource.Error(message = e.message?.stringfy()))
+        }
+        awaitClose { }
+    }
+
+    fun getLessonByUID(lessonUID: String): Flow<Resource<Lesson>> = callbackFlow {
+        trySend(Resource.Loading())
+        try {
+            val result = lessonCollectionRef.document(lessonUID).get().await()
+            val lesson = DocumentConverters.convertDocumentToLesson(result)
+            trySend(Resource.Success(lesson))
+        } catch (e: Exception) {
+            trySend(Resource.Error(message = e.message?.stringfy()))
+        }
+        awaitClose { }
+    }
+
+    fun getLessonsByStudentUid(studentUid: String): Flow<Resource<List<Lesson>>> = callbackFlow {
+        trySend(Resource.Loading())
+        try {
+            val result = lessonCollectionRef.whereArrayContains(LessonField.STUDENT_UIDS.key, studentUid)
+                .orderBy(LessonField.DAY.key)
+                .orderBy(LessonField.START_HOUR.key).get().await()
+            val lessonList = DocumentConverters.convertDocumentToLessonList(result.documents)
+            trySend(Resource.Success(lessonList))
+        } catch (e: Exception) {
+            trySend(Resource.Error(message = e.message?.stringfy()))
+        }
+        awaitClose { }
+    }
+
+    fun setLesson(lesson: Lesson): Flow<Resource<Nothing>> = callbackFlow {
+        trySend(Resource.Loading())
+        try {
+            lessonCollectionRef.document(lesson.uid).set(lesson.toFirebaseLesson()).await()
+            trySend(Resource.Success())
+        } catch (e: Exception) {
+            trySend(Resource.Error(message = e.message?.stringfy()))
+        }
+        awaitClose { }
+    }
+
+    fun deleteLesson(lessonUid: String): Flow<Resource<Nothing>> = callbackFlow {
+        trySend(Resource.Loading())
+        try {
+            lessonCollectionRef.document(lessonUid).delete().await()
+            trySend(Resource.Success())
+        } catch (e: Exception) {
+            trySend(Resource.Error(message = e.message?.stringfy()))
+        }
+        awaitClose { }
     }
 }

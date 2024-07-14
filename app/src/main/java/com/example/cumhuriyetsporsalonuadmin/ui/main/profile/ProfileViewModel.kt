@@ -1,10 +1,13 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main.profile
 
+import androidx.lifecycle.viewModelScope
 import com.example.cumhuriyetsporsalonuadmin.data.repository.FirebaseRepository
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Admin
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseViewModel
 import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @HiltViewModel
@@ -13,7 +16,7 @@ class ProfileViewModel @Inject constructor(
 ) : BaseViewModel<ProfileActionBus>() {
 
     fun updateAdmin(admin: Admin) {
-        firebaseRepository.updateAdmin(admin) {
+        firebaseRepository.updateAdmin(admin).onEach {
             when (it) {
                 is Resource.Loading -> {
                     setLoading(true)
@@ -29,7 +32,7 @@ class ProfileViewModel @Inject constructor(
                     sendAction(ProfileActionBus.UpdatedSuccessFully)
                 }
             }
-        }
+        }.launchIn(viewModelScope)
 
     }
 }
