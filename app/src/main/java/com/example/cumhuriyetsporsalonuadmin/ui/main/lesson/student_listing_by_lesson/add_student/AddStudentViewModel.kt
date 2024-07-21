@@ -89,7 +89,7 @@ class AddStudentViewModel @Inject constructor(
                         sendAction(AddStudentActionBus.ShowError(result.message))
                     }
 
-                    is Resource.Loading -> {}//setLoading(true)
+                    is Resource.Loading -> {setLoading(true)}
                     is Resource.Success -> {
                         setLoading(false)
                         selectableStudentList.value =

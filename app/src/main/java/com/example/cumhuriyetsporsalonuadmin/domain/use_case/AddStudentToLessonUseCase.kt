@@ -52,23 +52,14 @@ class AddStudentToLessonUseCase @Inject constructor(private val repository: Fire
         lessonUid: String, studentUid: String
     ): Flow<Resource<in Nothing>> = flow {
         repository.getStudentByUid(studentUid).collect { result ->
-            Log.d("tag", "addLessonUidToStudent: $result ${result.data} - ${result.message}")
-            when (result) {
-                is Resource.Success -> {
-                    val student = result.data ?: return@collect
-                    val newList = student.lessonUids.toMutableList().apply {
-                        add(lessonUid)
-                    }
-                    student.lessonUids = newList
-                    repository.setStudent(student).collect {
-//                        if (it is Resource.Error) {
-                        Log.d("tag", "setStudent: $it ${it.data} ${it.message} ")
-                        emit(it)
-//                        }
-                    }
-                }
-
-                else -> {}
+            if (result !is Resource.Success) return@collect
+            val student = result.data ?: return@collect
+            val newList = student.lessonUids.toMutableList().apply {
+                add(lessonUid)
+            }
+            student.lessonUids = newList
+            repository.setStudent(student).collect {
+                emit(it)
             }
         }
     }
