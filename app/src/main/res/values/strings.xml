@@ -76,6 +76,8 @@
     <string name="profile">Profil</string>
     <string name="edit_profile">Profili Düzenle</string>
 
+    <string name="remove_student">Öğrenciyi Sil</string>
+    <string name="delete">Sil</string>
     <string name="age">Yaş</string>
     <string name="profile_info">* Boy, kilo ve bmi(vücut kitle endeksi) yalnızca bmi hesaplama alanından değiştirilebilir</string>
     <string name="name">İsim</string>

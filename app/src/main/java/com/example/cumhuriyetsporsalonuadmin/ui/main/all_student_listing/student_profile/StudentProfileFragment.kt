@@ -1,9 +1,11 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main.all_student_listing.student_profile
 
 import androidx.navigation.fragment.navArgs
+import com.example.cumhuriyetsporsalonuadmin.R
 import com.example.cumhuriyetsporsalonuadmin.databinding.FragmentStudentProfileBinding
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Student
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseFragment
+import com.example.cumhuriyetsporsalonuadmin.utils.Stringfy.Companion.stringfy
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -29,6 +31,11 @@ class StudentProfileFragment :
                 viewModel.user?.let {
                     setUserProfile(it)
                 }
+            }
+
+            StudentProfileActionBus.StudentRemoved -> {
+                showSuccessMessage(R.string.student_removed.stringfy())
+                navigateBack()
             }
         }
     }
@@ -58,6 +65,10 @@ class StudentProfileFragment :
                 )
             navigateTo(action)
         }
+        binding.tvRemoveStudent.setOnClickListener {
+            viewModel.removeStudent()
+        }
+
         binding.imgBack.setOnClickListener {
             navigateBack()
         }

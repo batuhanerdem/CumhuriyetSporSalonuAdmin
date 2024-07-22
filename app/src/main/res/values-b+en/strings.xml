@@ -73,6 +73,10 @@
     <string name="no_lesson_found">No lesson found</string>
     <string name="no_application_found">No application found</string>
 
+    <string name="remove_student">Remove Student</string>
+    <string name="delete">Remove</string>
+
+
     <string name="profile">Profile</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="age">Age</string>

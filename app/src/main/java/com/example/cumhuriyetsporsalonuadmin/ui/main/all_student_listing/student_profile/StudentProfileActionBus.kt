@@ -12,4 +12,6 @@ sealed interface StudentProfileActionBus : BaseActionBus {
 
     data object StudentsLoaded : StudentProfileActionBus
 
+    data object StudentRemoved : StudentProfileActionBus
+
 }

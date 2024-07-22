@@ -5,12 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.main.all_student_listing.student_profile.StudentProfileFragment">
+
     <include
         android:id="@+id/layoutNotificationBar"
         layout="@layout/layout_top_notification_limit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <ImageView
         android:id="@+id/imgBack"
         android:layout_width="wrap_content"
@@ -31,6 +33,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/imgBack" />
+
+    <TextView
+        android:id="@+id/tvRemoveStudent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:fontFamily="@font/lexend_bold"
+        android:gravity="center"
+        android:textSize="18dp"
+        android:text="@string/delete"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="@id/tvTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvTitle" />
 
     <ImageView
         android:id="@+id/imgUser"
@@ -238,11 +254,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        app:layout_constraintVertical_bias="0.1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/layoutSpecs"
         app:layout_constraintStart_toStartOf="@id/layoutSpecs"
-        app:layout_constraintTop_toBottomOf="@id/layoutSpecs">
+        app:layout_constraintTop_toBottomOf="@id/layoutSpecs"
+        app:layout_constraintVertical_bias="0.1">
 
         <TextView
             android:id="@+id/tvLessons"
