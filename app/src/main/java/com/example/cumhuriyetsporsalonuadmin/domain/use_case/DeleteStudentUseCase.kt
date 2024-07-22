@@ -12,8 +12,8 @@ import javax.inject.Inject
 
 @ViewModelScoped
 class DeleteStudentUseCase @Inject constructor(private val repository: FirebaseRepository) {
-    suspend fun execute(studentUid: String): Flow<Resource<in Nothing>> = flow {
-        repository.deleteStudent(studentUid).flatMapLatest { result: Resource<Nothing> ->
+    suspend fun execute(studentUid: String): Flow<Resource<Unit>> = flow {
+        repository.deleteStudent(studentUid).flatMapLatest { result: Resource<Unit> ->
             if (result !is Resource.Success) return@flatMapLatest flow { }
             deleteStudentFromLesson(studentUid)
         }.collect {
@@ -21,7 +21,7 @@ class DeleteStudentUseCase @Inject constructor(private val repository: FirebaseR
         }
     }
 
-    private fun deleteStudentFromLesson(studentUid: String): Flow<Resource<in Nothing>> = flow {
+    private fun deleteStudentFromLesson(studentUid: String): Flow<Resource<Unit>> = flow {
         repository.getLessonsByStudentUid(studentUid).flatMapLatest { result ->
 
             if (result !is Resource.Success) return@flatMapLatest flow { }

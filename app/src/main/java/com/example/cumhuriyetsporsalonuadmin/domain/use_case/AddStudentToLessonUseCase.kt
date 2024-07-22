@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @ViewModelScoped
 class AddStudentToLessonUseCase @Inject constructor(private val repository: FirebaseRepository) {
-    suspend fun execute(lesson: Lesson, studentList: List<Student>): Flow<Resource<in Nothing>> =
+    suspend fun execute(lesson: Lesson, studentList: List<Student>): Flow<Resource<Unit>> =
         flow {
             emit(Resource.Loading())
             val newList = lesson.studentUids.toMutableList().apply {
@@ -38,7 +38,7 @@ class AddStudentToLessonUseCase @Inject constructor(private val repository: Fire
 
     private fun addLessonUidToStudent(
         lessonUid: String, studentUid: String
-    ): Flow<Resource<in Nothing>> = flow {
+    ): Flow<Resource<Unit>> = flow {
         repository.getStudentByUid(studentUid).flatMapLatest { result ->
             if (result !is Resource.Success) return@flatMapLatest flow { }
             val student = result.data ?: return@flatMapLatest flow { }

@@ -1,6 +1,5 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main.home
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.cumhuriyetsporsalonuadmin.data.repository.FirebaseRepository
 import com.example.cumhuriyetsporsalonuadmin.domain.model.User
@@ -42,9 +41,7 @@ class HomeVIewModel @Inject constructor(
 
     fun answerRequest(user: User, isAccepted: Boolean) {
         viewModelScope.launch {
-            answerRequestUseCase.execute(user.uid, isAccepted).collect{
-                Log.d("tag", "answerRequest: $it")
-            }
+            answerRequestUseCase.execute(user.uid, isAccepted).collect {}
         }
     }
 }

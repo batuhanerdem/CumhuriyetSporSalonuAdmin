@@ -43,7 +43,7 @@ class FirebaseRepository @Inject constructor(
         awaitClose { }
     }
 
-    fun updateAdmin(admin: Admin): Flow<Resource<Nothing>> = callbackFlow {
+    fun updateAdmin(admin: Admin): Flow<Resource<Unit>> = callbackFlow {
         trySend(Resource.Loading())
         try {
             adminDocumentRef.set(admin).await()
@@ -115,7 +115,7 @@ class FirebaseRepository @Inject constructor(
         awaitClose { }
     }
 
-    fun deleteStudent(studentUid: String): Flow<Resource<Nothing>> = callbackFlow {
+    fun deleteStudent(studentUid: String): Flow<Resource<Unit>> = callbackFlow {
         trySend(Resource.Loading())
         try {
             userCollectionRef.document(studentUid).delete().await()
@@ -126,7 +126,7 @@ class FirebaseRepository @Inject constructor(
         awaitClose { }
     }
 
-    fun setStudent(student: Student): Flow<Resource<Nothing>> = callbackFlow {
+    fun setStudent(student: Student): Flow<Resource<Unit>> = callbackFlow {
         trySend(Resource.Loading())
         try {
             userCollectionRef.document(student.uid).set(student.toHashMap()).await()
@@ -176,7 +176,7 @@ class FirebaseRepository @Inject constructor(
         awaitClose { }
     }
 
-    fun setLesson(lesson: Lesson): Flow<Resource<Nothing>> = callbackFlow {
+    fun setLesson(lesson: Lesson): Flow<Resource<Unit>> = callbackFlow {
         trySend(Resource.Loading())
         try {
             lessonCollectionRef.document(lesson.uid).set(lesson.toFirebaseLesson()).await()
@@ -187,7 +187,7 @@ class FirebaseRepository @Inject constructor(
         awaitClose { }
     }
 
-    fun deleteLesson(lessonUid: String): Flow<Resource<Nothing>> = callbackFlow {
+    fun deleteLesson(lessonUid: String): Flow<Resource<Unit>> = callbackFlow {
         trySend(Resource.Loading())
         try {
             lessonCollectionRef.document(lessonUid).delete().await()
