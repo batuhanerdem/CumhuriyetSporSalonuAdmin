@@ -38,7 +38,7 @@ open class BaseViewModel<ActionBus : BaseActionBus> : ViewModel() {
     private var loadingCancelJob = loadingCancel()
 
     private fun loadingCancel() = viewModelScope.launch {
-        delay(150)
+//        delay(150)
         mLoadingState.value = false
     }
 

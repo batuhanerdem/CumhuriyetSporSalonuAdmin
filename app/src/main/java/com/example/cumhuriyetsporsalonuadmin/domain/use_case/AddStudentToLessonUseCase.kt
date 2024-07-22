@@ -1,26 +1,15 @@
 package com.example.cumhuriyetsporsalonuadmin.domain.use_case
 
-import android.util.Log
 import com.example.cumhuriyetsporsalonuadmin.data.repository.FirebaseRepository
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Student
 import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import dagger.hilt.android.scopes.ViewModelScoped
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @ViewModelScoped
@@ -34,33 +23,32 @@ class AddStudentToLessonUseCase @Inject constructor(private val repository: Fire
             lesson.studentUids = newList
             val lessonResult = repository.setLesson(lesson)
             lessonResult.collect { result ->
-                when (result) {
-                    is Resource.Success -> {
-                        studentList.asFlow().flatMapMerge { student ->
-                            addLessonUidToStudent(lesson.uid, student.uid)
-                        }.collect {
-                            emit(it)
-                        }
-                    }
-
-                    else -> emit(result)
+                if (result !is Resource.Success) {
+                    emit(result)
+                    return@collect
                 }
+                studentList.asFlow().flatMapMerge { student ->
+                    addLessonUidToStudent(lesson.uid, student.uid)
+                }.collect {
+                    emit(it)
+                }
+
             }
         }
 
     private fun addLessonUidToStudent(
         lessonUid: String, studentUid: String
     ): Flow<Resource<in Nothing>> = flow {
-        repository.getStudentByUid(studentUid).collect { result ->
-            if (result !is Resource.Success) return@collect
-            val student = result.data ?: return@collect
+        repository.getStudentByUid(studentUid).flatMapLatest { result ->
+            if (result !is Resource.Success) return@flatMapLatest flow { }
+            val student = result.data ?: return@flatMapLatest flow { }
             val newList = student.lessonUids.toMutableList().apply {
                 add(lessonUid)
             }
             student.lessonUids = newList
-            repository.setStudent(student).collect {
-                emit(it)
-            }
+            repository.setStudent(student)
+        }.collect {
+            emit(it)
         }
     }
 

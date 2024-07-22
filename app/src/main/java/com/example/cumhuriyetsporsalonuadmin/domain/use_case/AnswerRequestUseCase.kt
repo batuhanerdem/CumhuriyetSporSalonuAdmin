@@ -6,6 +6,8 @@ import com.example.cumhuriyetsporsalonuadmin.domain.model.Student
 import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
@@ -14,17 +16,17 @@ class AnswerRequestUseCase @Inject constructor(private val repository: FirebaseR
     suspend fun execute(
         studentUid: String, answer: Boolean
     ): Flow<Resource<out Student>> = flow {
-        emit(Resource.Loading())
-        repository.getStudentByUid(studentUid).collect { result ->
+//        emit(Resource.Loading())
+        repository.getStudentByUid(studentUid).flatMapConcat { result ->
             when (result) {
                 is Resource.Success -> {
-                    val user = result.data ?: return@collect
+                    val user = result.data ?: return@flatMapConcat flow { emit(Resource.Error()) }
                     val answeredUser = user.copy(isVerified = answer.toVerifiedStatus())
-                    repository.setStudent(answeredUser).collect { emit(it) }
+                    repository.setStudent(answeredUser)
                 }
 
-                else -> emit(result)
+                else -> flow { }// emit(result)
             }
-        }
+        }.collect { emit(it) }
     }
 }

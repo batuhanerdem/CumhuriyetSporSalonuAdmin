@@ -42,7 +42,9 @@ class HomeVIewModel @Inject constructor(
 
     fun answerRequest(user: User, isAccepted: Boolean) {
         viewModelScope.launch {
-            answerRequestUseCase.execute(user.uid, isAccepted).collect{}
+            answerRequestUseCase.execute(user.uid, isAccepted).collect{
+                Log.d("tag", "answerRequest: $it")
+            }
         }
     }
 }
