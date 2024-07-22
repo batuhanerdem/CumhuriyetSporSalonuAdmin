@@ -13,6 +13,7 @@ import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import com.example.cumhuriyetsporsalonuadmin.utils.Stringfy.Companion.stringfy
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.scopes.ViewModelScoped
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -40,7 +41,7 @@ class FirebaseRepository @Inject constructor(
         } catch (e: Exception) {
             trySend(Resource.Error(message = e.message?.stringfy()))
         }
-        awaitClose { }
+        awaitClose { this.cancel() }
     }
 
     fun updateAdmin(admin: Admin): Flow<Resource<Unit>> = callbackFlow {
@@ -51,7 +52,7 @@ class FirebaseRepository @Inject constructor(
         } catch (e: Exception) {
             trySend(Resource.Error(message = e.message?.stringfy()))
         }
-        awaitClose { }
+        awaitClose { this.cancel() }
     }
 
     fun getUnverifiedStudents(): Flow<Resource<List<Student>>> = callbackFlow {
@@ -72,6 +73,7 @@ class FirebaseRepository @Inject constructor(
 
         awaitClose {
             listenerRegistration.remove()
+            this.cancel()
         }
     }
 
@@ -86,7 +88,7 @@ class FirebaseRepository @Inject constructor(
         } catch (e: Exception) {
             trySend(Resource.Error(message = e.message?.stringfy()))
         }
-        awaitClose { }
+        awaitClose { this.cancel() }
     }
 
     fun getStudentByUid(studentUid: String): Flow<Resource<Student>> = callbackFlow {
@@ -98,7 +100,7 @@ class FirebaseRepository @Inject constructor(
         } catch (e: Exception) {
             trySend(Resource.Error(message = e.message?.stringfy()))
         }
-        awaitClose { }
+        awaitClose { this.cancel() }
     }
 
     fun getStudentsByLessonUid(lessonUID: String): Flow<Resource<List<Student>>> = callbackFlow {
@@ -112,7 +114,7 @@ class FirebaseRepository @Inject constructor(
         } catch (e: Exception) {
             trySend(Resource.Error(message = e.message?.stringfy()))
         }
-        awaitClose { }
+        awaitClose { this.cancel() }
     }
 
     fun deleteStudent(studentUid: String): Flow<Resource<Unit>> = callbackFlow {
@@ -123,7 +125,7 @@ class FirebaseRepository @Inject constructor(
         } catch (e: Exception) {
             trySend(Resource.Error(message = e.message?.stringfy()))
         }
-        awaitClose { }
+        awaitClose { this.cancel() }
     }
 
     fun setStudent(student: Student): Flow<Resource<Unit>> = callbackFlow {
@@ -134,20 +136,21 @@ class FirebaseRepository @Inject constructor(
         } catch (e: Exception) {
             trySend(Resource.Error(message = e.message?.stringfy()))
         }
-        awaitClose { }
+        awaitClose { this.cancel() }
     }
 
     fun getAllLessons(): Flow<Resource<List<Lesson>>> = callbackFlow {
         trySend(Resource.Loading())
         try {
-            val result = lessonCollectionRef.orderBy(LessonField.DAY.key)
-                .orderBy(LessonField.START_HOUR.key).get().await()
+            val result =
+                lessonCollectionRef.orderBy(LessonField.DAY.key).orderBy(LessonField.START_HOUR.key)
+                    .get().await()
             val lessonList = DocumentConverters.convertDocumentToLessonList(result.documents)
             trySend(Resource.Success(lessonList))
         } catch (e: Exception) {
             trySend(Resource.Error(message = e.message?.stringfy()))
         }
-        awaitClose { }
+        awaitClose { this.cancel() }
     }
 
     fun getLessonByUID(lessonUID: String): Flow<Resource<Lesson>> = callbackFlow {
@@ -159,21 +162,21 @@ class FirebaseRepository @Inject constructor(
         } catch (e: Exception) {
             trySend(Resource.Error(message = e.message?.stringfy()))
         }
-        awaitClose { }
+        awaitClose { this.cancel() }
     }
 
     fun getLessonsByStudentUid(studentUid: String): Flow<Resource<List<Lesson>>> = callbackFlow {
         trySend(Resource.Loading())
         try {
-            val result = lessonCollectionRef.whereArrayContains(LessonField.STUDENT_UIDS.key, studentUid)
-                .orderBy(LessonField.DAY.key)
-                .orderBy(LessonField.START_HOUR.key).get().await()
+            val result =
+                lessonCollectionRef.whereArrayContains(LessonField.STUDENT_UIDS.key, studentUid)
+                    .orderBy(LessonField.DAY.key).orderBy(LessonField.START_HOUR.key).get().await()
             val lessonList = DocumentConverters.convertDocumentToLessonList(result.documents)
             trySend(Resource.Success(lessonList))
         } catch (e: Exception) {
             trySend(Resource.Error(message = e.message?.stringfy()))
         }
-        awaitClose { }
+        awaitClose { this.cancel() }
     }
 
     fun setLesson(lesson: Lesson): Flow<Resource<Unit>> = callbackFlow {
@@ -184,7 +187,7 @@ class FirebaseRepository @Inject constructor(
         } catch (e: Exception) {
             trySend(Resource.Error(message = e.message?.stringfy()))
         }
-        awaitClose { }
+        awaitClose { this.cancel() }
     }
 
     fun deleteLesson(lessonUid: String): Flow<Resource<Unit>> = callbackFlow {
@@ -195,6 +198,6 @@ class FirebaseRepository @Inject constructor(
         } catch (e: Exception) {
             trySend(Resource.Error(message = e.message?.stringfy()))
         }
-        awaitClose { }
+        awaitClose { this.cancel() }
     }
 }
