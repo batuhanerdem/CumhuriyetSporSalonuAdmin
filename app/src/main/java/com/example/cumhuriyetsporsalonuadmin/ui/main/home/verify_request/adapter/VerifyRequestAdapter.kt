@@ -1,23 +1,21 @@
-package com.example.cumhuriyetsporsalonuadmin.ui.main.home.adapter
+package com.example.cumhuriyetsporsalonuadmin.ui.main.home.verify_request.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.cumhuriyetsporsalonuadmin.databinding.ItemRequestBinding
+import com.example.cumhuriyetsporsalonuadmin.databinding.ItemVerifyRequestBinding
 import com.example.cumhuriyetsporsalonuadmin.domain.model.User
-import com.example.cumhuriyetsporsalonuadmin.ui.main.all_student_listing.adapter.TAG
 
 
-class RequestAdapter(
+class VerifyRequestAdapter(
     val answerRequestOnClick: (user: User, isAccepted: Boolean) -> Unit
-) : ListAdapter<User, RequestAdapter.RequestViewHolder>(UserDiffCallback) {
-    class RequestViewHolder(val binding: ItemRequestBinding) : RecyclerView.ViewHolder(binding.root)
+) : ListAdapter<User, VerifyRequestAdapter.RequestViewHolder>(UserDiffCallback) {
+    class RequestViewHolder(val binding: ItemVerifyRequestBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RequestViewHolder {
-        val binding = ItemRequestBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemVerifyRequestBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return RequestViewHolder(binding)
     }
 

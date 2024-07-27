@@ -5,6 +5,7 @@ enum class LessonField(val key: String) {
     DAY("day"),
     NAME("name"),
     STUDENT_UIDS("studentUids"),
+    REQUEST_UIDS("requestUids"),
     START_HOUR("startHour"),
     END_HOUR("endHour")
 }

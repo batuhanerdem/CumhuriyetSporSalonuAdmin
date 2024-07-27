@@ -87,8 +87,9 @@ object DocumentConverters {
             val startHour = doc.get(LessonField.START_HOUR.key) as String
             val endHour = doc.get(LessonField.END_HOUR.key) as String
             val studentUids = doc.get(LessonField.STUDENT_UIDS.key) as List<String>
+            val requestUids = doc.get(LessonField.REQUEST_UIDS.key) as List<String>
             val firebaseLesson =
-                FirebaseLesson(uid, name, day.toInt(), startHour, endHour, studentUids)
+                FirebaseLesson(uid, name, day.toInt(), startHour, endHour, studentUids, requestUids)
             val lesson = firebaseLesson.toLesson()
             lesson
         } catch (e: Exception) {

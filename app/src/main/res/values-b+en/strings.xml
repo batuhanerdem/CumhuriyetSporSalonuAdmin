@@ -52,9 +52,11 @@
     <string name="hours">Hours</string>
     <string name="student_number">Student Number</string>
     <string name="accept">Accept</string>
+    <string name="accepted">Accepted</string>
     <string name="deny">Deny</string>
     <string name="students">Students</string>
-    <string name="sign_up_requests">Sign-up Request</string>
+    <string name="sign_up_requests">Sign-up Requests</string>
+    <string name="lesson_requests">Lesson Requests</string>
     <string name="change_admin_credentials">Change Admin Credentials</string>
     <string name="second_hour_should_be_after">Second Lesson Should be After the First Lesson</string>
     <string name="fill_the_blanks">Please Fill the Blanks</string>
@@ -91,6 +93,8 @@
     <string name="student_removed">Student Removed</string>
 
     <string name="lesson_removed"> Lesson Removed</string>
+    <string name="go_to_the_lesson"><u>Go to the lesson</u></string>
 
+    <string name="go_to_the_profile"><u>Go to the profile</u></string>
 
 </resources>

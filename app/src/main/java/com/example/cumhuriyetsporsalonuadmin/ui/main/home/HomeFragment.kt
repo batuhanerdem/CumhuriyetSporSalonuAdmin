@@ -1,49 +1,38 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main.home
 
-import androidx.core.view.isVisible
+import com.example.cumhuriyetsporsalonuadmin.R
 import com.example.cumhuriyetsporsalonuadmin.databinding.FragmentHomeBinding
-import com.example.cumhuriyetsporsalonuadmin.domain.model.User
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseFragment
-import com.example.cumhuriyetsporsalonuadmin.ui.main.home.adapter.RequestAdapter
+import com.example.cumhuriyetsporsalonuadmin.ui.main.home.adapter.FragmentAdapter
+import com.example.cumhuriyetsporsalonuadmin.utils.Stringfy.Companion.stringfy
+import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<HomeActionBus, HomeVIewModel, FragmentHomeBinding>(
     FragmentHomeBinding::inflate, HomeVIewModel::class.java
 ) {
-    private lateinit var adapter: RequestAdapter
     override suspend fun onAction(action: HomeActionBus) {
         when (action) {
             HomeActionBus.Init -> {}
-            is HomeActionBus.ApplicationsLoaded -> {
-                adapter.submitList(viewModel.unverifiedList)
-                setNoFoundVisibility(viewModel.unverifiedList.isEmpty())
-            }
+            is HomeActionBus.ShowError -> showErrorMessage(action.error)
 
-            HomeActionBus.Accepted -> viewModel.getUnverifiedUsers()
-            is HomeActionBus.ShowError -> {
-                showErrorMessage(action.error)
-            }
         }
     }
 
     override fun initPage() {
-        viewModel.getUnverifiedUsers()
-        setRV()
+        setViewPager()
     }
 
-    private fun setRV() {
-        adapter = RequestAdapter(::answerRequest)
-        binding.rvApplication.adapter = adapter
-    }
-
-    private fun setNoFoundVisibility(isEmpty: Boolean) {
-        binding.noApplicationFound.isVisible = isEmpty
-        binding.rvApplication.isVisible = !isEmpty
-    }
-
-    private fun answerRequest(user: User, isAccepted: Boolean) {
-        viewModel.answerRequest(user, isAccepted)
+    private fun setViewPager() {
+        binding.viewPager.adapter = FragmentAdapter(childFragmentManager, lifecycle)
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            when (position) {
+                0 -> tab.text = R.string.sign_up_requests.stringfy().getString(requireContext())
+                1 -> tab.text = R.string.lesson_requests.stringfy().getString(requireContext())
+                else -> tab.text = ""
+            }
+        }.attach()
     }
 
 }

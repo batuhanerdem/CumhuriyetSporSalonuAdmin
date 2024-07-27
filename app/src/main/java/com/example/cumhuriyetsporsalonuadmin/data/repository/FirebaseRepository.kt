@@ -1,5 +1,6 @@
 package com.example.cumhuriyetsporsalonuadmin.data.repository
 
+import android.util.Log
 import com.example.cumhuriyetsporsalonuadmin.R
 import com.example.cumhuriyetsporsalonuadmin.domain.mappers.DocumentConverters
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Admin
@@ -179,6 +180,25 @@ class FirebaseRepository @Inject constructor(
         awaitClose { this.cancel() }
     }
 
+    fun getRequestedLessons(): Flow<Resource<List<Lesson>>> = callbackFlow {
+        trySend(Resource.Loading())
+        try {
+            lessonCollectionRef.whereNotEqualTo(LessonField.REQUEST_UIDS.key, emptyList<String>())
+                .orderBy(LessonField.DAY.key).get().addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val lessonList =
+                            DocumentConverters.convertDocumentToLessonList(task.result.documents)
+                        trySend(Resource.Success(lessonList))
+                    } else trySend(Resource.Error(message = task.exception?.message?.stringfy()))
+
+                }
+
+        } catch (e: Exception) {
+            trySend(Resource.Error(message = e.message?.stringfy()))
+        }
+        awaitClose { this.cancel() }
+    }
+
     fun setLesson(lesson: Lesson): Flow<Resource<Unit>> = callbackFlow {
         trySend(Resource.Loading())
         try {
@@ -201,3 +221,5 @@ class FirebaseRepository @Inject constructor(
         awaitClose { this.cancel() }
     }
 }
+
+const val TAG = "tag"

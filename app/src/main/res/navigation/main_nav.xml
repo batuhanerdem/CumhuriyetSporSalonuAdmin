@@ -9,7 +9,14 @@
         android:id="@+id/homeFragment"
         android:name="com.example.cumhuriyetsporsalonuadmin.ui.main.home.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_studentListingByLessonFragment"
+            app:destination="@id/studentListingByLessonFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_studentProfileFragment"
+            app:destination="@id/studentProfileFragment" />
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.cumhuriyetsporsalonuadmin.ui.main.profile.ProfileFragment"
@@ -100,5 +107,17 @@
         <argument
             android:name="uid"
             app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/lessonRequestFragment"
+        android:name="com.example.cumhuriyetsporsalonuadmin.ui.main.home.lesson_request.LessonRequestFragment"
+        android:label="fragment_lesson_request"
+        tools:layout="@layout/fragment_lesson_request" >
+        <action
+            android:id="@+id/action_lessonRequestFragment_to_studentListingByLessonFragment"
+            app:destination="@id/studentListingByLessonFragment" />
+        <action
+            android:id="@+id/action_lessonRequestFragment_to_studentProfileFragment"
+            app:destination="@id/studentProfileFragment" />
     </fragment>
 </navigation>

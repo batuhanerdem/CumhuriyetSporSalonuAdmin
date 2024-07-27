@@ -10,11 +10,11 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 @ViewModelScoped
-class AnswerRequestUseCase @Inject constructor(private val repository: FirebaseRepository) {
+class AnswerVerifyRequestUseCase @Inject constructor(private val repository: FirebaseRepository) {
     suspend fun execute(
         studentUid: String, answer: Boolean
     ): Flow<Resource<Unit>> = flow {
-//        emit(Resource.Loading())
+        emit(Resource.Loading())
         repository.getStudentByUid(studentUid).flatMapConcat { result ->
             if (result !is Resource.Success) return@flatMapConcat flow {
                 if (result is Resource.Error) emit(Resource.Error())

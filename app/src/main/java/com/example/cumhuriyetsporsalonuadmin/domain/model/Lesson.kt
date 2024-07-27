@@ -4,7 +4,8 @@ data class Lesson(
     val uid: String,
     var name: String,
     val lessonDate: LessonDate,
-    var studentUids: List<String> = emptyList()
+    var studentUids: List<String> = emptyList(),
+    var requestUids: List<String> = emptyList()
 ) {
 
     fun toFirebaseLesson(): FirebaseLesson {
@@ -23,7 +24,7 @@ data class Lesson(
         val startHour = "$startHourString.$startMinString"
         val endHour = "$endHourString.$endMinString"
         return FirebaseLesson(
-            this.uid, this.name, day, startHour, endHour, this.studentUids
+            this.uid, this.name, day, startHour, endHour, this.studentUids, this.requestUids
         )
     }
 

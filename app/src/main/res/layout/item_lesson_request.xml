@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layoutTop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/imgLesson"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/ic_lesson"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/lexend_medium"
+            android:textColor="@color/black"
+            android:layout_marginStart="10dp"
+            android:textSize="15sp"
+            app:layout_constraintStart_toEndOf="@id/imgLesson"
+            app:layout_constraintTop_toTopOf="@id/imgLesson"
+            app:layout_constraintBottom_toBottomOf="@id/imgLesson"
+            tools:text="Pazartesi" />
+
+        <TextView
+            android:id="@+id/tvComma"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=":"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="@id/tvDay"
+            app:layout_constraintStart_toEndOf="@id/tvDay"
+            app:layout_constraintTop_toTopOf="@id/tvDay" />
+
+        <TextView
+            android:id="@+id/tvLessonName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:fontFamily="@font/lexend_medium"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            app:layout_constraintStart_toEndOf="@id/tvComma"
+            app:layout_constraintTop_toTopOf="@id/tvDay"
+            tools:text="KickBox" />
+
+        <TextView
+            android:id="@+id/tvLessonStartHour"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:fontFamily="@font/lexend_medium"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            app:layout_constraintStart_toEndOf="@id/tvLessonName"
+            app:layout_constraintTop_toTopOf="@id/tvDay"
+            tools:text="15.00" />
+
+        <TextView
+            android:id="@+id/tvLessonHourLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:fontFamily="@font/lexend_medium"
+            android:text="-"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            app:layout_constraintStart_toEndOf="@id/tvLessonStartHour"
+            app:layout_constraintTop_toTopOf="@id/tvDay" />
+
+        <TextView
+            android:id="@+id/tvLessonEndHour"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:fontFamily="@font/lexend_medium"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            app:layout_constraintStart_toEndOf="@id/tvLessonHourLine"
+            app:layout_constraintTop_toTopOf="@id/tvDay"
+            tools:text="17.00" />
+
+        <TextView
+            android:id="@+id/tvGoToLesson"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="5dp"
+            android:fontFamily="@font/lexend_medium"
+            android:text="@string/go_to_the_lesson"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            app:layout_constraintStart_toStartOf="@id/tvGoToProfile"
+            app:layout_constraintTop_toBottomOf="@id/tvDay" />
+
+
+        <ImageView
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/ic_student"
+            app:layout_constraintBottom_toBottomOf="@id/tvStudentName"
+            app:layout_constraintEnd_toEndOf="@id/imgLesson"
+            app:layout_constraintTop_toTopOf="@id/tvStudentName" />
+
+        <TextView
+            android:id="@+id/tvStudentName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/lexend_medium"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            app:layout_constraintStart_toStartOf="@id/tvDay"
+            app:layout_constraintTop_toBottomOf="@id/tvGoToLesson"
+            tools:text="Batuhan Erdem" />
+
+
+        <TextView
+            android:id="@+id/tvGoToProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            android:fontFamily="@font/lexend_medium"
+            android:text="@string/go_to_the_profile"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvStudentName" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnAccept"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/bg_gray_edittext"
+        android:text="@string/accept"
+        android:textAllCaps="false"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/layoutTop"
+        app:layout_constraintTop_toBottomOf="@id/layoutTop" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnDeny"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/bg_transparent_edittext"
+        android:text="@string/deny"
+        android:textAllCaps="false"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/layoutTop"
+        app:layout_constraintTop_toBottomOf="@id/layoutTop" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

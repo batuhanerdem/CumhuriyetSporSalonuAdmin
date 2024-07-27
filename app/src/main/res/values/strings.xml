@@ -52,10 +52,12 @@
     <string name="hours">Saatler</string>
     <string name="student_number">Öğrenci sayısı</string>
     <string name="accept">Kabul Et</string>
+    <string name="accepted">Kabul Edildi</string>
     <string name="deny">Reddet</string>
     <string name="students">Öğrenciler</string>
     <string name="add_lesson">Dersi Ekle</string>
     <string name="sign_up_requests">Kayıt Olma İstekleri</string>
+    <string name="lesson_requests">Ders İstekleri</string>
     <string name="change_admin_credentials">Admin Bilgilerini Değiştirin</string>
     <string name="second_hour_should_be_after">İkinci Saat İlk Saatten Önce Olmalıdır</string>
     <string name="fill_the_blanks">Lütfen Boş Alanları Doldurun</string>
@@ -90,6 +92,8 @@
     <string name="student_removed">Öğrenci kaydı silindi</string>
 
     <string name="lesson_removed">Ders kaydı silindi</string>
+    <string name="go_to_the_lesson"><u>Derse git</u></string>
 
+    <string name="go_to_the_profile"><u>Profile git</u></string>
 
 </resources>
