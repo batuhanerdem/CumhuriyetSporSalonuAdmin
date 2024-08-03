@@ -1,5 +1,6 @@
 package com.example.cumhuriyetsporsalonuadmin.domain.use_case
 
+import android.util.Log
 import com.example.cumhuriyetsporsalonuadmin.data.repository.FirebaseRepository
 import com.example.cumhuriyetsporsalonuadmin.domain.model.LessonRequest
 import com.example.cumhuriyetsporsalonuadmin.utils.Resource
@@ -20,6 +21,7 @@ class AnswerLessonRequestUseCase @Inject constructor(private val repository: Fir
             if (!isAccepted) { // delete request
                 val newLesson = lessonRequest.lesson.copy(requestUids = newRequestList)
                 repository.setLesson(newLesson).collect {
+                    Log.d("tag", "execute: $it")
                     emit(it)
                 }
                 return@flow

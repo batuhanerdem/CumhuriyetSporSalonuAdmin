@@ -7,51 +7,57 @@ import com.example.cumhuriyetsporsalonuadmin.domain.model.LessonRequest
 import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.flatMapMerge
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 @ViewModelScoped
 class GetLessonRequestUseCase @Inject constructor(private val repository: FirebaseRepository) {
+    private val lessonRequestList = mutableListOf<LessonRequest>()
 
-    suspend fun execute(): Flow<Resource<List<LessonRequest>>> = flow {
+    fun execute(): Flow<Resource<List<LessonRequest>>> = flow {
 //        emit(Resource.Loading())
         repository.getRequestedLessons().collect { result ->
-            when (result) {
-                is Resource.Error -> emit(Resource.Error(result.message))
-                is Resource.Loading -> emit(Resource.Loading())
-                is Resource.Success -> {
-
-                    result.data?.let { requestedLessonList ->
-
-                        val lessonRequestList = mutableListOf<LessonRequest>()
-                        requestedLessonList.forEach() { lesson ->
-                            Log.d("tag", "execute: lessonlsit $requestedLessonList")
-                            createLessonRequestList(lessonRequestList, lesson)
-                        }
-                        emit(Resource.Success(lessonRequestList))
-                        Log.d("tag", "execute: emitledim ins")
-
-                    }
-                }
+            Log.d("tag", "execute basi : $result")
+            if (result is Resource.Error) {
+                emit(Resource.Error(result.message))
+                return@collect
             }
 
+            val requestedLessonList = result.data ?: return@collect
+
+            val flowList = requestedLessonList.map { lesson ->
+                addRequestsToListPerLesson(lesson, lesson.requestUids)
+            }
+            combine(flowList) { result ->
+                if (result.any { it is Resource.Error }) return@combine
+
+            }.collect {
+                Log.d("tag", "execute: valla bana da geldi")
+                emit(Resource.Success(lessonRequestList))
+            }
         }
     }
 
-    private suspend fun createLessonRequestList(list: MutableList<LessonRequest>, lesson: Lesson) {
-        lesson.requestUids.asFlow().flatMapMerge {
+    private suspend fun addRequestsToListPerLesson(
+        lesson: Lesson, studentUids: List<String>
+    ): Flow<Resource<Unit>> = flow {
+
+        val flowList = studentUids.map {
             repository.getStudentByUid(it)
-        }.collect {
-            Log.d(TAG, "createLessonRequestList: $lesson -  ${it.data}")
-            it.data?.let {
-                list.add(LessonRequest(lesson, it))
+        }
+        combine(flowList) { result ->
+            if (result.any { it is Resource.Error }) return@combine
+
+            result.forEach {
+                val student = it.data ?: return@forEach
+                lessonRequestList.add(LessonRequest(lesson, student))
             }
+
+        }.collect {
+            emit(Resource.Success(Unit))
         }
 
     }
 
 }
-
-const val TAG = "tag"

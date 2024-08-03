@@ -184,13 +184,13 @@ class FirebaseRepository @Inject constructor(
         trySend(Resource.Loading())
         try {
             lessonCollectionRef.whereNotEqualTo(LessonField.REQUEST_UIDS.key, emptyList<String>())
-                .orderBy(LessonField.DAY.key).get().addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val lessonList =
-                            DocumentConverters.convertDocumentToLessonList(task.result.documents)
-                        trySend(Resource.Success(lessonList))
-                    } else trySend(Resource.Error(message = task.exception?.message?.stringfy()))
-
+                .orderBy(LessonField.DAY.key).addSnapshotListener { event, error ->
+                    if (error != null) trySend(Resource.Error(error.message?.stringfy()))
+                    event?.documents ?: return@addSnapshotListener
+                    val lessonList = DocumentConverters.convertDocumentToLessonList(event.documents)
+                    Log.d(TAG, "snapshot listener: uyarildin")
+                    val send = trySend(Resource.Success(lessonList))
+                    Log.d(TAG, "issuccess: ${send.isSuccess}")
                 }
 
         } catch (e: Exception) {

@@ -55,7 +55,6 @@ class StudentProfileViewModel @Inject constructor(
                             sendAction(StudentProfileActionBus.StudentRemoved)
                         }
                     }
-
                 }
             }
         }
