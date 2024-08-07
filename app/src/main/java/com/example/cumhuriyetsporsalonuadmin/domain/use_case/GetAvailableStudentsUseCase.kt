@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 @ViewModelScoped
 class GetAvailableStudentsUseCase @Inject constructor(private val repository: FirebaseRepository) {
-    suspend fun execute(lessonUid: String): Flow<Resource<List<Student>>> = flow {
+    fun execute(lessonUid: String): Flow<Resource<List<Student>>> = flow {
         repository.getVerifiedStudents()
             .collect { result -> //collect latest yaptigimda crash yiyorum :D
                 if (result !is Resource.Success) {
@@ -23,5 +23,6 @@ class GetAvailableStudentsUseCase @Inject constructor(private val repository: Fi
                 studentList.removeAll(itemsToRemove)
                 emit(Resource.Success(studentList))
             }
+        return@flow
     }
 }

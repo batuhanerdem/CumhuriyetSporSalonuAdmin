@@ -10,17 +10,16 @@ import javax.inject.Inject
 
 @ViewModelScoped
 class DeleteLessonUseCase @Inject constructor(private val repository: FirebaseRepository) {
-    suspend fun execute(lessonUid: String): Flow<Resource<Unit>> = flow {
+    fun execute(lessonUid: String): Flow<Resource<Unit>> = flow {
 
         repository.deleteLesson(lessonUid).collect { result: Resource<Unit> ->
-            emit(Resource.Loading())
             if (result is Resource.Error) {
                 emit(result)
                 return@collect
             }
             deleteLessonFromStudent(lessonUid).collect { emit(it) }
         }
-
+        return@flow
     }
 
 

@@ -9,7 +9,6 @@ import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,16 +19,15 @@ class StudentProfileViewModel @Inject constructor(
     var user: User? = null
 
     fun getStudent(uid: String) {
+        setLoading(true)
         firebaseRepository.getStudentByUid(uid).onEach { result ->
+            setLoading(false)
             when (result) {
                 is Resource.Error -> {
-                    setLoading(false)
                     sendAction(StudentProfileActionBus.ShowError(result.message))
                 }
 
-                is Resource.Loading -> setLoading(true)
                 is Resource.Success -> {
-                    setLoading(false)
                     result.data?.let {
                         user = it
                         sendAction(StudentProfileActionBus.StudentsLoaded)
@@ -41,22 +39,19 @@ class StudentProfileViewModel @Inject constructor(
 
     fun removeStudent() {
         user?.let {
-            viewModelScope.launch {
-                deleteStudentUseCase.execute(it.uid).collect { result ->
-                    when (result) {
-                        is Resource.Error -> {
-                            setLoading(false)
-                            sendAction(StudentProfileActionBus.ShowError(result.message))
-                        }
+            setLoading(true)
+            deleteStudentUseCase.execute(it.uid).onEach { result ->
+                setLoading(false)
+                when (result) {
+                    is Resource.Error -> {
+                        sendAction(StudentProfileActionBus.ShowError(result.message))
+                    }
 
-                        is Resource.Loading -> setLoading(true)
-                        is Resource.Success -> {
-                            setLoading(false)
-                            sendAction(StudentProfileActionBus.StudentRemoved)
-                        }
+                    is Resource.Success -> {
+                        sendAction(StudentProfileActionBus.StudentRemoved)
                     }
                 }
-            }
+            }.launchIn(viewModelScope)
         }
     }
 }

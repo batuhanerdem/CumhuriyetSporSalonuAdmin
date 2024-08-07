@@ -10,8 +10,7 @@ import javax.inject.Inject
 
 @ViewModelScoped
 class DeleteStudentFromLessonUseCase @Inject constructor(private val repository: FirebaseRepository) {
-    suspend fun execute(lesson: Lesson, studentUid: String): Flow<Resource<Unit>> = flow {
-        emit(Resource.Loading())
+    fun execute(lesson: Lesson, studentUid: String): Flow<Resource<Unit>> = flow {
         val newList = lesson.studentUids.toMutableList()
         newList.remove(studentUid)
         lesson.studentUids = newList
@@ -25,6 +24,7 @@ class DeleteStudentFromLessonUseCase @Inject constructor(private val repository:
                 emit(it)
             }
         }
+        return@flow
     }
 
 
@@ -44,5 +44,6 @@ class DeleteStudentFromLessonUseCase @Inject constructor(private val repository:
                 emit(it)
             }
         }
+        return@flow
     }
 }

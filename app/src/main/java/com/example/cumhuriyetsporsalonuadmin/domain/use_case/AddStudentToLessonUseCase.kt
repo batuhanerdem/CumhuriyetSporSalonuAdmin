@@ -13,7 +13,6 @@ import javax.inject.Inject
 @ViewModelScoped
 class AddStudentToLessonUseCase @Inject constructor(private val repository: FirebaseRepository) {
     fun execute(lesson: Lesson, studentList: List<Student>): Flow<Resource<Unit>> = flow {
-        emit(Resource.Loading())
 
         val newList = lesson.studentUids.toMutableList().apply {
             addAll(studentList.map { it.uid })
@@ -38,6 +37,7 @@ class AddStudentToLessonUseCase @Inject constructor(private val repository: Fire
                 emit(Resource.Success(Unit))
             }
         }
+        return@flow
     }
 
     private fun addLessonUidToStudent(lessonUid: String, studentUid: String): Flow<Resource<Unit>> =

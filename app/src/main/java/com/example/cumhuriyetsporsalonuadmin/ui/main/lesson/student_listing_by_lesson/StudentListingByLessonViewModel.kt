@@ -8,10 +8,8 @@ import com.example.cumhuriyetsporsalonuadmin.domain.use_case.DeleteStudentFromLe
 import com.example.cumhuriyetsporsalonuadmin.ui.base.BaseViewModel
 import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,17 +23,16 @@ class StudentListingByLessonViewModel @Inject constructor(
 
 
     fun getStudents(lessonUid: String) {
+        setLoading(true)
         studentList.clear()
         firebaseRepository.getStudentsByLessonUid(lessonUid).onEach { result ->
+            setLoading(false)
             when (result) {
                 is Resource.Error -> {
-                    setLoading(false)
                     sendAction(StudentListingByLessonActionBus.ShowError(result.message))
                 }
 
-                is Resource.Loading -> setLoading(true)
                 is Resource.Success -> {
-                    setLoading(false)
                     result.data?.let {
                         studentList.addAll(it)
                         sendAction(StudentListingByLessonActionBus.StudentsLoaded)
@@ -47,16 +44,15 @@ class StudentListingByLessonViewModel @Inject constructor(
     }
 
     fun getLesson(lessonUid: String) {
+        setLoading(true)
         firebaseRepository.getLessonByUID(lessonUid).onEach { result ->
+            setLoading(false)
             when (result) {
                 is Resource.Error -> {
-                    setLoading(false)
                     sendAction(StudentListingByLessonActionBus.ShowError(result.message))
                 }
 
-                is Resource.Loading -> setLoading(true)
                 is Resource.Success -> {
-                    setLoading(false)
                     result.data?.let {
                         lesson = it
                         sendAction(StudentListingByLessonActionBus.LessonLoaded)
@@ -68,29 +64,25 @@ class StudentListingByLessonViewModel @Inject constructor(
     }
 
     fun deleteStudentFromLesson(studentUid: String) {
-        viewModelScope.launch {
+        setLoading(true)
+        deleteStudentFromLessonUseCase.execute(lesson, studentUid).onEach { result ->
+            setLoading(false)
+            when (result) {
+                is Resource.Error -> {
+                    sendAction(StudentListingByLessonActionBus.ShowError(result.message))
+                }
 
-            deleteStudentFromLessonUseCase.execute(lesson, studentUid).collect { result ->
-                when (result) {
-                    is Resource.Error -> {
-                        setLoading(false)
-                        sendAction(StudentListingByLessonActionBus.ShowError(result.message))
+                is Resource.Success -> {
+                    val removedStudent: Student? = studentList.find {
+                        it.uid == studentUid
                     }
-
-                    is Resource.Loading -> setLoading(true)
-                    is Resource.Success -> {
-                        setLoading(false)
-                        val removedStudent: Student? = studentList.find {
-                            it.uid == studentUid
-                        }
-                        val newList = lesson.studentUids.toMutableList()
-                        newList.remove(removedStudent?.uid)
-                        studentList.remove(removedStudent)
-                        lesson.studentUids = newList
-                        sendAction(StudentListingByLessonActionBus.StudentRemoved)
-                    }
+                    val newList = lesson.studentUids.toMutableList()
+                    newList.remove(removedStudent?.uid)
+                    studentList.remove(removedStudent)
+                    lesson.studentUids = newList
+                    sendAction(StudentListingByLessonActionBus.StudentRemoved)
                 }
             }
-        }
+        }.launchIn(viewModelScope)
     }
 }

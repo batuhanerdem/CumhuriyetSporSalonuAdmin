@@ -12,8 +12,8 @@ import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import com.example.cumhuriyetsporsalonuadmin.utils.SelectableData
 import com.example.cumhuriyetsporsalonuadmin.utils.SelectableData.Companion.toSelectable
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,75 +30,66 @@ class AddStudentViewModel @Inject constructor(
     lateinit var args: AddStudentFragmentArgs
 
     fun getLesson() {
-        viewModelScope.launch {
-            firebaseRepository.getLessonByUID(args.lessonUid).collect() { result ->
-                when (result) {
-                    is Resource.Error -> {
-                        setLoading(false)
-                        sendAction(AddStudentActionBus.ShowError(result.message))
-                    }
+        setLoading(true)
+        firebaseRepository.getLessonByUID(args.lessonUid).onEach { result ->
+            setLoading(false)
+            when (result) {
+                is Resource.Error -> {
+                    sendAction(AddStudentActionBus.ShowError(result.message))
+                }
 
-                    is Resource.Loading -> setLoading(true)
-                    is Resource.Success -> {
-                        setLoading(false)
-                        result.data?.let {
-                            lesson = it
-                            sendAction(AddStudentActionBus.LessonLoaded)
-                        }
+                is Resource.Success -> {
+                    result.data?.let {
+                        lesson = it
+                        sendAction(AddStudentActionBus.LessonLoaded)
                     }
                 }
             }
-        }
+        }.launchIn(viewModelScope)
     }
 
     fun getStudents() {
+        setLoading(true)
         selectableStudentList.value = emptyList<SelectableData<Student>>().toMutableList()
-        viewModelScope.launch {
-            getAvailableStudentsUseCase.execute(args.lessonUid).collect { result ->
-                when (result) {
-                    is Resource.Error -> {
-                        setLoading(false)
-                        sendAction(AddStudentActionBus.ShowError(result.message))
-                    }
+        getAvailableStudentsUseCase.execute(args.lessonUid).onEach { result ->
+            setLoading(false)
+            when (result) {
+                is Resource.Error -> {
+                    sendAction(AddStudentActionBus.ShowError(result.message))
+                }
 
-                    is Resource.Loading -> setLoading(true)
-                    is Resource.Success -> {
-                        setLoading(false)
-                        val studentList = mutableListOf<SelectableData<Student>>()
-                        val availableStudentList = result.data ?: return@collect
-                        availableStudentList.map {
-                            studentList.add(it.toSelectable())
-                        }
-                        selectableStudentList.value = studentList
-
+                is Resource.Success -> {
+                    val studentList = mutableListOf<SelectableData<Student>>()
+                    val availableStudentList = result.data ?: return@onEach
+                    availableStudentList.map {
+                        studentList.add(it.toSelectable())
                     }
+                    selectableStudentList.value = studentList
+
                 }
             }
-        }
+        }.launchIn(viewModelScope)
     }
 
     fun addSelectedStudents() {
         val studentList = getSelectedStudents()
         val lesson = lesson ?: return
         if (studentList.isEmpty()) return
-        viewModelScope.launch {
-            addStudentToLessonUseCase.execute(lesson, studentList).collect { result ->
-                when (result) {
-                    is Resource.Error -> {
-                        setLoading(false)
-                        sendAction(AddStudentActionBus.ShowError(result.message))
-                    }
+        setLoading(true)
+        addStudentToLessonUseCase.execute(lesson, studentList).onEach { result ->
+            setLoading(false)
+            when (result) {
+                is Resource.Error -> {
+                    sendAction(AddStudentActionBus.ShowError(result.message))
+                }
 
-                    is Resource.Loading -> {setLoading(true)}
-                    is Resource.Success -> {
-                        setLoading(false)
-                        selectableStudentList.value =
-                            emptyList<SelectableData<Student>>().toMutableList()
-                        sendAction(AddStudentActionBus.StudentsAdded)
-                    }
+                is Resource.Success -> {
+                    selectableStudentList.value =
+                        emptyList<SelectableData<Student>>().toMutableList()
+                    sendAction(AddStudentActionBus.StudentsAdded)
                 }
             }
-        }
+        }.launchIn(viewModelScope)
     }
 
     fun getSelectedStudents(): List<Student> {

@@ -1,6 +1,5 @@
 package com.example.cumhuriyetsporsalonuadmin.domain.use_case
 
-import android.util.Log
 import com.example.cumhuriyetsporsalonuadmin.data.repository.FirebaseRepository
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
 import com.example.cumhuriyetsporsalonuadmin.domain.model.LessonRequest
@@ -16,9 +15,7 @@ class GetLessonRequestUseCase @Inject constructor(private val repository: Fireba
     private val lessonRequestList = mutableListOf<LessonRequest>()
 
     fun execute(): Flow<Resource<List<LessonRequest>>> = flow {
-//        emit(Resource.Loading())
         repository.getRequestedLessons().collect { result ->
-            Log.d("tag", "execute basi : $result")
             if (result is Resource.Error) {
                 emit(Resource.Error(result.message))
                 return@collect
@@ -29,14 +26,14 @@ class GetLessonRequestUseCase @Inject constructor(private val repository: Fireba
             val flowList = requestedLessonList.map { lesson ->
                 addRequestsToListPerLesson(lesson, lesson.requestUids)
             }
-            combine(flowList) { result ->
-                if (result.any { it is Resource.Error }) return@combine
+            combine(flowList) { list ->
+                if (list.any { it is Resource.Error }) return@combine
 
             }.collect {
-                Log.d("tag", "execute: valla bana da geldi")
                 emit(Resource.Success(lessonRequestList))
             }
         }
+        return@flow
     }
 
     private suspend fun addRequestsToListPerLesson(
@@ -57,7 +54,7 @@ class GetLessonRequestUseCase @Inject constructor(private val repository: Fireba
         }.collect {
             emit(Resource.Success(Unit))
         }
-
+        return@flow
     }
 
 }

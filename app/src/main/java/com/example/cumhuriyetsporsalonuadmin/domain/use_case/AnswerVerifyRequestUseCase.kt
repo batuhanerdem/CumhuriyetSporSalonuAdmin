@@ -10,14 +10,12 @@ import javax.inject.Inject
 
 @ViewModelScoped
 class AnswerVerifyRequestUseCase @Inject constructor(private val repository: FirebaseRepository) {
-    suspend fun execute(
+    fun execute(
         studentUid: String, answer: Boolean
     ): Flow<Resource<Unit>> = flow {
-        emit(Resource.Loading())
         repository.getStudentByUid(studentUid).collect { result ->
-            if (result !is Resource.Success) {
-                if (result is Resource.Error) emit(Resource.Error())
-                else emit(Resource.Loading())
+            if (result is Resource.Error) {
+                emit(Resource.Error())
                 return@collect
             }
             val user = result.data ?: return@collect
@@ -26,5 +24,6 @@ class AnswerVerifyRequestUseCase @Inject constructor(private val repository: Fir
                 emit(it)
             }
         }
+        return@flow
     }
 }

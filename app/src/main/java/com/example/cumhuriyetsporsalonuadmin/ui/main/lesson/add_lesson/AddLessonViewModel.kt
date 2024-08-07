@@ -36,19 +36,15 @@ class AddLessonViewModel @Inject constructor(private val firebaseRepository: Fir
     }
 
     fun saveLesson(lesson: Lesson) {
+        setLoading(true)
         firebaseRepository.setLesson(lesson).onEach { result ->
+            setLoading(false)
             when (result) {
                 is Resource.Error -> {
-                    setLoading(false)
                     sendAction(AddLessonActionBus.ShowError(result.message))
                 }
 
-                is Resource.Loading -> {
-                    setLoading(true)
-                }
-
                 is Resource.Success -> {
-                    setLoading(false)
                     sendAction(AddLessonActionBus.Success)
                 }
             }

@@ -19,12 +19,13 @@ class EditStudentProfileViewModel @Inject constructor(
     fun saveUser(
         name: String?, surname: String?, age: String?
     ) {
+        setLoading(true)
         val currentUser = student ?: return
         val newUser = currentUser.copy(name = name, surname = surname, age = age)
         firebaseRepository.setStudent(newUser).onEach { action ->
+            setLoading(false)
             when (action) {
                 is Resource.Error -> sendAction(EditStudentProfileActionBus.ShowError(action.message))
-                is Resource.Loading -> {}
                 is Resource.Success -> {
                     student = newUser.copy()
                     sendAction(EditStudentProfileActionBus.UserUpdated)
@@ -34,16 +35,15 @@ class EditStudentProfileViewModel @Inject constructor(
     }
 
     fun getStudent(uid: String) {
+        setLoading(true)
         firebaseRepository.getStudentByUid(uid).onEach { result ->
+            setLoading(false)
             when (result) {
                 is Resource.Error -> {
-                    setLoading(false)
                     sendAction(EditStudentProfileActionBus.ShowError(result.message))
                 }
 
-                is Resource.Loading -> setLoading(true)
                 is Resource.Success -> {
-                    setLoading(false)
                     result.data?.let {
                         student = it
                         sendAction(EditStudentProfileActionBus.StudentLoaded)

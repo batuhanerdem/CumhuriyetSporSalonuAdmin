@@ -21,11 +21,11 @@ class LessonListingByStudentViewModel @Inject constructor(
     lateinit var student: Student
 
     fun getClasses(studentUid: String) {
+        setLoading(true)
         firebaseRepository.getLessonsByStudentUid(studentUid).onEach { result ->
+            setLoading(false)
             when (result) {
-                is Resource.Loading -> setLoading(true)
                 is Resource.Error -> {
-                    setLoading(false)
                     sendAction(LessonListingByStudentActionBus.ShowError(result.message))
                 }
 
@@ -41,16 +41,15 @@ class LessonListingByStudentViewModel @Inject constructor(
     }
 
     fun getStudent(studentUid: String) {
+        setLoading(true)
         firebaseRepository.getStudentByUid(studentUid).onEach { action ->
+            setLoading(false)
             when (action) {
                 is Resource.Error -> {
-                    setLoading(false)
                     sendAction(LessonListingByStudentActionBus.ShowError(action.message))
                 }
 
-                is Resource.Loading -> setLoading(true)
                 is Resource.Success -> {
-                    setLoading(false)
                     action.data?.let {
                         student = it
                         sendAction(LessonListingByStudentActionBus.StudentLoaded)
@@ -59,6 +58,5 @@ class LessonListingByStudentViewModel @Inject constructor(
             }
         }.launchIn(viewModelScope)
     }
-
 
 }

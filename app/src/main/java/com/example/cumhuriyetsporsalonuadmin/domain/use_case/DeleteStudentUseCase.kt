@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 @ViewModelScoped
 class DeleteStudentUseCase @Inject constructor(private val repository: FirebaseRepository) {
-    suspend fun execute(studentUid: String): Flow<Resource<Unit>> = flow {
+    fun execute(studentUid: String): Flow<Resource<Unit>> = flow {
         repository.deleteStudent(studentUid).collect { result: Resource<Unit> ->
             if (result is Resource.Error) {
                 emit(Resource.Error(result.message))
@@ -20,6 +20,7 @@ class DeleteStudentUseCase @Inject constructor(private val repository: FirebaseR
                 emit(it)
             }
         }
+        return@flow
     }
 
     private fun deleteStudentFromLesson(studentUid: String): Flow<Resource<Unit>> = flow {
@@ -42,10 +43,10 @@ class DeleteStudentUseCase @Inject constructor(private val repository: FirebaseR
                 repository.setLesson(it)
             }
             combine(flowList) { results ->
-                if (results.any { it is Resource.Error })
-                    emit(Resource.Error())
+                if (results.any { it is Resource.Error }) emit(Resource.Error())
 
             }.collect { emit(Resource.Success()) }
         }
+        return@flow
     }
 }

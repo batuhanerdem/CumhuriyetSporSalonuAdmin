@@ -16,19 +16,15 @@ class ProfileViewModel @Inject constructor(
 ) : BaseViewModel<ProfileActionBus>() {
 
     fun updateAdmin(admin: Admin) {
+        setLoading(true)
         firebaseRepository.updateAdmin(admin).onEach {
+            setLoading(false)
             when (it) {
-                is Resource.Loading -> {
-                    setLoading(true)
-                }
-
                 is Resource.Error -> {
-                    setLoading(false)
                     sendAction(ProfileActionBus.ShowError(it.message))
                 }
 
                 is Resource.Success -> {
-                    setLoading(false)
                     sendAction(ProfileActionBus.UpdatedSuccessFully)
                 }
             }

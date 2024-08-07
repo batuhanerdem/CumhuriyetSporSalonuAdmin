@@ -1,6 +1,5 @@
 package com.example.cumhuriyetsporsalonuadmin.data.repository
 
-import android.util.Log
 import com.example.cumhuriyetsporsalonuadmin.R
 import com.example.cumhuriyetsporsalonuadmin.domain.mappers.DocumentConverters
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Admin
@@ -30,7 +29,6 @@ class FirebaseRepository @Inject constructor(
     private val lessonCollectionRef = db.collection(CollectionName.LESSON.value)
 
     fun adminLogin(admin: Admin): Flow<Resource<Unit>> = callbackFlow {
-        trySend(Resource.Loading())
         try {
             val task = adminDocumentRef.get().await()
             val dbAdmin = DocumentConverters.convertDocumentToAdmin(task)
@@ -46,7 +44,6 @@ class FirebaseRepository @Inject constructor(
     }
 
     fun updateAdmin(admin: Admin): Flow<Resource<Unit>> = callbackFlow {
-        trySend(Resource.Loading())
         try {
             adminDocumentRef.set(admin).await()
             trySend(Resource.Success())
@@ -57,7 +54,6 @@ class FirebaseRepository @Inject constructor(
     }
 
     fun getUnverifiedStudents(): Flow<Resource<List<Student>>> = callbackFlow {
-        trySend(Resource.Loading())
         val listenerRegistration = userCollectionRef.whereEqualTo(
             UserField.IS_VERIFIED.key, VerifiedStatus.NOTANSWERED.asString
         ).addSnapshotListener { value, error ->
@@ -79,7 +75,6 @@ class FirebaseRepository @Inject constructor(
     }
 
     fun getVerifiedStudents(): Flow<Resource<List<Student>>> = callbackFlow {
-        trySend(Resource.Loading())
         try {
             val result = userCollectionRef.whereEqualTo(
                 UserField.IS_VERIFIED.key, VerifiedStatus.VERIFIED.asString
@@ -93,7 +88,6 @@ class FirebaseRepository @Inject constructor(
     }
 
     fun getStudentByUid(studentUid: String): Flow<Resource<Student>> = callbackFlow {
-        trySend(Resource.Loading())
         try {
             val result = userCollectionRef.document(studentUid).get().await()
             val student = DocumentConverters.convertDocumentToStudent(result)
@@ -105,7 +99,6 @@ class FirebaseRepository @Inject constructor(
     }
 
     fun getStudentsByLessonUid(lessonUID: String): Flow<Resource<List<Student>>> = callbackFlow {
-        trySend(Resource.Loading())
         try {
             val result = userCollectionRef.whereEqualTo(
                 UserField.IS_VERIFIED.key, VerifiedStatus.VERIFIED.asString
@@ -119,7 +112,6 @@ class FirebaseRepository @Inject constructor(
     }
 
     fun deleteStudent(studentUid: String): Flow<Resource<Unit>> = callbackFlow {
-        trySend(Resource.Loading())
         try {
             userCollectionRef.document(studentUid).delete().await()
             trySend(Resource.Success())
@@ -130,7 +122,6 @@ class FirebaseRepository @Inject constructor(
     }
 
     fun setStudent(student: Student): Flow<Resource<Unit>> = callbackFlow {
-        trySend(Resource.Loading())
         try {
             userCollectionRef.document(student.uid).set(student.toHashMap()).await()
             trySend(Resource.Success())
@@ -141,7 +132,6 @@ class FirebaseRepository @Inject constructor(
     }
 
     fun getAllLessons(): Flow<Resource<List<Lesson>>> = callbackFlow {
-        trySend(Resource.Loading())
         try {
             val result =
                 lessonCollectionRef.orderBy(LessonField.DAY.key).orderBy(LessonField.START_HOUR.key)
@@ -155,7 +145,6 @@ class FirebaseRepository @Inject constructor(
     }
 
     fun getLessonByUID(lessonUID: String): Flow<Resource<Lesson>> = callbackFlow {
-        trySend(Resource.Loading())
         try {
             val result = lessonCollectionRef.document(lessonUID).get().await()
             val lesson = DocumentConverters.convertDocumentToLesson(result)
@@ -167,7 +156,6 @@ class FirebaseRepository @Inject constructor(
     }
 
     fun getLessonsByStudentUid(studentUid: String): Flow<Resource<List<Lesson>>> = callbackFlow {
-        trySend(Resource.Loading())
         try {
             val result =
                 lessonCollectionRef.whereArrayContains(LessonField.STUDENT_UIDS.key, studentUid)
@@ -181,16 +169,13 @@ class FirebaseRepository @Inject constructor(
     }
 
     fun getRequestedLessons(): Flow<Resource<List<Lesson>>> = callbackFlow {
-        trySend(Resource.Loading())
         try {
             lessonCollectionRef.whereNotEqualTo(LessonField.REQUEST_UIDS.key, emptyList<String>())
                 .orderBy(LessonField.DAY.key).addSnapshotListener { event, error ->
                     if (error != null) trySend(Resource.Error(error.message?.stringfy()))
                     event?.documents ?: return@addSnapshotListener
                     val lessonList = DocumentConverters.convertDocumentToLessonList(event.documents)
-                    Log.d(TAG, "snapshot listener: uyarildin")
-                    val send = trySend(Resource.Success(lessonList))
-                    Log.d(TAG, "issuccess: ${send.isSuccess}")
+                    trySend(Resource.Success(lessonList))
                 }
 
         } catch (e: Exception) {
@@ -200,7 +185,6 @@ class FirebaseRepository @Inject constructor(
     }
 
     fun setLesson(lesson: Lesson): Flow<Resource<Unit>> = callbackFlow {
-        trySend(Resource.Loading())
         try {
             lessonCollectionRef.document(lesson.uid).set(lesson.toFirebaseLesson()).await()
             trySend(Resource.Success())
@@ -211,7 +195,6 @@ class FirebaseRepository @Inject constructor(
     }
 
     fun deleteLesson(lessonUid: String): Flow<Resource<Unit>> = callbackFlow {
-        trySend(Resource.Loading())
         try {
             lessonCollectionRef.document(lessonUid).delete().await()
             trySend(Resource.Success())
@@ -222,4 +205,3 @@ class FirebaseRepository @Inject constructor(
     }
 }
 
-const val TAG = "tag"

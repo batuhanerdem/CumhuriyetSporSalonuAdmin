@@ -1,6 +1,5 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main.home.lesson_request
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.cumhuriyetsporsalonuadmin.domain.model.LessonRequest
 import com.example.cumhuriyetsporsalonuadmin.domain.use_case.AnswerLessonRequestUseCase
@@ -10,7 +9,6 @@ import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,38 +21,32 @@ class LessonRequestViewModel @Inject constructor(
 
 
     fun answerRequest(lessonRequest: LessonRequest, isAccepted: Boolean) {
-        viewModelScope.launch {
-            answerLessonRequestUseCase.execute(lessonRequest, isAccepted).collect { result ->
-                when (result) {
-                    is Resource.Error -> {
-                        setLoading(false)
-                        sendAction(LessonRequestActionBus.ShowError(result.message))
-                    }
+        setLoading(false)
+        answerLessonRequestUseCase.execute(lessonRequest, isAccepted).onEach { result ->
+            setLoading(false)
+            when (result) {
+                is Resource.Error -> {
+                    sendAction(LessonRequestActionBus.ShowError(result.message))
+                }
 
-                    is Resource.Loading -> setLoading(true)
-                    is Resource.Success -> {
-                        setLoading(false)
-                        Log.d(TAG, "answerRequest: $result")
-                        _requestList.remove(lessonRequest)
-                        //there is a problem here -> requestuids and  studentuods
-                        sendAction(LessonRequestActionBus.Answered)
-                    }
+                is Resource.Success -> {
+                    _requestList.remove(lessonRequest)
+                    //there is a problem here -> requestuids and  studentuods
+                    sendAction(LessonRequestActionBus.Answered)
                 }
             }
-        }
+        }.launchIn(viewModelScope)
     }
 
     fun getRequest() {
+        setLoading(true)
         getLessonRequestUseCase.execute().onEach { result ->
+            setLoading(false)
             when (result) {
                 is Resource.Error -> {
-                    setLoading(false)
                 }
 
-                is Resource.Loading -> setLoading(true)
                 is Resource.Success -> {
-                    setLoading(false)
-                    Log.d(TAG, "getRequests: $result \n ${result.data}")
                     result.data?.let {
                         _requestList = it.toMutableList()
                         sendAction(LessonRequestActionBus.ApplicationsLoaded)

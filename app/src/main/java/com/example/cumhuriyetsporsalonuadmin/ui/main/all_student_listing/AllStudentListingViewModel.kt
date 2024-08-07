@@ -22,17 +22,16 @@ class AllStudentListingViewModel @Inject constructor(
     lateinit var lesson: Lesson
 
     fun getStudents() {
+        setLoading(true)
         studentList.clear()
         firebaseRepository.getVerifiedStudents().onEach { result ->
+            setLoading(false)
             when (result) {
                 is Resource.Error -> {
-                    setLoading(false)
                     sendAction(AllStudentListingActionBus.ShowError(result.message))
                 }
 
-                is Resource.Loading -> setLoading(true)
                 is Resource.Success -> {
-                    setLoading(false)
                     result.data?.let {
                         studentList.addAll(it)
                         sendAction(AllStudentListingActionBus.StudentsLoaded)
@@ -42,15 +41,6 @@ class AllStudentListingViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-
-    fun getLessonByUID(lessonUid: String) {
-        firebaseRepository.getLessonByUID(lessonUid).onEach {
-            it.data?.let {
-                lesson = it
-                sendAction(AllStudentListingActionBus.LessonLoaded)
-            }
-        }.launchIn(viewModelScope)
-    }
 
     fun filterList(query: String?) {
         filteredList.clear()

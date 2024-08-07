@@ -20,19 +20,15 @@ class LoginViewModel @Inject constructor(
     }
 
     fun login(admin: Admin) {
+        setLoading(true)
         firebaseRepository.adminLogin(admin).onEach { result ->
+            setLoading(false)
             when (result) {
-                is Resource.Loading -> {
-                    setLoading(true)
-                }
-
                 is Resource.Error -> {
-                    setLoading(false)
                     sendAction(LoginActionBus.ShowError(result.message))
                 }
 
                 is Resource.Success -> {
-                    setLoading(false)
                     sendAction(LoginActionBus.LoggedIn)
                 }
             }
