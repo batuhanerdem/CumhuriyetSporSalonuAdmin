@@ -170,18 +170,22 @@ class FirebaseRepository @Inject constructor(
 
     fun getRequestedLessons(): Flow<Resource<List<Lesson>>> = callbackFlow {
         try {
-            lessonCollectionRef.whereNotEqualTo(LessonField.REQUEST_UIDS.key, emptyList<String>())
-                .orderBy(LessonField.DAY.key).addSnapshotListener { event, error ->
-                    if (error != null) trySend(Resource.Error(error.message?.stringfy()))
-                    event?.documents ?: return@addSnapshotListener
-                    val lessonList = DocumentConverters.convertDocumentToLessonList(event.documents)
-                    trySend(Resource.Success(lessonList))
-                }
-
+            val listenerRegistration = lessonCollectionRef.whereNotEqualTo(
+                LessonField.REQUEST_UIDS.key, emptyList<String>()
+            ).orderBy(LessonField.DAY.key).addSnapshotListener { event, error ->
+                if (error != null) trySend(Resource.Error(error.message?.stringfy()))
+                event?.documents ?: return@addSnapshotListener
+                val lessonList = DocumentConverters.convertDocumentToLessonList(event.documents)
+                trySend(Resource.Success(lessonList))
+            }
+            awaitClose {
+                listenerRegistration.remove()
+                this.cancel()
+            }
         } catch (e: Exception) {
             trySend(Resource.Error(message = e.message?.stringfy()))
         }
-        awaitClose { this.cancel() }
+
     }
 
     fun setLesson(lesson: Lesson): Flow<Resource<Unit>> = callbackFlow {

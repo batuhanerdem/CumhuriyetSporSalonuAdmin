@@ -21,12 +21,12 @@ class LessonRequestFragment :
         when (action) {
             LessonRequestActionBus.Answered -> {
                 setNoFoundVisibility(viewModel.requestList.isEmpty())
-                adapter.submitList(viewModel.requestList)
+                adapter.submitList(viewModel.requestList.toList())
             }
 
             LessonRequestActionBus.ApplicationsLoaded -> {
                 setNoFoundVisibility(viewModel.requestList.isEmpty())
-                adapter.submitList(viewModel.requestList)
+                adapter.submitList(viewModel.requestList.toList())
             }
 
             LessonRequestActionBus.Init -> {}

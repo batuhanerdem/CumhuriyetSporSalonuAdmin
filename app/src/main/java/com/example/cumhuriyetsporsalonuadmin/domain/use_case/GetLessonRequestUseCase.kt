@@ -5,56 +5,52 @@ import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
 import com.example.cumhuriyetsporsalonuadmin.domain.model.LessonRequest
 import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import dagger.hilt.android.scopes.ViewModelScoped
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 @ViewModelScoped
 class GetLessonRequestUseCase @Inject constructor(private val repository: FirebaseRepository) {
-    private val lessonRequestList = mutableListOf<LessonRequest>()
 
-    fun execute(): Flow<Resource<List<LessonRequest>>> = flow {
-        repository.getRequestedLessons().collect { result ->
+    @OptIn(ExperimentalCoroutinesApi::class)//for some reason
+    fun execute(): Flow<Resource<List<LessonRequest>>> {
+        return repository.getRequestedLessons().flatMapLatest { result ->
+            val lessonRequestList = mutableListOf<LessonRequest>()
             if (result is Resource.Error) {
-                emit(Resource.Error(result.message))
-                return@collect
+                return@flatMapLatest flow { emit(Resource.Error(result.message)) }
             }
 
-            val requestedLessonList = result.data ?: return@collect
+            val requestedLessonList =
+                result.data ?: return@flatMapLatest flow { emit(Resource.Error(result.message)) }
 
             val flowList = requestedLessonList.map { lesson ->
-                addRequestsToListPerLesson(lesson, lesson.requestUids)
+                addRequestsToListPerLesson(lesson, lesson.requestUids, lessonRequestList)
             }
-            combine(flowList) { list ->
-                if (list.any { it is Resource.Error }) return@combine
-
-            }.collect {
-                emit(Resource.Success(lessonRequestList))
+            return@flatMapLatest combine(flowList) { list ->
+                if (list.any { it is Resource.Error }) return@combine Resource.Error<List<LessonRequest>>()
+                Resource.Success<List<LessonRequest>>(lessonRequestList)
             }
         }
-        return@flow
     }
 
-    private suspend fun addRequestsToListPerLesson(
-        lesson: Lesson, studentUids: List<String>
-    ): Flow<Resource<Unit>> = flow {
+    private fun addRequestsToListPerLesson(
+        lesson: Lesson, studentUids: List<String>, lessonRequestList: MutableList<LessonRequest>
+    ): Flow<Resource<Unit>> {
 
         val flowList = studentUids.map {
             repository.getStudentByUid(it)
         }
-        combine(flowList) { result ->
-            if (result.any { it is Resource.Error }) return@combine
-
+        return combine(flowList) { result ->
+            if (result.any { it is Resource.Error }) return@combine Resource.Error()
             result.forEach {
                 val student = it.data ?: return@forEach
                 lessonRequestList.add(LessonRequest(lesson, student))
             }
-
-        }.collect {
-            emit(Resource.Success(Unit))
+            Resource.Success(Unit)
         }
-        return@flow
     }
 
 }
