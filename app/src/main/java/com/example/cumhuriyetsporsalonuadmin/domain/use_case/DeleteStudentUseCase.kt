@@ -5,36 +5,25 @@ import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
 @ViewModelScoped
 class DeleteStudentUseCase @Inject constructor(private val repository: FirebaseRepository) {
-    fun execute(studentUid: String): Flow<Resource<Unit>> = flow {
-        repository.deleteStudent(studentUid).collect { result: Resource<Unit> ->
-            if (result is Resource.Error) {
-                emit(Resource.Error(result.message))
-                return@collect
-            }
-            deleteStudentFromLesson(studentUid).collect {
-                emit(it)
-            }
+    fun execute(studentUid: String): Flow<Resource<Unit>> {
+        return repository.deleteStudent(studentUid).flatMapConcat { result: Resource<Unit> ->
+            if (result is Resource.Error) return@flatMapConcat flowOf(Resource.Error(result.message))
+            deleteStudentFromLesson(studentUid)
         }
-        return@flow
     }
 
-    private fun deleteStudentFromLesson(studentUid: String): Flow<Resource<Unit>> = flow {
-        repository.getLessonsByStudentUid(studentUid).collect { result ->
+    private fun deleteStudentFromLesson(studentUid: String): Flow<Resource<Unit>> {
+        return repository.getLessonsByStudentUid(studentUid).flatMapConcat { result ->
 
-            if (result is Resource.Error) {
-                emit(Resource.Error(result.message))
-                return@collect
-            }
+            if (result is Resource.Error) return@flatMapConcat flowOf(Resource.Error(result.message))
             val lessonList = result.data
-            if (lessonList.isNullOrEmpty()) {
-                emit(Resource.Success())
-                return@collect
-            }
+            if (lessonList.isNullOrEmpty()) return@flatMapConcat flowOf(Resource.Success(Unit))
 
             val flowList = lessonList.map {
                 val newList = it.studentUids.toMutableList()
@@ -43,10 +32,9 @@ class DeleteStudentUseCase @Inject constructor(private val repository: FirebaseR
                 repository.setLesson(it)
             }
             combine(flowList) { results ->
-                if (results.any { it is Resource.Error }) emit(Resource.Error())
-
-            }.collect { emit(Resource.Success()) }
+                if (results.any { it is Resource.Error }) Resource.Error<Unit>()
+                Resource.Success(Unit)
+            }
         }
-        return@flow
     }
 }
