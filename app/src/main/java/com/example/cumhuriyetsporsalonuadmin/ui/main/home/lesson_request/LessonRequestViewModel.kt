@@ -9,7 +9,6 @@ import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,22 +38,20 @@ class LessonRequestViewModel @Inject constructor(
 
     fun getRequest() {
         setLoading(true)
-        viewModelScope.launch {
-            getLessonRequestUseCase.execute().collect { result ->
-                setLoading(false)
-                when (result) {
-                    is Resource.Error -> {
-                        sendAction(LessonRequestActionBus.ShowError(result.message))
-                    }
+        getLessonRequestUseCase.execute().onEach { result ->
+            setLoading(false)
+            when (result) {
+                is Resource.Error -> {
+                    sendAction(LessonRequestActionBus.ShowError(result.message))
+                }
 
-                    is Resource.Success -> {
-                        result.data?.let {
-                            _requestList = it.toMutableList()
-                            sendAction(LessonRequestActionBus.ApplicationsLoaded)
-                        }
+                is Resource.Success -> {
+                    result.data?.let {
+                        _requestList = it.toMutableList()
+                        sendAction(LessonRequestActionBus.ApplicationsLoaded)
                     }
                 }
             }
-        }
+        }.launchIn(viewModelScope)
     }
 }
