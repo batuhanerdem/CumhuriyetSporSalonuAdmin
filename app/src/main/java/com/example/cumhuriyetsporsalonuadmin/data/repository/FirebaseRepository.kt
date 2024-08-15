@@ -11,7 +11,9 @@ import com.example.cumhuriyetsporsalonuadmin.domain.model.firebase_collection.Le
 import com.example.cumhuriyetsporsalonuadmin.domain.model.firebase_collection.UserField
 import com.example.cumhuriyetsporsalonuadmin.utils.Resource
 import com.example.cumhuriyetsporsalonuadmin.utils.Stringfy.Companion.stringfy
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
@@ -169,8 +171,9 @@ class FirebaseRepository @Inject constructor(
     }
 
     fun getRequestedLessons(): Flow<Resource<List<Lesson>>> = callbackFlow {
+        lateinit var listenerRegistration: ListenerRegistration
         try {
-            val listenerRegistration = lessonCollectionRef.whereNotEqualTo(
+            listenerRegistration = lessonCollectionRef.whereNotEqualTo(
                 LessonField.REQUEST_UIDS.key, emptyList<String>()
             ).orderBy(LessonField.DAY.key).addSnapshotListener { event, error ->
                 if (error != null) trySend(Resource.Error(error.message?.stringfy()))
@@ -178,14 +181,14 @@ class FirebaseRepository @Inject constructor(
                 val lessonList = DocumentConverters.convertDocumentToLessonList(event.documents)
                 trySend(Resource.Success(lessonList))
             }
-            awaitClose {
-                listenerRegistration.remove()
-                this.cancel()
-            }
+
         } catch (e: Exception) {
             trySend(Resource.Error(message = e.message?.stringfy()))
         }
-
+        awaitClose {
+            listenerRegistration.remove()
+            this.cancel()
+        }
     }
 
     fun setLesson(lesson: Lesson): Flow<Resource<Unit>> = callbackFlow {
@@ -206,6 +209,82 @@ class FirebaseRepository @Inject constructor(
             trySend(Resource.Error(message = e.message?.stringfy()))
         }
         awaitClose { this.cancel() }
+    }
+
+    fun removeUidFromLesson(lessonUid: String, uid: String) = callbackFlow<Resource<Unit>> {
+        try {
+            lessonCollectionRef.document(lessonUid).update(
+                LessonField.STUDENT_UIDS.key, FieldValue.arrayRemove(uid)
+            ).await()
+            trySend(Resource.Success())
+        } catch (e: Exception) {
+            trySend(Resource.Error(message = e.message?.stringfy()))
+        }
+        awaitClose { this.cancel() }
+    }
+
+    fun removeUidFromRequest(lessonUid: String, uid: String) = callbackFlow<Resource<Unit>> {
+        try {
+            lessonCollectionRef.document(lessonUid).update(
+                LessonField.REQUEST_UIDS.key, FieldValue.arrayRemove(uid)
+            ).await()
+            trySend(Resource.Success())
+        } catch (e: Exception) {
+            trySend(Resource.Error(message = e.message?.stringfy()))
+        }
+        awaitClose { this.cancel() }
+    }
+
+    fun removeUidFromStudent(lessonUid: String, studentUid: String) = callbackFlow<Resource<Unit>> {
+        try {
+            userCollectionRef.document(studentUid).update(
+                UserField.LESSON_UIDS.key, FieldValue.arrayRemove(lessonUid)
+            ).await()
+            trySend(Resource.Success())
+        } catch (e: Exception) {
+            trySend(Resource.Error(message = e.message?.stringfy()))
+        }
+        awaitClose { this.cancel() }
+    }
+
+    fun addLessonUidToStudent(lessonUid: String, studentUid: String) =
+        callbackFlow<Resource<Unit>> {
+            try {
+                userCollectionRef.document(studentUid).update(
+                    UserField.LESSON_UIDS.key, FieldValue.arrayUnion(lessonUid)
+                ).await()
+                trySend(Resource.Success())
+            } catch (e: Exception) {
+                trySend(Resource.Error(message = e.message?.stringfy()))
+            }
+            awaitClose { this.cancel() }
+        }
+
+    fun addStudentUidToLesson(lessonUid: String, studentUid: String) =
+        callbackFlow<Resource<Unit>> {
+            try {
+                lessonCollectionRef.document(lessonUid).update(
+                    LessonField.STUDENT_UIDS.key, FieldValue.arrayUnion(studentUid)
+                ).await()
+                trySend(Resource.Success())
+            } catch (e: Exception) {
+                trySend(Resource.Error(message = e.message?.stringfy()))
+            }
+            awaitClose { this.cancel() }
+        }
+
+
+    fun getRequestedLessonsByStudentUid(studentUid: String) = callbackFlow<Resource<List<Lesson>>> {
+        try {
+            val lessonDocs =
+                lessonCollectionRef.whereArrayContains("requestUids", studentUid).get().await()
+            val lessons = DocumentConverters.convertDocumentToLessonList(lessonDocs.documents)
+            trySend(Resource.Success(lessons))
+        } catch (e: Exception) {
+            trySend(Resource.Error(message = e.message?.stringfy()))
+        }
+        awaitClose { this.cancel() }
+
     }
 }
 

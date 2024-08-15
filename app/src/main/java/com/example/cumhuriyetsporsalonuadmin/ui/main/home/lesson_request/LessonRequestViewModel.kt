@@ -1,5 +1,6 @@
 package com.example.cumhuriyetsporsalonuadmin.ui.main.home.lesson_request
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.cumhuriyetsporsalonuadmin.domain.model.LessonRequest
 import com.example.cumhuriyetsporsalonuadmin.domain.use_case.AnswerLessonRequestUseCase
@@ -39,6 +40,7 @@ class LessonRequestViewModel @Inject constructor(
     fun getRequest() {
         setLoading(true)
         getLessonRequestUseCase.execute().onEach { result ->
+            Log.d("tag", "getRequest: $result")
             setLoading(false)
             when (result) {
                 is Resource.Error -> {

@@ -73,10 +73,10 @@ class AddStudentViewModel @Inject constructor(
 
     fun addSelectedStudents() {
         val studentList = getSelectedStudents()
-        val lesson = lesson ?: return
+        val lessonUid = lesson?.uid ?: return
         if (studentList.isEmpty()) return
         setLoading(true)
-        addStudentToLessonUseCase.execute(lesson, studentList).onEach { result ->
+        addStudentToLessonUseCase.execute(lessonUid, studentList).onEach { result ->
             setLoading(false)
             when (result) {
                 is Resource.Error -> {

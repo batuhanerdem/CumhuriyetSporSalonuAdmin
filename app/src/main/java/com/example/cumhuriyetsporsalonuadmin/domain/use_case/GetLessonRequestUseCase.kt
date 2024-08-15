@@ -1,5 +1,6 @@
 package com.example.cumhuriyetsporsalonuadmin.domain.use_case
 
+import android.util.Log
 import com.example.cumhuriyetsporsalonuadmin.data.repository.FirebaseRepository
 import com.example.cumhuriyetsporsalonuadmin.domain.model.Lesson
 import com.example.cumhuriyetsporsalonuadmin.domain.model.LessonRequest
@@ -8,7 +9,7 @@ import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
@@ -16,22 +17,24 @@ import javax.inject.Inject
 @ViewModelScoped
 class GetLessonRequestUseCase @Inject constructor(private val repository: FirebaseRepository) {
 
+
     @OptIn(ExperimentalCoroutinesApi::class)//for some reason
     fun execute(): Flow<Resource<List<LessonRequest>>> {
-        return repository.getRequestedLessons().flatMapConcat { result ->
+        //flatMapConcat doesn't listen changes, flatMapLatest does.
+        return repository.getRequestedLessons().flatMapLatest { result ->
             val lessonRequestList = mutableListOf<LessonRequest>()
             if (result is Resource.Error) {
-                return@flatMapConcat flow { emit(Resource.Error(result.message)) }
+                return@flatMapLatest flow { emit(Resource.Error(result.message)) }
             }
 
             val requestedLessonList =
-                result.data ?: return@flatMapConcat flow { emit(Resource.Error(result.message)) }
+                result.data ?: return@flatMapLatest flow { emit(Resource.Error(result.message)) }
 
             val flowList = requestedLessonList.map { lesson ->
                 addRequestsToListPerLesson(lesson, lesson.requestUids, lessonRequestList)
             }
-            if (flowList.isEmpty()) return@flatMapConcat flowOf(Resource.Success(emptyList()))
-            return@flatMapConcat combine(flowList) { list ->
+            if (flowList.isEmpty()) return@flatMapLatest flowOf(Resource.Success(emptyList()))
+            return@flatMapLatest combine(flowList) { list ->
                 if (list.any { it is Resource.Error }) return@combine Resource.Error<List<LessonRequest>>()
                 Resource.Success<List<LessonRequest>>(lessonRequestList)
             }
