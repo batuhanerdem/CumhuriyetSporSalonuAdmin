@@ -12,18 +12,22 @@ import com.example.cumhuriyetsporsalonuadmin.domain.model.User
 class VerifyRequestAdapter(
     val answerRequestOnClick: (user: User, isAccepted: Boolean) -> Unit
 ) : ListAdapter<User, VerifyRequestAdapter.RequestViewHolder>(UserDiffCallback) {
-    class RequestViewHolder(val binding: ItemVerifyRequestBinding) : RecyclerView.ViewHolder(binding.root)
+    class RequestViewHolder(val binding: ItemVerifyRequestBinding) :
+        RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RequestViewHolder {
-        val binding = ItemVerifyRequestBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemVerifyRequestBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return RequestViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: RequestViewHolder, position: Int) {
         val currentUser = getItem(position)
-        holder.binding.tvName.text = currentUser.email
+        "${currentUser.name} ${currentUser.surname}".also { holder.binding.tvName.text = it }
+        holder.binding.tvEmail.text = currentUser.email
         holder.binding.btnAccept.setOnClickListener {
-            answerRequestOnClick(currentUser, true) }
+            answerRequestOnClick(currentUser, true)
+        }
         holder.binding.btnDeny.setOnClickListener { answerRequestOnClick(currentUser, false) }
     }
 
