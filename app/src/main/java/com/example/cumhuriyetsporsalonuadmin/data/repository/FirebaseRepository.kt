@@ -115,7 +115,8 @@ class FirebaseRepository @Inject constructor(
 
     fun deleteStudent(studentUid: String): Flow<Resource<Unit>> = callbackFlow {
         try {
-            userCollectionRef.document(studentUid).delete().await()
+            userCollectionRef.document(studentUid)
+                .update(UserField.IS_VERIFIED.key, VerifiedStatus.DENIED.asString).await()
             trySend(Resource.Success())
         } catch (e: Exception) {
             trySend(Resource.Error(message = e.message?.stringfy()))
@@ -280,6 +281,18 @@ class FirebaseRepository @Inject constructor(
                 lessonCollectionRef.whereArrayContains("requestUids", studentUid).get().await()
             val lessons = DocumentConverters.convertDocumentToLessonList(lessonDocs.documents)
             trySend(Resource.Success(lessons))
+        } catch (e: Exception) {
+            trySend(Resource.Error(message = e.message?.stringfy()))
+        }
+        awaitClose { this.cancel() }
+
+    }
+
+    fun clearStudentsLessons(studentUid: String) = callbackFlow<Resource<Unit>> {
+        try {
+            userCollectionRef.document(studentUid)
+                .update(UserField.LESSON_UIDS.key, emptyList<Lesson>()).await()
+            trySend(Resource.Success(Unit))
         } catch (e: Exception) {
             trySend(Resource.Error(message = e.message?.stringfy()))
         }

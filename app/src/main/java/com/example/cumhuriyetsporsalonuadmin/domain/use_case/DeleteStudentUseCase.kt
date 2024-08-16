@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.zip
 import javax.inject.Inject
 
 @ViewModelScoped
@@ -17,8 +16,14 @@ class DeleteStudentUseCase @Inject constructor(private val repository: FirebaseR
     fun execute(studentUid: String): Flow<Resource<Unit>> {
         return repository.deleteStudent(studentUid).flatMapConcat { result: Resource<Unit> ->
             if (result is Resource.Error) return@flatMapConcat flowOf(Resource.Error(result.message))
-            deleteStudentFromLesson(studentUid).zip(deleteStudentFromRequests(studentUid)) { r1, r2 ->
-                if (r1 is Resource.Success && r2 is Resource.Success) Resource.Success(Unit)
+            combine(
+                deleteStudentFromLesson(studentUid),
+                deleteStudentFromRequests(studentUid),
+                repository.clearStudentsLessons(studentUid)
+            ) { r1, r2, r3 ->
+                if (r1 is Resource.Success && r2 is Resource.Success && r3 is Resource.Success) Resource.Success(
+                    Unit
+                )
                 else Resource.Error()
             }
         }
