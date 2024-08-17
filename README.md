@@ -12,7 +12,6 @@ I used Firestore as the backend for this app. However, to achieve complete secur
 - Hilt for Dependency Injection
 - Navigation Component
 - Retrofit
-- ViewPager2
 - Firebase Auth, FireStore as backend
 - Tab layout with ViewPager2
 - Lottie for loading animation
